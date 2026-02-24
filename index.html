@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Module – L’art du Hook Impactant™</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-nude: #f7efe9;
+      --bg-nude-soft: #fbf5f0;
+      --gold: #c9a15b;
+      --gold-soft: #e3cfa0;
+      --brown: #4b2f23;
+      --brown-soft: #7a5642;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at top left, #fff 0, var(--bg-nude) 40%, var(--bg-nude-soft) 100%);
+      color: var(--brown);
+      line-height: 1.6;
+      padding: 40px 16px;
+    }
+
+    .module-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(201, 161, 91, 0.25);
+      box-shadow: 0 18px 45px rgba(75, 47, 35, 0.12);
+      padding: 32px 24px 40px;
+    }
+
+    @media (min-width: 768px) {
+      .module-wrapper {
+        padding: 40px 48px 48px;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold-soft), var(--bg-nude-soft));
+      color: var(--brown);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--brown-soft);
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      line-height: 1.2;
+      color: var(--brown);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--brown-soft);
+      margin-bottom: 24px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+      margin: 24px 0 32px;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+      color: var(--brown);
+      position: relative;
+      padding-left: 14px;
+    }
+
+    h2::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      margin: 16px 0 6px;
+      color: var(--brown-soft);
+    }
+
+    p {
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, rgba(227, 207, 160, 0.25), rgba(247, 239, 233, 0.9));
+      border-left: 3px solid var(--gold);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin: 10px 0 14px;
+      font-size: 0.95rem;
+    }
+
+    .list {
+      margin: 8px 0 14px 18px;
+      font-size: 0.95rem;
+    }
+
+    .list li {
+      margin-bottom: 6px;
+    }
+
+    .quote {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--brown-soft);
+      border-left: 2px solid var(--gold-soft);
+      padding-left: 10px;
+      margin: 8px 0 12px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg-nude-soft);
+      color: var(--brown-soft);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .section-card {
+      background: var(--bg-nude-soft);
+      border-radius: 14px;
+      padding: 16px 14px;
+      border: 1px solid rgba(201, 161, 91, 0.25);
+      margin-bottom: 18px;
+    }
+
+    .hook-example {
+      background: var(--white);
+      border-radius: 10px;
+      border: 1px dashed rgba(201, 161, 91, 0.6);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      margin: 6px 0 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(75, 47, 35, 0.06);
+      font-size: 0.8rem;
+      color: var(--brown-soft);
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 768px) {
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .cta-block {
+      margin-top: 26px;
+      padding: 18px 16px;
+      border-radius: 14px;
+      background: radial-gradient(circle at top left, var(--gold-soft), var(--bg-nude-soft));
+      border: 1px solid rgba(201, 161, 91, 0.5);
+    }
+
+    .cta-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--brown);
+      margin-bottom: 6px;
+    }
+
+    .cta-options {
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .cta-options li {
+      margin-bottom: 4px;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      font-size: 0.9rem;
+      color: var(--brown-soft);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <main class="module-wrapper">
+    <!-- En-tête -->
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span>Module Brille &amp; Vibre</span>
+    </div>
+    <h1>L’ART DU HOOK IMPACTANT™</h1>
+    <p class="subtitle">Comment captiver en 3 secondes et transformer un scroll en attention réelle.</p>
+
+    <div class="divider"></div>
+
+    <!-- 1. Qu’est-ce qu’un hook -->
+    <section>
+      <h2>1. Qu’est-ce qu’un hook (vraiment)</h2>
+      <p>Un hook, c’est la première phrase, le premier cadre, le premier choc visuel qui arrête quelqu’un dans son scroll.</p>
+      <p>C’est le point d’entrée émotionnel de ton contenu.</p>
+      <p>Sur Instagram et TikTok, tu n’as que 0,8 à 2 secondes pour convaincre quelqu’un que ton contenu mérite son attention. Le hook n’est pas un détail&nbsp;: c’est une grande partie de la performance d’un post.</p>
+
+      <div class="section-card">
+        <p><strong>Un bon hook&nbsp;:</strong></p>
+        <ul class="list">
+          <li>crée une tension (curiosité, surprise, contradiction, promesse) ;</li>
+          <li>parle directement au cerveau émotionnel ;</li>
+          <li>donne une raison immédiate de rester ;</li>
+          <li>promet une transformation, une révélation ou une solution.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. Règles d’or -->
+    <section>
+      <h2>2. Les 4 règles d’or des rois du marketing</h2>
+
+      <div class="section-card">
+        <h3>Règle 1 — “Make them stop” (David Ogilvy)</h3>
+        <p>Ton hook doit provoquer un micro‑choc. Pas de tiède, pas de neutre.</p>
+        <p class="quote">«&nbsp;Si votre titre n’attire pas l’attention, vous avez perdu 80&nbsp;% de votre budget.&nbsp;»</p>
+        <p>Sur les réseaux, ton budget = ton temps + ton énergie.</p>
+      </div>
+
+      <div class="section-card">
+        <h3>Règle 2 — “Enter the conversation already happening in their mind” (Robert Collier)</h3>
+        <p>Ton hook doit commencer là où ton audience se trouve mentalement&nbsp;: ses peurs, ses désirs, ses frustrations, ses rêves.</p>
+        <p>Si ton hook ne parle pas d’eux, ils passent.</p>
+      </div>
+
+      <div class="section-card">
+        <h3>Règle 3 — “Be specific or be ignored” (Gary Halbert)</h3>
+        <p>Les hooks vagues ne convertissent pas. Les hooks précis créent de la crédibilité instantanée.</p>
+        <div class="grid-2">
+          <div class="hook-example">
+            <strong>Faible&nbsp;:</strong><br>
+            «&nbsp;Comment gagner de l’argent&nbsp;»
+          </div>
+          <div class="hook-example">
+            <strong>Fort&nbsp;:</strong><br>
+            «&nbsp;Comment j’ai généré 1&nbsp;200&nbsp;€ en 48h avec 37 abonnés&nbsp;»
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3>Règle 4 — “Make a promise you can keep” (Dan Kennedy)</h3>
+        <p>Un hook puissant promet une transformation réaliste, désirable et claire.</p>
+        <ul class="list">
+          <li>pas de promesse floue ;</li>
+          <li>pas de promesse impossible ;</li>
+          <li>une promesse qui donne envie d’écouter la suite.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3. Types de hooks -->
+    <section>
+      <h2>3. Les 7 types de hooks qui explosent sur Instagram &amp; TikTok</h2>
+
+      <div class="section-card">
+        <span class="tag">Révélation</span>
+        <div class="hook-example">
+          «&nbsp;Personne ne te dit ça, mais c’est la seule raison pour laquelle ton contenu ne convertit pas.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Erreur fatale</span>
+        <div class="hook-example">
+          «&nbsp;Si tu fais ça, tu t’empêches littéralement de réussir.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Avant / Après</span>
+        <div class="hook-example">
+          «&nbsp;Avant&nbsp;: je postais tous les jours.<br>
+          Après&nbsp;: je poste 3 fois par semaine et je vends 10x plus.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Chiffre choc</span>
+        <div class="hook-example">
+          «&nbsp;J’ai doublé mes ventes en supprimant 80&nbsp;% de mon contenu.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Anti‑mythe</span>
+        <div class="hook-example">
+          «&nbsp;Non, tu n’as pas besoin de plus d’abonnés pour vendre.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Confession</span>
+        <div class="hook-example">
+          «&nbsp;Je vais être honnête&nbsp;: j’ai saboté mon business pendant 2 ans.&nbsp;»
+        </div>
+      </div>
+
+      <div class="section-card">
+        <span class="tag">Promesse claire</span>
+        <div class="hook-example">
+          «&nbsp;Voici comment créer un contenu qui vend, même si tu débutes.&nbsp;»
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Méthode PRO-HOOK -->
+    <section>
+      <h2>4. La Méthode PRO-HOOK™</h2>
+      <p>Une méthode en 3 étapes, simple, fluide, que tu peux enseigner et appliquer immédiatement.</p>
+
+      <div class="section-card">
+        <h3>Étape 1 — Identifier la tension</h3>
+        <p>Choisis une émotion dominante&nbsp;:</p>
+        <div>
+          <span class="pill"><span class="pill-dot"></span> Frustration</span>
+          <span class="pill"><span class="pill-dot"></span> Désir</span>
+          <span class="pill"><span class="pill-dot"></span> Peur</span>
+          <span class="pill"><span class="pill-dot"></span> Ambition</span>
+          <span class="pill"><span class="pill-dot"></span> Curiosité</span>
+        </div>
+        <p class="highlight">Le hook doit amplifier cette émotion pour créer un effet «&nbsp;je me sens concerné·e&nbsp;».</p>
+      </div>
+
+      <div class="section-card">
+        <h3>Étape 2 — Formuler la promesse</h3>
+        <p>Pose-toi la question&nbsp;: <strong>«&nbsp;Qu’est-ce que la personne gagne si elle reste 10 secondes de plus&nbsp;?&nbsp;»</strong></p>
+        <p>La promesse doit être&nbsp;:</p>
+        <ul class="list">
+          <li>claire ;</li>
+          <li>spécifique ;</li>
+          <li>désirable ;</li>
+          <li>immédiate.</li>
+        </ul>
+      </div>
+
+      <div class="section-card">
+        <h3>Étape 3 — Ajouter l’angle marketing</h3>
+        <p>Choisis un angle parmi les 7 types de hooks. C’est ce qui donne le style, le ton, l’impact.</p>
+        <p><strong>Exemple&nbsp;:</strong></p>
+        <ul class="list">
+          <li><strong>Tension&nbsp;:</strong> «&nbsp;Je n’arrive pas à vendre&nbsp;»</li>
+          <li><strong>Promesse&nbsp;:</strong> «&nbsp;Tu vas comprendre pourquoi&nbsp;»</li>
+          <li><strong>Angle&nbsp;:</strong> Erreur fatale</li>
+        </ul>
+        <div class="hook-example">
+          Hook final&nbsp;:<br>
+          «&nbsp;Si tu ne vends pas, c’est probablement à cause de cette erreur que 90&nbsp;% des créateurs font.&nbsp;»
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Hooks prêts à l’emploi -->
+    <section>
+      <h2>5. 10 hooks prêts à l’emploi</h2>
+      <p>À adapter à ton audience, ton ton et ton expertise.</p>
+      <div class="section-card">
+        <ul class="list">
+          <li>«&nbsp;Tu veux créer du contenu qui vend&nbsp;? Commence par arrêter ça.&nbsp;»</li>
+          <li>«&nbsp;La raison pour laquelle ton compte ne décolle pas n’a rien à voir avec l’algorithme.&nbsp;»</li>
+          <li>«&nbsp;J’ai testé toutes les stratégies… voici la seule qui a vraiment changé mon business.&nbsp;»</li>
+          <li>«&nbsp;Si tu débutes, lis ça avant de poster ton prochain contenu.&nbsp;»</li>
+          <li>«&nbsp;Tu n’as pas besoin de plus d’abonnés. Tu as besoin de ça.&nbsp;»</li>
+          <li>«&nbsp;La vérité, c’est que tu travailles trop pour des résultats trop faibles.&nbsp;»</li>
+          <li>«&nbsp;Voici comment j’ai transformé un post banal en post viral.&nbsp;»</li>
+          <li>«&nbsp;Tu veux vendre&nbsp;? Alors arrête de créer du contenu gentil.&nbsp;»</li>
+          <li>«&nbsp;Le problème, ce n’est pas ton contenu. C’est ton hook.&nbsp;»</li>
+          <li>«&nbsp;Si tu appliques ça pendant 7 jours, ton engagement va changer.&nbsp;»</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Conclusion -->
+    <section>
+      <h2>6. Conclusion inspirante</h2>
+      <div class="highlight">
+        <p>Un hook n’est pas une simple phrase.</p>
+        <p>C’est un levier de transformation, la porte d’entrée vers ton univers, ton expertise, ton message.</p>
+        <p>Quand tu maîtrises l’art du hook, tu ne crées plus seulement du contenu… tu crées de l’impact.</p>
+        <p>Et c’est cet impact qui construit une marque qui brille et vibre.</p>
+      </div>
+    </section>
+
+    <!-- Bloc options / suite du module -->
+    <section class="cta-block">
+      <p class="cta-title">Pour aller plus loin avec ce module</p>
+      <p>Tu peux transformer ce contenu en plusieurs formats pédagogiques pour tes clientes&nbsp;:</p>
+      <ul class="list cta-options">
+        <li><strong>PDF premium&nbsp;:</strong> mise en page élégante, à télécharger après une masterclass.</li>
+        <li><strong>Script vidéo&nbsp;:</strong> base pour tourner un Reels ou un TikTok éducatif.</li>
+        <li><strong>Exercice pratique&nbsp;:</strong> demander à tes clientes de créer 5 hooks en appliquant la méthode PRO‑HOOK™.</li>
+        <li><strong>Checklist imprimable&nbsp;:</strong> les 4 règles d’or + les 7 types de hooks à garder sous les yeux.</li>
+      </ul>
+    </section>
+
+    <p class="footer-note">Module «&nbsp;L’art du Hook Impactant™&nbsp;» – Brille &amp; Vibre.</p>
+  </main>
+</body>
+</html>
