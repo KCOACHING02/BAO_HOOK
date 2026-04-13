@@ -460,6 +460,52 @@
     /* ── TAB PANELS ── */
     .tab-panel { display: none; animation: fadeUp 0.3s ease; }
     .tab-panel.active { display: block; }
+
+    /* ── FORMAT GRID (Posts tab) ── */
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .format-grid { grid-template-columns: 1fr; }
+    }
+    .format-card {
+      background: var(--cream);
+      border: 1.5px solid var(--beige);
+      border-radius: 12px;
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .format-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(201, 168, 76, 0.15);
+    }
+    .format-card.selected {
+      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
+      border-color: var(--gold);
+      box-shadow: 0 4px 14px rgba(201, 168, 76, 0.25);
+    }
+    .format-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .format-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .format-desc {
+      font-size: 11px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -663,7 +709,100 @@
     </section>
 
     <!-- Onglet : Posts -->
-    <section id="tab-posts" class="tab-panel"></section>
+    <section id="tab-posts" class="tab-panel">
+      <div class="page">
+
+        <div class="section-eyebrow">Générateur de posts</div>
+        <div class="section-title">Crée ton <em>prochain post</em></div>
+        <div class="section-body">
+          Choisis un format, décris ton sujet, et Claude génère <strong>3 variantes</strong> à partir de ton profil. Tu pourras ensuite retravailler la variante que tu préfères.
+        </div>
+
+        <!-- ── Carte 1 — Format ── -->
+        <div class="card">
+          <div class="section-eyebrow">01 — Quel format ?</div>
+          <div class="format-grid">
+            <div class="format-card selected" data-format="reel">
+              <div class="format-icon">🎬</div>
+              <div class="format-name">Reel</div>
+              <div class="format-desc">Vidéo courte avec hook, script et overlays</div>
+            </div>
+            <div class="format-card" data-format="carrousel">
+              <div class="format-icon">🎠</div>
+              <div class="format-name">Carrousel</div>
+              <div class="format-desc">7 slides structurées + caption</div>
+            </div>
+            <div class="format-card" data-format="photo">
+              <div class="format-icon">📸</div>
+              <div class="format-name">Photo</div>
+              <div class="format-desc">Caption longue selon le framework 4 colonnes</div>
+            </div>
+            <div class="format-card" data-format="inspiration">
+              <div class="format-icon">✨</div>
+              <div class="format-name">Inspiration</div>
+              <div class="format-desc">Citation + courte légende</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Carte 2 — Sujet ── -->
+        <div class="card">
+          <div class="section-eyebrow">02 — De quoi tu veux parler ?</div>
+          <div class="field">
+            <label class="field-label" for="post-sujet">Sujet ou angle du post</label>
+            <textarea id="post-sujet" class="field-textarea" style="min-height: 90px;" placeholder="Ex : pourquoi mes anciennes clientes me disent qu'elles ont enfin l'impression d'écrire avec leur vraie voix"></textarea>
+            <div class="field-hint">Plus tu es précise, meilleur sera le résultat. Tu peux décrire un cas, une réflexion, une leçon, un témoignage…</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 3 — Options (facultatif) ── -->
+        <div class="card">
+          <div class="section-eyebrow">03 — Options (facultatif)</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="post-objectif">Objectif spécifique</label>
+              <select id="post-objectif" class="field-select">
+                <option value="">— Utiliser celui du profil —</option>
+                <option value="ventes">💰 Vendre</option>
+                <option value="engagement">💬 Engager</option>
+                <option value="autorite">🎯 Asseoir mon autorité</option>
+                <option value="visibilite">✨ Gagner en visibilité</option>
+                <option value="liste">📩 Construire ma liste</option>
+              </select>
+              <div class="field-hint">Override l'objectif du profil pour ce post uniquement.</div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="post-longueur">Longueur de la caption</label>
+              <select id="post-longueur" class="field-select">
+                <option value="courte">Courte (~80 mots)</option>
+                <option value="moyenne" selected>Moyenne (~180 mots)</option>
+                <option value="longue">Longue (~300 mots)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="post-angle">Angle ou ton particulier</label>
+            <input id="post-angle" type="text" class="field-input" placeholder="Ex : confession personnelle / pédagogique / drôle / vulnérable…">
+            <div class="field-hint">Optionnel — laisse vide pour utiliser ton ton de profil par défaut.</div>
+          </div>
+        </div>
+
+        <!-- ── Bouton de génération ── -->
+        <button id="btn-generate-post" class="btn btn-primary btn-block" style="padding: 16px; font-size: 15px; margin-bottom: 24px;">
+          ✨ Générer 3 variantes
+        </button>
+
+        <!-- ── Loading ── -->
+        <div id="posts-loading" style="display: none;"></div>
+
+        <!-- ── Résultats ── -->
+        <div id="posts-results"></div>
+
+      </div>
+    </section>
 
   </main>
 
