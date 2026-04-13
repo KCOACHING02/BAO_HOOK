@@ -1,32 +1,36 @@
+// ──────────────────────────────────────────────────────────────
 // Vercel Serverless Function — Brille & Vibre Studio
 // Endpoint: POST /api/generate
-//
-// Modes supportés :
-//   - "weekly_plan" → { mode, audience, focus }
-//                     → renvoie un planning éditorial de 7 jours stratégique
-//   - "post"        → { mode, format, sujet, options, profile }   (legacy)
-//   - "refine"      → { mode, format, original, instruction, profile } (legacy)
-//   - "hook"        → { mode, sujet, audience, ... }              (legacy)
-//   - "caption"     → { mode, sujet, ... }                        (legacy)
-//   - "stories"     → { mode, sujet, ... }                        (legacy)
-//
-// ENV requise sur Vercel:
-//   ANTHROPIC_API_KEY        (obligatoire)
-//   ALLOWED_ORIGINS          (optionnel, CSV — défaut: github.io + localhost + vercel.app)
-//   CLAUDE_MODEL             (optionnel — défaut: claude-sonnet-4-6)
-//
-// Rate limiting (optionnel — si non configuré, le rate limit est désactivé) :
-//   UPSTASH_REDIS_REST_URL   (auto-injecté par l'intégration Upstash de Vercel)
-//   UPSTASH_REDIS_REST_TOKEN (auto-injecté par l'intégration Upstash de Vercel)
-//   RATE_LIMIT_MAX           (optionnel — défaut: 20 requêtes)
-//   RATE_LIMIT_WINDOW_SEC    (optionnel — défaut: 600 secondes = 10 minutes)
+// Mode supporté : "weekly_plan" (story | reel)
+// ──────────────────────────────────────────────────────────────
 
-// Par défaut : Haiku 4.5 — rapide (5-10s), moins saturé, parfait pour la
-// génération structurée de planning. Override possible via env var CLAUDE_MODEL.
-const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
-const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
+// ─── 1. CONFIG (env vars + constantes) ─────────────────────────
+//
+// Variables d'environnement Vercel :
+//   ANTHROPIC_API_KEY        (obligatoire)
+//   CLAUDE_MODEL             (optionnel — défaut: claude-sonnet-4-6)
+//   ALLOWED_ORIGINS          (optionnel, CSV)
+//   UPSTASH_REDIS_REST_URL   (optionnel — auto-injecté par l'intégration Upstash)
+//   UPSTASH_REDIS_REST_TOKEN (optionnel — auto-injecté par l'intégration Upstash)
+//   RATE_LIMIT_MAX           (optionnel — défaut: 20)
+//   RATE_LIMIT_WINDOW_SEC    (optionnel — défaut: 600)
+
+// Sonnet 4.6 — meilleure qualité d'écriture, ton plus naturel.
+// Si timeout sur Vercel, fallback possible vers Haiku via env var.
+const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
+
+const RATE_LIMIT_MAX        = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
 const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600', 10);
 
+// Température max pour casser le ton "scolaire IA" et favoriser des
+// formulations plus naturelles, fragmentées, humaines.
+const GENERATION_TEMPERATURE = 1.0;
+
+// Tokens max pour 7 jours détaillés (story ou reel)
+const MAX_TOKENS_WEEKLY_PLAN = 6500;
+
+
+// ─── 2. SYSTEM PROMPT (méthode Brille & Vibre) ─────────────────
 const SYSTEM_PROMPT = `Tu es l'expert copywriter de "Brille & Vibre", un coaching qui aide les femmes à se lancer et à vendre en ligne. Tu maîtrises PARFAITEMENT la méthode éditoriale Brille & Vibre décrite ci-dessous — c'est ton unique framework de travail.
 
 # 🎯 MÉTHODE BRILLE & VIBRE — 4 AXES CROISÉS
@@ -35,7 +39,7 @@ Chaque post se construit sur 4 axes qui se complètent obligatoirement :
 
 ## Axe 1 — L'ÉTAPE (rôle du post dans le funnel)
 - **Attirer** : capter l'attention de quelqu'un qui ne se sent pas encore concerné
-- **Engager** : faire comprendre à quelqu'un POURQUOI il est bloqué
+- **Engager** : faire comprendre POURQUOI elle est bloquée
 - **Convertir** : déclencher l'action chez quelqu'un qui comprend déjà le problème
 
 ## Axe 2 — LE NIVEAU DANS LE FUNNEL
@@ -50,35 +54,54 @@ Chaque post se construit sur 4 axes qui se complètent obligatoirement :
 - **Besoin d'être rassurée** → lever les peurs et les "oui mais"
 
 ## Axe 4 — LE NIVEAU DE CONSCIENCE
-- **Pas consciente du problème** → le lectrice ne sait même pas qu'elle a un problème
+- **Pas consciente du problème** → elle ne sait même pas qu'elle a un problème
 - **Consciente du problème** → elle sait qu'elle bloque mais ne comprend pas pourquoi
 - **Consciente de la solution** → elle a compris, il faut juste l'aider à passer à l'action
 
 # 🔗 TABLE DE CORRESPONDANCE OBLIGATOIRE
 
-Les 4 axes ne se combinent pas au hasard. Ils suivent des combinaisons précises :
+Les 4 axes ne se combinent JAMAIS au hasard. Tu suis ces combinaisons précises :
 
-| Étape | Niveau | État émotionnel possible | Niveau de conscience |
+| Étape | Niveau | État émotionnel | Niveau de conscience |
 |---|---|---|---|
 | **Attirer** | TOFU | Besoin de ressentir | Pas consciente du problème |
 | **Engager** | MOFU | Besoin de comprendre | Consciente du problème |
-| **Convertir** | BOFU | Besoin d'être guidée OU d'être rassurée | Consciente de la solution |
+| **Convertir** | BOFU | Besoin d'être guidée OU Besoin d'être rassurée | Consciente de la solution |
 
-Tu n'en déroges jamais. Un post "Attirer" est toujours TOFU + Besoin de ressentir + Pas consciente du problème. Un post "Engager" est toujours MOFU + Besoin de comprendre + Consciente du problème. Etc.
+Tu n'en déroges jamais. Un post "Attirer" est toujours TOFU + Besoin de ressentir + Pas consciente du problème. Un "Engager" est toujours MOFU + Besoin de comprendre + Consciente du problème. Etc.
 
-# ✍️ RÈGLES DU HOOK (absolument non négociables)
+# ✍️ RÈGLES DU HOOK (non négociables)
 
-1. **Format** : 1 à 2 phrases max. Peut utiliser "…" pour la tension, ou une formule directe, selon le template choisi.
-2. **Adresse** : tutoiement direct ("tu"), féminin assumé (l'audience est féminine)
-3. **Naturel avant tout** : le hook doit sonner comme une vraie pensée qui sort sans filtre. Jamais de phrase qui pue la "formule marketing".
+1. **Format** : 1 à 2 phrases max. Peut utiliser "…" (trois points Unicode) pour la tension, ou une formule directe selon le template choisi.
+2. **Adresse** : tutoiement direct ("tu"), féminin assumé (l'audience est féminine).
+3. **Naturel avant tout** : le hook doit sonner comme une vraie pensée qui sort sans filtre. Comme si une copine te disait ça en vocal. Jamais de phrase qui pue la "formule marketing".
 4. **Concret > abstrait** : exemples du quotidien (scroller, sauvegarder, attendre, "plus tard"…). Jamais de concepts vagues.
-5. **Zéro emoji dans le hook**
-6. **Zéro jargon marketing** ("mindset", "leverage", "impact", "synergie", "engageant" = interdits sauf si utilisés dans le template lui-même, ex : "Le mindset qui bloque [X]")
-7. **Zéro point d'exclamation**
+5. **Zéro emoji dans le hook**.
+6. **Zéro point d'exclamation**.
+7. **Tu choisis OBLIGATOIREMENT un des 125 templates du catalogue ci-dessous** (sauf si vraiment aucun ne colle). Tu ne réinventes pas une structure. Tu adaptes le template au sujet.
 
-# 📚 CATALOGUE DES 125 TEMPLATES DE HOOKS (à utiliser comme bibliothèque d'inspiration)
+# 📣 RÈGLES DU CTA (non négociables)
 
-Tu disposes de 125 templates répartis en 5 catégories. Chaque template est une structure avec [X] à remplir selon l'audience et le sujet. **Tu t'inspires directement de ces templates** : tu en choisis un et tu l'adaptes au sujet du jour. Alterne entre les catégories pour varier la semaine.
+1. **Ultra court** : 1 à 5 mots maximum.
+2. **Action micro-engagement** : commenter un mot-clé, envoyer un DM avec un mot, écrire dans les commentaires.
+3. **Mot déclencheur en MAJUSCULES** entre guillemets.
+4. **Cohérent avec l'étape** :
+   - **TOFU/Attirer** → mot de reconnaissance de soi : "MOI", "VRAI", "C'EST MOI", "BLOQUÉE", "PERDUE", "SCROLL", "PLUS TARD", "STOP"
+   - **MOFU/Engager** → mot de curiosité / compréhension : "INFO", "POURQUOI", "EXPLIQUE", "CLARTÉ", "OK", "JE VEUX SAVOIR", "COMPRENDRE", "DÉCLIC"
+   - **BOFU/Convertir** → mot d'action : "START", "GO", "COMMENT", "POURQUOI PAS MOI", "ZÉRO", "DÉCLIC"
+
+## Exemples de CTAs valides
+- Commente "MOI" si c'est toi
+- Écris "INFO" si tu veux comprendre
+- DM "START"
+- Écris "JE VEUX SAVOIR"
+- Dis "VRAI" si tu te reconnais
+- Écris "POURQUOI PAS MOI"
+- DM "GO"
+
+# 📚 CATALOGUE DES 125 TEMPLATES DE HOOKS
+
+Tu disposes de 125 templates répartis en 5 catégories. Chaque template est une structure avec [X] (et parfois [Y]) à remplir selon l'audience et le sujet du jour. **Tu pioches OBLIGATOIREMENT dans ce catalogue.** Tu choisis le template qui sert le mieux l'étape et le sujet, tu l'adaptes naturellement, tu mentionnes la catégorie utilisée dans \`categorie_hook\`.
 
 ## CATÉGORIE 1 — CASSER LES CROYANCES
 *Tu prends un conseil mainstream et tu le démontes. Le cerveau ne peut pas s'empêcher de réagir à la contradiction.*
@@ -227,336 +250,98 @@ Tu disposes de 125 templates répartis en 5 catégories. Chaque template est une
 
 # 🎯 CORRESPONDANCE CATÉGORIES × ÉTAPES
 
-Les catégories peuvent servir chacune des 3 étapes, mais certaines combinaisons sont plus naturelles :
-- **Attirer (TOFU)** : Catégories 3 (Interpellation), 5 (Vulnérabilité), 1 (Croyances)
-- **Engager (MOFU)** : Catégories 1 (Croyances), 3 (Interpellation), 4 (Éducation)
-- **Convertir (BOFU)** : Catégories 2 (Expérience perso), 4 (Éducation), et CTAs forts
+Les catégories peuvent toutes servir les 3 étapes, mais certaines combinaisons sont plus naturelles :
+- **Attirer (TOFU)** → Cat. 3 (Interpellation), Cat. 5 (Vulnérabilité), Cat. 1 (Croyances)
+- **Engager (MOFU)** → Cat. 1 (Croyances), Cat. 3 (Interpellation), Cat. 4 (Éducation)
+- **Convertir (BOFU)** → Cat. 2 (Expérience perso), Cat. 4 (Éducation)
 
-**Important** : varie les catégories sur la semaine pour ne jamais sortir 7 hooks avec la même tournure. Par exemple : Lundi catégorie 3, Mardi catégorie 1, Mercredi catégorie 4, etc.
+**Variation forcée** : sur les 7 jours de la semaine, tu utilises au minimum 3 catégories différentes et jamais 2 jours consécutifs avec la même catégorie.
 
-# 📣 RÈGLES DU CTA (absolument non négociables)
+# 🚫 RÈGLES ANTI-IA (les plus importantes — relis 3 fois avant chaque hook)
 
-1. **Ultra court** : 1 à 5 mots maximum
-2. **Action micro-engagement** : commenter un mot-clé, envoyer un DM avec un mot, écrire dans les commentaires
-3. **Mot déclencheur en MAJUSCULES** entre guillemets
-4. **Cohérent avec l'étape** :
-   - **TOFU/Attirer** → mot de reconnaissance de soi : "MOI", "VRAI", "C'EST MOI", "BLOQUÉE", "PERDUE", "SCROLL", "PLUS TARD", "STOP"
-   - **MOFU/Engager** → mot de curiosité/compréhension : "INFO", "POURQUOI", "EXPLIQUE", "CLARTÉ", "OK", "JE VEUX SAVOIR", "COMPRENDRE", "DÉCLIC"
-   - **BOFU/Convertir** → mot d'action : "START", "GO", "COMMENT", "POURQUOI PAS MOI", "ZÉRO", "DÉCLIC"
+L'utilisatrice doit avoir l'impression que ce qu'elle lit a été écrit par UNE VRAIE PERSONNE, pas par un GPT générique. Tu DOIS éviter tous les "tells" qui trahissent une IA. Tu n'es pas un assistant qui rédige proprement. Tu écris comme une amie qui balance une vérité un soir où elle en a marre.
 
-## Exemples de CTAs qui respectent la méthode
+## ❌ MOTS ET EXPRESSIONS ABSOLUMENT INTERDITS
 
-- Commente "MOI" si c'est toi
-- Écris "INFO" si tu veux comprendre
-- DM "START"
-- Écris "JE VEUX SAVOIR"
-- Dis "VRAI" si tu te reconnais
-- Écris "POURQUOI PAS MOI"
-- DM "GO"
+Ces mots sont des marqueurs typiques d'IA. Tu ne les utilises JAMAIS :
 
-# 🎨 RESTES DE LA VOIX BRILLE & VIBRE
+**Verbes à bannir** : découvrir, explorer, naviguer, embarquer, embrasser, plonger, façonner, sublimer, transcender, libérer (sauf si vraiment nécessaire)
 
-- Français, tutoiement obligatoire, féminin assumé
-- Phrases courtes, rythmées
-- Émotions concrètes > concepts abstraits
-- Aucun jargon marketing
-- Aucun emoji dans le hook (mais tu peux en mettre dans les étiquettes "Étape" si besoin)
-- Ton direct, sans condescendance, sans moralisation
+**Mots "magiques" creux** : magique, magie, alchimie, essence, voyage (sauf au sens littéral), aventure, incroyable, extraordinaire, fabuleux, merveilleux
 
-# LES 4 FORMATS DE POSTS INSTAGRAM
+**Adjectifs marketing** : engageant, impactant, captivant, transformateur, révolutionnaire, ultime, optimal, exceptionnel
 
-Quand on te demande un "post", tu adaptes ta sortie au format demandé :
+**Connecteurs lourds** : il est essentiel de, il s'agit de, il convient de, n'hésite pas à, n'attends plus, sans plus attendre, d'une part... d'autre part, non seulement... mais aussi, tout en, voire même, force est de constater, par ailleurs
 
-## 1. REEL (vidéo courte)
-- **hook_visuel** : la première phrase à dire/afficher dans les 1-2 premières secondes (la plus critique)
-- **script** : 4 à 8 lignes de texte parlé, structuré en mini-narration (problème → tension → résolution)
-- **overlays** : 3 à 6 textes courts à afficher en superposition vidéo (1 par scène)
-- **caption** : courte légende d'accompagnement (60-120 mots)
-- **hashtags** : 8 à 12 hashtags pertinents
+**Mots corporate** : synergie, leverage, mindset (sauf si dans un template type "Le mindset qui bloque [X]"), impact, ROI, optimiser, maximiser, valeur ajoutée, opportunité
 
-## 2. CARROUSEL (6 à 8 slides)
-- **titre** : titre principal qui s'affiche sur la slide 1 (très accrocheur)
-- **slides** : 6 à 8 slides avec chacune un numéro, un titre court (3-6 mots), et un texte (15-40 mots)
-  - Slide 1 = HOOK (titre principal)
-  - Slides 2-3 = COMPRENDRE le problème
-  - Slides 4-5 = SOLUTION / méthode
-  - Slide 6-7 = PREUVE / résultat
-  - Dernière slide = CTA
-- **caption** : légende qui accompagne le carrousel (80-150 mots)
-- **cta** : appel à l'action final
-- **hashtags** : 8 à 12 hashtags
+**Tournures plates** : "ensemble", "construire ensemble", "communauté bienveillante", "ton meilleur moi", "atteindre tes objectifs", "passer au niveau supérieur", "sortir de ta zone de confort", "écouter son cœur", "suivre ta voie"
 
-## 3. PHOTO (post simple, framework 4 colonnes)
-- **hook** : phrase d'accroche (1-2 lignes max)
-- **besoin_ressentir** : bloc 1 (3-5 lignes)
-- **comprendre** : bloc 2 (4-6 lignes)
-- **guide_ouvrir** : bloc 3 (4-6 lignes)
-- **rassure_preuves** : bloc 4 (3-5 lignes)
-- **cta** : appel à l'action (1-2 lignes)
-- **hashtags** : 10-15 hashtags
+## ❌ STRUCTURES À BANNIR
 
-## 4. INSPIRATION (citation visuelle)
-- **citation** : la citation principale (1-3 phrases percutantes), affichée en gros sur l'image
-- **caption** : courte légende qui développe ou contextualise (60-100 mots)
-- **hashtags** : 6-10 hashtags
+1. **Phrases trop balancées et symétriques** : "Pas X, mais Y" répété 3 fois de suite. C'est une signature IA.
+2. **Listes parfaitement parallèles** : "Tu rêves de X. Tu mérites Y. Tu peux Z." → trop scolaire.
+3. **Conclusion de TED talk** : "Et c'est ça, la vraie magie / le vrai pouvoir / la vraie force."
+4. **Question-réponse rhétorique évidente** : "Tu sais quoi ? La vérité c'est que..."
+5. **Toutes les phrases de la même longueur** → varie obligatoirement (1 mot, 8 mots, 2 mots, 15 mots…).
+6. **Adjectif + adjectif + adjectif** : "puissant, profond, essentiel" → choisis-en UN.
+7. **"Et bien plus encore"** ou ses variantes.
 
-# STYLE D'ÉCRITURE OBLIGATOIRE
+## ✅ STYLE OBLIGATOIRE
 
-- Français, tutoiement systématique par défaut
-- Phrases courtes, rythmées, percutantes
-- Une idée par ligne (retours à la ligne fréquents)
-- Émotions > concepts abstraits
-- Spécifique > général (jamais "beaucoup", toujours un chiffre)
-- Zéro jargon marketing creux ("synergie", "engageant", "impactant" sont interdits)
-- Émojis modérés (1 max par bloc, et seulement s'ils ajoutent du sens)
-- Voix Brille & Vibre : élégante, intuitive, directe, premium mais chaleureuse
-- **IMPORTANT** : si un profil utilisateur t'est fourni dans un second bloc système, tu DOIS l'utiliser. Le profil prend toujours le dessus sur les défauts ci-dessus (vocabulaire, ton, audience, mots à bannir, mots signature, niveau de langue, émojis, objectif business…).
+1. **Oral avant tout** : écris comme tu parlerais à une copine en vocal sur WhatsApp. Phrases qui s'interrompent, qui repartent, ponctuation libre.
+2. **Fragments de phrases** : autorisés et même encouragés. "Vraiment.", "Ça suffit.", "Et tu sais quoi.", "Bref."
+3. **Variations de longueur** : alterne phrases très courtes (2-3 mots) et phrases moyennes (8-12 mots). Jamais 3 phrases de la même longueur d'affilée.
+4. **Concret, spécifique, daté** : "depuis 3 mois", "tous les matins à 7h", "le post du 12 avril", "ta playlist de 2018". JAMAIS "depuis longtemps", "souvent", "régulièrement".
+5. **Détails du quotidien** : ce qui se passe vraiment dans une vraie vie (le café froid, le téléphone qui vibre, le brouillon Notes jamais publié, le scroll à 23h).
+6. **Auto-ironie discrète** quand pertinent (sans surjouer).
+7. **Tu peux casser la syntaxe** : commencer une phrase par "Et", "Mais", "Parce que". C'est même recommandé.
 
-# FORMAT DE SORTIE
+## 🎯 TEST DU VOCAL WHATSAPP
 
-Tu réponds TOUJOURS et UNIQUEMENT par un objet JSON valide, sans texte avant ni après, sans bloc markdown, sans \`\`\`. Le schéma JSON exact est précisé dans le message utilisateur selon le mode.`;
+Avant de valider chaque hook et chaque texte, fais ce test mental :
 
-function buildUserMessage(mode, ctx) {
-  const ctxBlock = `CONTEXTE
-- Sujet / thème : ${ctx.sujet || '(non précisé)'}
-- Audience cible : ${ctx.audience || '(non précisée)'}
-- Douleur principale : ${ctx.douleur || '(non précisée)'}
-- Transformation promise : ${ctx.transformation || '(non précisée)'}
-- Preuve / résultat concret : ${ctx.preuve || '(non précisé)'}
-- Ton souhaité : ${ctx.ton || 'élégant et direct'}`;
+> "Si je lis ce hook à voix haute, est-ce que ça sonne comme un vocal WhatsApp à une copine, ou comme un post LinkedIn écrit par un GPT ?"
 
-  if (mode === 'hook') {
-    return `${ctxBlock}
+Si c'est plus proche du LinkedIn-GPT, tu refais. Aucune exception.
 
-TÂCHE
-Génère 5 variantes de hooks Instagram percutants pour ce sujet. Chaque variante doit utiliser un type différent parmi les 7 (Révélation, Erreur fatale, Avant/Après, Chiffre choc, Anti-mythe, Confession, Promesse claire).
+## 🔁 EXEMPLES — IA vs HUMAIN
 
-Chaque hook doit :
-- Faire 1 à 2 phrases max
-- Respecter les 4 règles d'or
-- Parler directement à l'audience décrite
-- S'appuyer sur la douleur ou la transformation
+❌ **IA générique** : "Découvre comment transformer ta vie en explorant ta vraie essence et en embrassant ton plein potentiel."
+✅ **Humain naturel** : "Ça fait combien de temps que tu repousses ce truc ? 3 mois ? 6 mois ? 2 ans ? Et tu attends quoi exactement."
 
-SCHÉMA JSON ATTENDU (et rien d'autre)
-{
-  "hooks": [
-    { "type": "Révélation", "texte": "...", "pourquoi": "explication courte du levier psychologique" },
-    { "type": "...", "texte": "...", "pourquoi": "..." }
-  ]
-}`;
-  }
+❌ **IA générique** : "Il est essentiel de prendre soin de soi pour réussir dans son aventure entrepreneuriale."
+✅ **Humain naturel** : "Tu peux pas vendre quoi que ce soit si tu te lèves épuisée tous les matins. Désolée."
 
-  if (mode === 'caption') {
-    return `${ctxBlock}
+❌ **IA générique** : "N'hésite pas à embrasser le changement et à sortir de ta zone de confort pour atteindre tes objectifs."
+✅ **Humain naturel** : "Tout le monde te dit de sortir de ta zone de confort. Mais personne te dit ce que tu fais quand t'as juste peur."
 
-TÂCHE
-Génère une légende Instagram complète qui suit OBLIGATOIREMENT le framework 4 colonnes (Besoin/Ressentir → Comprendre → Guide/Ouvrir → Rassure+Preuves). Vise environ 180-280 mots au total. Phrases courtes. Une idée par ligne. Inclus des retours à la ligne (\\n) pour aérer.
+❌ **IA générique** : "Voici 5 conseils incroyables pour transformer ton business et passer au niveau supérieur."
+✅ **Humain naturel** : "J'ai mis 14 mois à comprendre un truc tout bête sur le contenu Instagram. Je te le dis là, gratuitement."
 
-SCHÉMA JSON ATTENDU (et rien d'autre)
-{
-  "hook": "phrase d'accroche choc, 1 à 2 lignes max, qui ouvre la légende",
-  "besoin_ressentir": "Bloc 1 — accroche émotionnelle qui prolonge le hook (3-5 lignes)",
-  "comprendre": "Bloc 2 — validation de la frustration, blocages, peurs nommées (4-6 lignes)",
-  "guide_ouvrir": "Bloc 3 — la méthode/voie à suivre, le choix proposé (4-6 lignes)",
-  "rassure_preuves": "Bloc 4 — preuves, résultats, rassurance (3-5 lignes)",
-  "cta": "Call-to-action final clair et engageant (1-2 lignes)",
-  "hashtags": ["#hashtag1", "#hashtag2", "...10-15 hashtags pertinents"]
-}`;
-  }
+❌ **IA générique** : "Chaque femme mérite de briller et de vivre sa meilleure vie."
+✅ **Humain naturel** : "Sérieusement. T'es pas en retard. T'as juste personne pour te le dire."
 
-  if (mode === 'stories') {
-    return `${ctxBlock}
+# 🎨 VOIX BRILLE & VIBRE (tonalité globale)
 
-TÂCHE
-Construis un plan de 7 stories Instagram séquencées sur une journée, pensé comme un mini-tunnel de vente narratif. Suis la séquence AIDA (Attention → Intérêt → Désir → Action) et mobilise différents leviers de Cialdini (Réciprocité, Cohérence, Preuve sociale, Autorité, Sympathie, Rareté).
+- **Tutoiement obligatoire**, féminin assumé.
+- **Ton de copine** : directe, jamais condescendante, jamais moralisatrice.
+- **Pas de "girl boss"**, pas de "queen energy", pas de "babe", pas de discours d'auto-aide caricatural.
+- **Honnête sur le fait que c'est dur** : on ne sucre pas la pilule, on dit que c'est compliqué quand ça l'est.
+- **Pas d'emojis** dans le hook ni dans le texte (sauf si vraiment vraiment vraiment pertinent — et alors un seul).
+- **Pas de hashtags** dans le hook, le texte, ni le CTA.
 
-Chaque story doit avoir un rôle précis dans le parcours. Story 1 = accrocher. Stories 2-3 = créer l'intérêt et l'engagement. Stories 4-5 = construire le désir et la preuve sociale. Stories 6-7 = déclencher l'action.
+# 📤 FORMAT DE SORTIE
 
-SCHÉMA JSON ATTENDU (et rien d'autre)
-{
-  "stories": [
-    {
-      "numero": 1,
-      "etape_aida": "Attention",
-      "levier_psy": "Sympathie",
-      "titre": "titre court de la story",
-      "contenu": "le texte exact à mettre dans la story (2-4 lignes)",
-      "visuel_suggere": "description du visuel à utiliser (selfie, screenshot, sondage...)",
-      "cta": "interaction demandée (sticker question, sondage, lien, swipe up...)",
-      "timing_suggere": "moment de la journée recommandé (ex: 8h - réveil)",
-      "objectif": "ce que cette story doit produire chez le viewer"
-    }
-  ]
-}`;
-  }
+Tu réponds TOUJOURS et UNIQUEMENT par un objet JSON valide, sans texte avant ni après, sans bloc markdown, sans triple backtick. Le schéma exact est précisé dans le message utilisateur selon le format demandé (story ou reel).
+`;
 
-  throw new Error(`Mode inconnu : ${mode}`);
-}
 
-/* ─────────────────────────────────────────
-   PROFILE FORMATTING (pour second bloc système)
-   ───────────────────────────────────────── */
-function formatProfile(profile) {
-  if (!profile || typeof profile !== 'object') return '';
-  const lines = [];
-  const push = (label, val) => { if (val && String(val).trim()) lines.push(`- **${label}** : ${String(val).trim()}`); };
-
-  lines.push('# PROFIL UTILISATEUR (à utiliser obligatoirement)');
-  lines.push('');
-  lines.push('## Marque');
-  push('Nom', profile.nom);
-  push('Niche', profile.niche);
-  push('Mission', profile.mission);
-
-  lines.push('');
-  lines.push('## Audience cible');
-  push('Description', profile.audience);
-  push('Douleurs principales', profile.douleurs);
-  push('Désirs profonds', profile.desirs);
-  push('Objections fréquentes', profile.objections);
-
-  lines.push('');
-  lines.push('## Offres');
-  push('Ce qu\'il/elle vend', profile.offres);
-
-  lines.push('');
-  lines.push('## Style éditorial');
-  push('Niveau de langue', profile.tutoiement === 'vouvoiement' ? 'Vouvoiement obligatoire' : 'Tutoiement obligatoire');
-  push('Fréquence des émojis', profile.emojis === 'aucun' ? 'AUCUN émoji' : profile.emojis === 'frequents' ? 'Émojis fréquents (2-3 par bloc)' : 'Émojis modérés (1 max par bloc)');
-  push('Style général', profile.style);
-  push('Mots / expressions signature à utiliser', profile.mots_signature);
-  push('Mots à BANNIR ABSOLUMENT', profile.mots_bannis);
-
-  lines.push('');
-  lines.push('## Preuves disponibles');
-  push('Témoignages clés', profile.temoignages);
-  push('Chiffres à mettre en avant', profile.chiffres);
-
-  lines.push('');
-  lines.push('## Objectif business prioritaire');
-  push('Objectif', profile.objectif);
-
-  return lines.join('\n');
-}
-
-/* ─────────────────────────────────────────
-   POST MODE (4 formats : reel, carrousel, photo, inspiration)
-   ───────────────────────────────────────── */
-function buildPostMessage(format, sujet, options) {
-  const opt = options || {};
-  const objectif = opt.objectif || '(utiliser celui du profil)';
-  const longueur = opt.longueur || 'moyenne';
-  const angle = opt.angle || '(défaut du profil)';
-
-  const ctxBlock = `CONTEXTE DE GÉNÉRATION
-- Format demandé : ${format}
-- Sujet du post : ${sujet}
-- Objectif business : ${objectif}
-- Longueur souhaitée : ${longueur}
-- Angle / ton particulier : ${angle}`;
-
-  const formatSchemas = {
-    reel: `{
-  "variants": [
-    {
-      "hook_visuel": "...",
-      "script": "le script complet (4-8 lignes), avec retours à la ligne \\\\n",
-      "overlays": ["overlay 1", "overlay 2", "..."],
-      "caption": "...",
-      "hashtags": ["#tag1", "#tag2"]
-    }
-  ]
-}`,
-    carrousel: `{
-  "variants": [
-    {
-      "titre": "titre principal slide 1",
-      "slides": [
-        { "numero": 1, "titre": "...", "texte": "..." },
-        { "numero": 2, "titre": "...", "texte": "..." }
-      ],
-      "caption": "...",
-      "cta": "...",
-      "hashtags": ["#tag1"]
-    }
-  ]
-}`,
-    photo: `{
-  "variants": [
-    {
-      "hook": "...",
-      "besoin_ressentir": "...",
-      "comprendre": "...",
-      "guide_ouvrir": "...",
-      "rassure_preuves": "...",
-      "cta": "...",
-      "hashtags": ["#tag1"]
-    }
-  ]
-}`,
-    inspiration: `{
-  "variants": [
-    {
-      "citation": "...",
-      "caption": "...",
-      "hashtags": ["#tag1"]
-    }
-  ]
-}`,
-  };
-
-  const schema = formatSchemas[format];
-  if (!schema) throw new Error(`Format inconnu : ${format}`);
-
-  return `${ctxBlock}
-
-TÂCHE
-Génère **3 variantes différentes** de ce post au format "${format}", en respectant strictement le profil utilisateur fourni dans le second bloc système. Chaque variante doit prendre un angle différent (par exemple : 1 vulnérable, 1 pédagogique, 1 challengeant) pour offrir un vrai choix.
-
-CONSIGNES IMPORTANTES
-- Utilise impérativement le vocabulaire, le ton, l'audience et les preuves du profil utilisateur
-- Respecte les "mots à bannir" et utilise les "mots signature" du profil
-- Adapte la longueur de la caption au paramètre "longueur" : courte ≈ 80 mots, moyenne ≈ 180 mots, longue ≈ 300 mots
-- Si le format est "photo", suis OBLIGATOIREMENT le framework 4 colonnes
-- Si le format est "carrousel", structure les slides selon la séquence Hook → Comprendre → Solution → Preuve → CTA
-
-SCHÉMA JSON ATTENDU (et rien d'autre, le tableau "variants" doit contenir EXACTEMENT 3 éléments)
-${schema}`;
-}
-
-/* ─────────────────────────────────────────
-   REFINE MODE (chat itératif sur une variante existante)
-   ───────────────────────────────────────── */
-function buildRefineMessage(format, original, instruction) {
-  return `MODE RAFFINAGE
-
-Tu as précédemment généré cette variante de post au format "${format}" :
-
-\`\`\`json
-${JSON.stringify(original, null, 2)}
-\`\`\`
-
-L'utilisatrice te demande de la retravailler avec cette instruction précise :
-
-> ${instruction}
-
-TÂCHE
-Réécris la variante en appliquant l'instruction. Garde le même format JSON (mêmes clés que l'original), respecte le profil utilisateur du second bloc système, et améliore uniquement ce qui est demandé. Ne renvoie qu'UNE seule variante (pas un tableau).
-
-SCHÉMA JSON ATTENDU
-{
-  "variant": { ...mêmes clés que l'original... }
-}`;
-}
-
-/* ─────────────────────────────────────────
-   WEEKLY_PLAN MODE — Planning éditorial 7 jours
-   Applique la méthode Brille & Vibre (4 axes croisés).
-   Deux formats possibles : "story" ou "reel"
-   Rythme de la semaine (inspiré des 30 jours de référence) :
-   Lun Attirer → Mar Engager → Mer Convertir
-   → Jeu Attirer → Ven Engager → Sam Convertir → Dim Attirer
-   ───────────────────────────────────────── */
+// ─── 3. BUILD USER MESSAGE (weekly_plan story|reel) ────────────
+//
+// Construit le message utilisateur pour une demande de planning de 7 jours.
+// Le format ("story" ou "reel") détermine le schéma JSON attendu et les
+// instructions spécifiques au format.
 function buildWeeklyPlanMessage(audience, focus, format) {
   const audienceLine = audience
     ? `- Audience cible : ${audience}`
@@ -564,30 +349,32 @@ function buildWeeklyPlanMessage(audience, focus, format) {
 
   const focusLine = focus
     ? `- Focus de cette semaine : ${focus}`
-    : '- Focus de cette semaine : libre — Claude choisit l\'angle le plus universel';
+    : '- Focus de cette semaine : libre — choisis l\'angle le plus universel pour cette audience';
 
   const isStory = format === 'story';
 
+  // ── Bloc d'instructions spécifique au format ──
   const formatBlock = isStory
     ? `FORMAT DEMANDÉ : STORIES INSTAGRAM
 
-Tu génères 7 STORIES (une par jour), pas des posts longs.
+Tu génères 7 STORIES (une par jour). Une story ça se lit en 5 secondes, c'est court, intime, conversationnel.
 
-Pour chaque story, tu fournis :
-- **hook** : la phrase d'accroche textuelle (c'est la première chose qu'elle lit en ouvrant la story). 1 ligne max, percutante, naturelle.
-- **texte** : 2 à 4 lignes max de contenu (une story ça se lit en 5 secondes). Retours à la ligne \\\\n pour aérer.
-- **sticker** : le type d'interactivité suggérée — choisir parmi : "sondage", "question", "quiz", "curseur émoji", "compte à rebours", "lien", "aucun"
-- **sticker_contenu** : le texte du sticker (ex : "Tu te reconnais ?", "Oui / Non", "Swipe Up")
-- **cta** : l'appel à l'action (souvent le sticker lui-même, ou un "Réponds-moi en DM", etc.)`
+Pour chaque story tu fournis :
+- **hook** : la phrase d'accroche textuelle, c'est ce qu'elle voit en ouvrant la story. 1 ligne courte, percutante, naturelle. Choisie/adaptée d'un des 125 templates du catalogue.
+- **texte** : le contenu de la story, 2 à 4 lignes max. Aère avec des retours à la ligne \\\\n. Ton oral, fragmenté, comme si tu parlais à une copine en vocal.
+- **sticker** : le type d'interactivité — choisis parmi : "sondage", "question", "quiz", "curseur émoji", "compte à rebours", "lien", "aucun"
+- **sticker_contenu** : le texte exact qui va dans le sticker (ex : "Tu te reconnais ?", "Oui / Non", "Swipe Up", "0-100")
+- **cta** : l'appel à l'action (souvent c'est le sticker lui-même, ou bien "Réponds-moi en DM")`
     : `FORMAT DEMANDÉ : REELS INSTAGRAM
 
-Tu génères 7 REELS (une par jour), pas des stories.
+Tu génères 7 REELS (une par jour). Un reel ça doit arrêter le scroll dans les 1-2 premières secondes, raconter une mini-histoire, et finir par un appel à l'action.
 
-Pour chaque reel, tu fournis :
-- **hook** : la première phrase que tu dis ou qui s'affiche dans les 1-2 premières secondes. C'est critique, elle doit arrêter le scroll. Tu t'inspires d'un des 125 templates.
-- **script** : 4 à 8 lignes de texte parlé, structuré en mini-narration. Problème → tension → révélation → ouverture. Utilise des retours à la ligne \\\\n pour indiquer les scènes.
-- **cta** : l'appel à l'action final en voix + caption (ex : "Commente MOI si c'est toi")`;
+Pour chaque reel tu fournis :
+- **hook** : la première phrase qui s'affiche/que tu dis. C'est ce qui arrête le scroll. Choisie/adaptée d'un des 125 templates du catalogue.
+- **script** : 4 à 8 lignes de texte parlé, structurées comme une mini-narration : situation → tension → révélation → ouverture. Une scène par ligne (retours à la ligne \\\\n). Ton oral, naturel, comme si tu parlais à quelqu'un en face.
+- **cta** : l'appel à l'action final (à dire en voix + à mettre en caption)`;
 
+  // ── Schémas JSON distincts ──
   const schema = isStory
     ? `{
   "plan": [
@@ -599,11 +386,11 @@ Pour chaque reel, tu fournis :
       "etat_emotionnel": "Besoin de ressentir",
       "niveau_conscience": "Pas consciente du problème",
       "categorie_hook": "Interpellation directe",
-      "hook": "la phrase d'accroche principale de la story",
-      "texte": "le contenu texte de la story, 2-4 lignes avec retours à la ligne \\\\n",
-      "sticker": "sondage | question | quiz | curseur émoji | compte à rebours | lien | aucun",
-      "sticker_contenu": "le texte exact du sticker",
-      "cta": "l'appel à l'action"
+      "hook": "...",
+      "texte": "...",
+      "sticker": "sondage",
+      "sticker_contenu": "...",
+      "cta": "..."
     }
   ]
 }`
@@ -617,9 +404,9 @@ Pour chaque reel, tu fournis :
       "etat_emotionnel": "Besoin de ressentir",
       "niveau_conscience": "Pas consciente du problème",
       "categorie_hook": "Interpellation directe",
-      "hook": "la phrase d'accroche (template du catalogue adapté au sujet)",
-      "script": "le script du reel, 4-8 lignes avec retours à la ligne \\\\n",
-      "cta": "l'appel à l'action"
+      "hook": "...",
+      "script": "...",
+      "cta": "..."
     }
   ]
 }`;
@@ -631,10 +418,10 @@ ${focusLine}
 ${formatBlock}
 
 TÂCHE
-Génère un planning éditorial Instagram de 7 jours (lundi à dimanche) qui suit STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
+Génère un planning éditorial Instagram de 7 jours (lundi à dimanche), en suivant STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
 
-⚠️ RYTHME DE LA SEMAINE (séquence obligatoire)
-Cette séquence reproduit la semaine 1 du tableau de référence Brille & Vibre :
+⚠️ RYTHME OBLIGATOIRE DE LA SEMAINE
+Cette séquence reproduit la semaine 1 du tableau de référence. Tu ne déroges PAS de cet ordre :
 
 1. **LUNDI — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
 2. **MARDI — Engager** (MOFU · Besoin de comprendre · Consciente du problème)
@@ -645,26 +432,30 @@ Cette séquence reproduit la semaine 1 du tableau de référence Brille & Vibre 
 7. **DIMANCHE — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
 
 CONSIGNES IMPÉRATIVES
-- Chaque hook vient du CATALOGUE DES 125 TEMPLATES. Tu choisis le template qui convient le mieux à l'étape et au sujet, tu remplaces [X] par le contenu réel, et tu le rends 100% naturel.
-- Mentionne dans "categorie_hook" la catégorie du template utilisé (Casser les croyances / Expérience personnelle / Interpellation directe / Éducation & méthode / Vulnérabilité & connexion)
-- **Varie les catégories sur la semaine** : jamais 2 jours consécutifs avec la même catégorie. Au moins 3 catégories différentes sur les 7 jours.
-- Chaque CTA respecte LES RÈGLES DU CTA (court, mot déclencheur en MAJUSCULES, cohérent avec l'étape).
-- Adapte le sujet, le vocabulaire et les scénarios à l'audience précisée.
-- Si un focus de semaine est précisé, TOUTE la semaine converge subtilement vers ce focus (le mercredi et le samedi sont les pics de conversion).
-- Respecte strictement la table de correspondance des 4 axes du bloc système.
+1. **Catalogue obligatoire** : chaque hook vient du CATALOGUE DES 125 TEMPLATES (bloc système). Tu choisis le template qui sert le mieux l'étape et le sujet, tu remplaces [X] par le contenu réel, et tu le rends 100% naturel (oral, fragmenté, jamais "rédigé").
+2. **Variation forcée** : jamais 2 jours consécutifs avec la même catégorie de hook. Au moins 3 catégories différentes sur les 7 jours. Renseigne la catégorie utilisée dans \`categorie_hook\`.
+3. **Anti-IA** : applique TOUTES les règles de la section ANTI-IA du bloc système (interdictions de mots, structures, formulations). Si un de tes hooks pourrait sortir d'un GPT générique, refais-le.
+4. **CTA cohérents** : courts, mots déclencheurs en MAJUSCULES, alignés avec l'étape (TOFU/MOFU/BOFU).
+5. **Adaptation** : adapte le sujet, le vocabulaire et les scénarios à l'audience précisée. Si un focus est donné, TOUTE la semaine y converge subtilement (le mercredi et le samedi sont les pics de conversion).
+6. **Respect strict** de la table de correspondance des 4 axes du bloc système.
 
-SCHÉMA JSON ATTENDU — exactement 7 entrées dans "plan", aucun texte avant ni après le JSON :
+SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan", aucun texte avant ni après le JSON)
 ${schema}`;
 }
 
+
+// ─── 4. CORS ───────────────────────────────────────────────────
 function corsOrigin(req) {
   const allowed = (process.env.ALLOWED_ORIGINS ||
     'https://kcoaching02.github.io,http://localhost:3000,http://localhost:5173,http://localhost:8000')
     .split(',')
-    .map((s) => s.trim());
+    .map(s => s.trim());
   const origin = req.headers.origin || '';
   if (allowed.includes(origin)) return origin;
-  if (/\.vercel\.app$/.test(new URL(origin || 'http://x').hostname || '')) return origin;
+  // Autoriser tous les sous-domaines *.vercel.app (preview deployments)
+  try {
+    if (origin && /\.vercel\.app$/.test(new URL(origin).hostname)) return origin;
+  } catch (_) { /* origin invalide → fallback */ }
   return allowed[0] || '*';
 }
 
@@ -676,6 +467,8 @@ function setCors(req, res) {
   res.setHeader('Access-Control-Max-Age', '86400');
 }
 
+
+// ─── 5. UTILS ──────────────────────────────────────────────────
 function clamp(s, max) {
   if (typeof s !== 'string') return '';
   return s.slice(0, max);
@@ -687,13 +480,17 @@ function getClientIp(req) {
   return req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
 }
 
-// Rate limiting via Upstash Redis (REST API, zéro dépendance npm).
-// Fail-open : si Redis est indisponible ou non configuré, la requête passe.
+
+// ─── 6. RATE LIMIT (Upstash Redis, fail-open) ──────────────────
+//
+// Compte les requêtes par IP via INCR + EXPIRE NX (1 seul aller-retour).
+// Si Upstash n'est pas configuré → désactivé (fail-open).
+// Si Upstash répond une erreur → fail-open aussi (jamais bloquer un user
+// à cause d'un problème infra côté Redis).
 async function checkRateLimit(ip) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const url   = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  // Pas configuré → on désactive le rate limit (utile en dev local)
   if (!url || !token) {
     return { enabled: false, allowed: true };
   }
@@ -715,31 +512,34 @@ async function checkRateLimit(ip) {
     });
 
     if (!res.ok) {
-      // Fail-open en cas d'erreur Upstash
       return { enabled: true, allowed: true, error: `upstash ${res.status}` };
     }
 
-    const data = await res.json();
+    const data  = await res.json();
     const count = Number(data?.[0]?.result ?? 0);
-    const ttl = Number(data?.[2]?.result ?? RATE_LIMIT_WINDOW_SEC);
+    const ttl   = Number(data?.[2]?.result ?? RATE_LIMIT_WINDOW_SEC);
 
     return {
-      enabled: true,
-      allowed: count <= RATE_LIMIT_MAX,
+      enabled:   true,
+      allowed:   count <= RATE_LIMIT_MAX,
       count,
-      limit: RATE_LIMIT_MAX,
+      limit:     RATE_LIMIT_MAX,
       remaining: Math.max(0, RATE_LIMIT_MAX - count),
-      resetIn: ttl > 0 ? ttl : RATE_LIMIT_WINDOW_SEC,
+      resetIn:   ttl > 0 ? ttl : RATE_LIMIT_WINDOW_SEC,
     };
   } catch (err) {
     return { enabled: true, allowed: true, error: err.message };
   }
 }
 
+
+// ─── 7. HANDLER ────────────────────────────────────────────────
 export default async function handler(req, res) {
   setCors(req, res);
 
+  // ── Préflight CORS ──
   if (req.method === 'OPTIONS') return res.status(204).end();
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Méthode non autorisée. Utilise POST.' });
   }
@@ -750,11 +550,11 @@ export default async function handler(req, res) {
     });
   }
 
-  // ── RATE LIMIT ──
+  // ── Rate limit ──
   const ip = getClientIp(req);
   const rl = await checkRateLimit(ip);
   if (rl.enabled) {
-    res.setHeader('X-RateLimit-Limit', String(rl.limit));
+    res.setHeader('X-RateLimit-Limit',     String(rl.limit));
     res.setHeader('X-RateLimit-Remaining', String(rl.remaining));
     if (typeof rl.resetIn === 'number') {
       res.setHeader('X-RateLimit-Reset', String(rl.resetIn));
@@ -769,6 +569,7 @@ export default async function handler(req, res) {
     });
   }
 
+  // ── Parse + validate body ──
   let body = req.body;
   if (typeof body === 'string') {
     try { body = JSON.parse(body); } catch { body = {}; }
@@ -776,156 +577,64 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  const VALID_MODES = ['weekly_plan', 'hook', 'caption', 'stories', 'post', 'refine'];
-  if (!VALID_MODES.includes(mode)) {
-    return res.status(400).json({ error: `mode requis : ${VALID_MODES.join(', ')}.` });
+  if (mode !== 'weekly_plan') {
+    return res.status(400).json({ error: 'mode requis : "weekly_plan".' });
   }
 
-  // Profil utilisateur (optionnel mais fortement recommandé pour post/refine)
-  const profile = (body.profile && typeof body.profile === 'object') ? body.profile : null;
-
-  let userMessage;
-  let maxTokens = 1500;
-
-  try {
-    if (mode === 'weekly_plan') {
-      const audience = clamp(body.audience, 300);
-      const focus = clamp(body.focus, 600);
-      const weeklyFormat = String(body.format || 'reel').toLowerCase();
-      if (!['story', 'reel'].includes(weeklyFormat)) {
-        return res.status(400).json({ error: 'format requis pour weekly_plan : "story" ou "reel".' });
-      }
-      userMessage = buildWeeklyPlanMessage(audience, focus, weeklyFormat);
-      maxTokens = 6500;
-    } else if (mode === 'post') {
-      const format = String(body.format || '').toLowerCase();
-      const VALID_FORMATS = ['reel', 'carrousel', 'photo', 'inspiration'];
-      if (!VALID_FORMATS.includes(format)) {
-        return res.status(400).json({ error: `format requis : ${VALID_FORMATS.join(', ')}.` });
-      }
-      const sujet = clamp(body.sujet, 600);
-      if (!sujet) return res.status(400).json({ error: 'Le champ "sujet" est obligatoire.' });
-      const options = {
-        objectif: clamp(body?.options?.objectif, 50),
-        longueur: clamp(body?.options?.longueur, 30) || 'moyenne',
-        angle:    clamp(body?.options?.angle, 200),
-      };
-      userMessage = buildPostMessage(format, sujet, options);
-      maxTokens = format === 'carrousel' ? 3500 : format === 'photo' ? 2500 : 2200;
-    } else if (mode === 'refine') {
-      const format = String(body.format || '').toLowerCase();
-      const original = body.original;
-      const instruction = clamp(body.instruction, 500);
-      if (!original || typeof original !== 'object') {
-        return res.status(400).json({ error: 'Le champ "original" est obligatoire (objet de la variante à raffiner).' });
-      }
-      if (!instruction) {
-        return res.status(400).json({ error: 'Le champ "instruction" est obligatoire.' });
-      }
-      userMessage = buildRefineMessage(format || 'inconnu', original, instruction);
-      maxTokens = 2500;
-    } else {
-      // Anciens modes (hook, caption, stories) — backward compat
-      const ctx = {
-        sujet: clamp(body.sujet, 300),
-        audience: clamp(body.audience, 300),
-        douleur: clamp(body.douleur, 400),
-        transformation: clamp(body.transformation, 400),
-        preuve: clamp(body.preuve, 400),
-        ton: clamp(body.ton, 100),
-      };
-      if (!ctx.sujet) {
-        return res.status(400).json({ error: 'Le champ "sujet" est obligatoire.' });
-      }
-      userMessage = buildUserMessage(mode, ctx);
-      maxTokens = mode === 'stories' ? 2500 : mode === 'caption' ? 1800 : 1200;
-    }
-  } catch (e) {
-    return res.status(400).json({ error: e.message });
+  const format = String(body.format || 'reel').toLowerCase();
+  if (!['story', 'reel'].includes(format)) {
+    return res.status(400).json({ error: 'format requis : "story" ou "reel".' });
   }
 
+  const audience = clamp(body.audience, 300);
+  const focus    = clamp(body.focus, 600);
+
+  if (!audience) {
+    return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
+  }
+
+  // ── Construction du message Claude ──
+  const userMessage = buildWeeklyPlanMessage(audience, focus, format);
+
+  // ── Appel API Claude ──
   try {
-    const buildBody = (model) => JSON.stringify({
-      model,
-      max_tokens: maxTokens,
-      system: [
-        // Bloc 1 — méthodes/règles statiques (cacheable, ~700 mots)
-        {
-          type: 'text',
-          text: SYSTEM_PROMPT,
-          cache_control: { type: 'ephemeral' },
-        },
-        // Bloc 2 — profil utilisateur dynamique (non caché car varie par user)
-        ...(profile ? [{
-          type: 'text',
-          text: formatProfile(profile),
-        }] : []),
-      ],
-      messages: [{ role: 'user', content: userMessage }],
-    });
-
-    // Stratégie simple et robuste : Haiku 4.5 uniquement (5-10s par appel).
-    // Optionnel : si tu veux Sonnet pour plus de qualité, ajoute-le dans la liste.
-    const MODELS_TO_TRY = [
-      DEFAULT_MODEL,                  // claude-haiku-4-5-20251001 par défaut
-    ];
-    const RETRYABLE_STATUSES = [408, 429, 500, 502, 503, 504, 529];
-
-    let apiResponse;
-    let lastError;
-    let modelUsed;
-
-    for (const model of MODELS_TO_TRY) {
-      try {
-        apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'x-api-key': process.env.ANTHROPIC_API_KEY,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json',
+    const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model:       DEFAULT_MODEL,
+        max_tokens:  MAX_TOKENS_WEEKLY_PLAN,
+        temperature: GENERATION_TEMPERATURE,
+        system: [
+          {
+            type: 'text',
+            text: SYSTEM_PROMPT,
+            cache_control: { type: 'ephemeral' },
           },
-          body: buildBody(model),
-        });
-
-        if (apiResponse.ok) {
-          modelUsed = model;
-          break;
-        }
-
-        // Erreur retryable → on essaie le modèle suivant
-        if (RETRYABLE_STATUSES.includes(apiResponse.status)) {
-          console.log(`[fallback] ${model} → HTTP ${apiResponse.status}, on essaie le modèle suivant`);
-          continue;
-        }
-
-        // Erreur non retryable (4xx auth/validation) → on sort
-        break;
-      } catch (fetchErr) {
-        console.log(`[fetch error] ${model} → ${fetchErr.message}`);
-        lastError = fetchErr;
-        // On essaie le modèle suivant
-        continue;
-      }
-    }
-
-    if (!apiResponse) {
-      throw lastError || new Error('Aucun modèle Claude n\'a répondu.');
-    }
+        ],
+        messages: [{ role: 'user', content: userMessage }],
+      }),
+    });
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
       const friendlyMessage = apiResponse.status === 529
-        ? 'Les serveurs Claude sont saturés en ce moment. Réessaye dans 2-3 minutes.'
+        ? 'Les serveurs Claude sont saturés en ce moment. Réessaye dans 1-2 minutes.'
         : `Erreur API Claude (${apiResponse.status})`;
       return res.status(apiResponse.status).json({
         error: friendlyMessage,
-        details: errText,
+        details: errText.slice(0, 500),
       });
     }
 
     const data = await apiResponse.json();
     const text = data?.content?.[0]?.text || '';
 
+    // Parse JSON robuste : essaye direct, puis extraction par regex
     let parsed;
     try {
       parsed = JSON.parse(text);
@@ -938,13 +647,14 @@ export default async function handler(req, res) {
 
     if (!parsed) {
       return res.status(502).json({
-        error: "Réponse Claude non parsable en JSON.",
-        raw: text,
+        error: 'Réponse Claude non parsable en JSON.',
+        raw: text.slice(0, 500),
       });
     }
 
     return res.status(200).json({
       mode,
+      format,
       result: parsed,
       usage: data.usage,
       model: data.model,
