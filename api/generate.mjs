@@ -90,7 +90,7 @@ Si après avoir lu ton hook, la personne peut fermer l'app et se sentir bien →
 
 ### 🌟 EXEMPLES DE LA CRÉATRICE (référence absolue, à reproduire en style)
 
-Voici 5 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMENT de leur style, leur ton, leur structure, leur naturel. Ce sont tes étalons absolus.
+Voici 9 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMENT de leur style, leur ton, leur structure, leur naturel. Ce sont tes étalons absolus.
 
 1. **(Reel — confession + résultat + sans X, sans Y, sans Z)**
    "J'ai appris à vendre des produits digitaux sans me montrer, sans pub, sans prospecter"
@@ -116,7 +116,27 @@ Voici 5 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
    "On est le 22 mars. Si tu commences le marketing digital aujourd'hui… Imagine cet été, ta situation sera complètement différente. Mais tu préfères scroller."
    → Pattern : date précise → projection dans 3 mois → accusation finale qui pique
 
-### Les 9 mécaniques de hook à utiliser (curiosity gap + patterns de la créatrice)
+6. **(Reel — méta / adresse à l'algo + manifeste)**
+   "Cher algorithme. Please présente moi à celles et ceux qui veulent gérer leur réseaux autrement"
+   Caption : "Arrête de subir les réseaux et commence à t'en servir pour générer..."
+   → Pattern : adresse directe à l'algo (4ème mur cassé) + manifeste implicite. Ton playful + insight.
+
+7. **(Reel — aspiration + le "pourquoi" rendu visible)**
+   "Parce que ma paix ressemble à ça"
+   Caption : "Emmener ton business là où tu te sens bien. On pense que c'est compliqué..."
+   → Pattern : phrase courte minimaliste évocatrice + visuel aspirant. Le hook est juste l'AMORCE émotionnelle, la révélation est dans la caption.
+
+8. **(Story photo — promesse explicite + invitation à lire)**
+   "Si tu veux créer un revenu depuis ton téléphone, lis bien ceci. 👇"
+   Caption : "c'est bien plus simple que tu le penses. Tu identifies ce que tu sais faire ou ce qui te passionne. Tu crées un produit digital autour de ça. Tu le mets dans ta boutique..."
+   → Pattern : promesse de valeur explicite + flèche pointante + recadrage de simplicité dans la caption + méthode en 3-4 étapes très simples
+
+9. **(Carrousel — all caps + flèches + preuve collective)**
+   "ELLES ONT ARRÊTÉ DE POSTER AU HASARD. VOICI LEURS RÉSULTATS ➡️➡️➡️"
+   Caption : "Regarder les autres réussir ne changera pas ta vie. Le point commun entre ces femmes ? Elles ont arrêté d'attendre le bon moment..."
+   → Pattern : titre en majuscules + flèches qui poussent au swipe + preuve sociale collective au féminin ("elles") + truth-bomb d'ouverture en caption + révélation de pattern commun
+
+### Les 13 mécaniques de hook à utiliser (curiosity gap + patterns de la créatrice)
 
 1. **PROMESSE + RÉTENTION** : tu promets de révéler quelque chose de précis, mais tu ne révèles PAS dans le hook.
    - ❌ "Tu scroll toute la journée et tu n'avances pas." (descriptif, pas de tension — elle peut fermer l'app)
@@ -157,6 +177,29 @@ Voici 5 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
    - ❌ "C'est dur de se lancer."
    - ✅ "Le plus difficile n'est pas de faire une vente. C'est de savoir comment commencer."
    - ✅ "Le plus dur c'est pas de créer du contenu. C'est de continuer après 30 jours sans aucun retour."
+
+10. **MÉTA / ADRESSE À L'ALGO** : tu casses le 4ème mur en t'adressant à l'algorithme directement. Ton playful, smart, qui dénote.
+    - ❌ "J'aimerais que mes contenus touchent plus de monde."
+    - ✅ "Cher algorithme. Please présente-moi à celles qui veulent gérer leur réseaux autrement."
+    - ✅ "Hé l'algo, si tu pouvais m'envoyer chez celles qui en ont marre de poster dans le vide, ça m'arrangerait."
+
+11. **ASPIRATION VISUELLE + LE "POURQUOI" RENDU VISIBLE** : phrase courte, minimaliste, évocatrice. Le hook AMORCE l'émotion, la révélation est dans la caption.
+    - ❌ "J'adore ma vie depuis que j'ai changé."
+    - ✅ "Parce que ma paix ressemble à ça."
+    - ✅ "C'est pour ça que j'ai dit non."
+    - ✅ "Pour pouvoir faire ça, j'ai dit oui à autre chose."
+
+12. **PROMESSE DE VALEUR + FLÈCHE / INVITATION À LIRE** : tu indiques explicitement que la valeur est dans la suite, et tu invites à lire.
+    - ❌ "Voici comment faire."
+    - ✅ "Si tu veux créer un revenu depuis ton téléphone, lis bien ceci. 👇"
+    - ✅ "Si t'as 30 secondes, lis ça avant de scroller plus loin."
+    - ✅ "Je t'explique tout en dessous, prends 1 minute. 👇"
+
+13. **PREUVE COLLECTIVE FÉMININE + PATTERN COMMUN** : tu utilises "elles" pour créer un effet tribal, et tu teases ce qu'elles ont en commun.
+    - ❌ "Beaucoup de femmes réussissent dans ce domaine."
+    - ✅ "Elles ont arrêté de poster au hasard. Voici leurs résultats."
+    - ✅ "Le point commun entre ces 12 femmes qui se sont lancées en 2025 ? Elles ont toutes fait LA MÊME chose au début."
+    - ✅ "Elles n'avaient ni audience, ni expérience, ni temps. Et pourtant."
 
 ### Test du "open loop"
 
