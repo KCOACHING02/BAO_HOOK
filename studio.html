@@ -412,6 +412,54 @@
       padding-left: 14px;
       text-align: left;
     }
+
+    /* ── TAB NAV ── */
+    .tab-nav {
+      background: var(--card);
+      border-bottom: 1.5px solid var(--beige);
+      position: sticky;
+      top: 47px;
+      z-index: 40;
+      box-shadow: 0 4px 18px var(--shadow);
+    }
+    .tab-nav-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+      padding: 0 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav-inner::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 18px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin-bottom: -1.5px;
+    }
+    .tab-btn:hover { color: var(--gold-dark); }
+    .tab-btn.active {
+      color: var(--gold-dark);
+      border-bottom-color: var(--gold);
+      font-weight: 700;
+    }
+    .tab-btn .tab-icon { font-size: 16px; }
+
+    /* ── TAB PANELS ── */
+    .tab-panel { display: none; animation: fadeUp 0.3s ease; }
+    .tab-panel.active { display: block; }
   </style>
 </head>
 <body>
@@ -440,13 +488,24 @@
   </section>
 
   <!-- ── TAB NAV ── -->
-  <nav id="tab-nav"></nav>
+  <nav id="tab-nav" class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="profil">
+        <span class="tab-icon">⚙️</span>
+        <span>Profil</span>
+      </button>
+      <button class="tab-btn" data-tab="posts">
+        <span class="tab-icon">📝</span>
+        <span>Posts</span>
+      </button>
+    </div>
+  </nav>
 
   <!-- ── MAIN CONTENT ── -->
   <main id="main">
 
     <!-- Onglet : Profil / Brand Voice -->
-    <section id="tab-profil" class="tab-panel"></section>
+    <section id="tab-profil" class="tab-panel active"></section>
 
     <!-- Onglet : Posts -->
     <section id="tab-posts" class="tab-panel"></section>
@@ -457,7 +516,20 @@
   <div id="toast-container"></div>
 
   <script>
-    // JS logic will be added section by section
+    /* ── TAB SWITCHING ── */
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
   </script>
 
 </body>
