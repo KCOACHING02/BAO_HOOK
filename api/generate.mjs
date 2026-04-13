@@ -709,12 +709,11 @@ export default async function handler(req, res) {
         ],
         messages: [
           { role: 'user', content: userMessage },
-          // Prefill : on force Claude à commencer sa réponse par '{'
+          // Prefill : on force Claude à commencer sa réponse par '{"plan":'
           // → garantit une sortie JSON sans préambule, plus de "Réponse non parsable"
-          { role: 'assistant', content: '{' },
+          // (le contenu du prefill ne doit JAMAIS finir par un whitespace)
+          { role: 'assistant', content: '{"plan":' },
         ],
-        // Stop sequence supplémentaire pour éviter que Claude rajoute du texte après le JSON
-        stop_sequences: ['\n\nNote:', '\n\nExplication:'],
       }),
     });
 
@@ -732,11 +731,11 @@ export default async function handler(req, res) {
     const data = await apiResponse.json();
     let text = data?.content?.[0]?.text || '';
 
-    // Reconstituer le JSON en prepending le '{' du prefill
-    // (Claude a commencé sa réponse par '{' grâce au prefill, donc le text renvoyé
-    //  commence directement après, sans le '{' initial)
+    // Reconstituer le JSON en prependant le prefill ('{"plan":') si Claude a continué après
+    // (Claude a commencé sa réponse par '{"plan":' grâce au prefill, donc le text
+    //  renvoyé commence directement après — il faut le préfixer pour avoir un JSON valide)
     if (!text.trimStart().startsWith('{')) {
-      text = '{' + text;
+      text = '{"plan":' + text;
     }
 
     // Parse JSON robuste : essaye direct, puis cherche le plus grand bloc {...} balancé
