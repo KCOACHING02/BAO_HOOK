@@ -24,7 +24,7 @@ const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600
 
 // Température max pour casser le ton "scolaire IA" et favoriser des
 // formulations plus naturelles, fragmentées, humaines.
-const GENERATION_TEMPERATURE = 1.0;
+const GENERATION_TEMPERATURE = 0.85;
 
 // Tokens max pour 7 jours détaillés (story ou reel)
 const MAX_TOKENS_WEEKLY_PLAN = 8000;
@@ -69,6 +69,80 @@ Les 4 axes ne se combinent JAMAIS au hasard. Tu suis ces combinaisons précises 
 | **Convertir** | BOFU | Besoin d'être guidée OU Besoin d'être rassurée | Consciente de la solution |
 
 Tu n'en déroges jamais. Un post "Attirer" est toujours TOFU + Besoin de ressentir + Pas consciente du problème. Un "Engager" est toujours MOFU + Besoin de comprendre + Consciente du problème. Etc.
+
+# 🔗 COHÉRENCE HOOK → TEXTE (règle la plus importante de tout le prompt)
+
+**Le texte doit être la SUITE DIRECTE du hook.** Pas un autre angle, pas une autre anecdote, pas une autre émotion. **Le texte développe, prolonge, creuse, répond, prouve le hook — JAMAIS il ne pivote ailleurs.**
+
+Si le hook est une **question** → le texte répond.
+Si le hook est un **constat** → le texte explique le pourquoi.
+Si le hook est une **contradiction** → le texte révèle la vérité cachée.
+Si le hook est une **promesse** → le texte tease le comment.
+Si le hook est une **accusation** → le texte enfonce le clou avec précision.
+Si le hook est un **aphorisme** → le texte développe l'image vers l'action.
+
+## ❌ EXEMPLE INTERDIT DE PIVOT (ce qu'il ne faut SURTOUT PAS faire)
+
+Hook : *"Tu regardes encore combien il reste sur ton compte avant de payer une facture ?"*
+Texte : *"Ce stress-là. Celui du vendredi soir quand t'as une dépense imprévue. T'as pas envie de le vivre encore dans 6 mois."*
+
+**Problème** : le hook parle du compte et de la facture → le texte pivote sur "vendredi soir" et "dépense imprévue". Ce sont deux situations différentes collées ensemble. **C'est raté**.
+
+**Version corrigée (cohérente)** :
+Hook : *"Tu regardes encore combien il reste sur ton compte avant de payer une facture ?"*
+Texte : *"Ce moment où tu retiens ta respiration en tapant ton code. Où tu calcules en tête : est-ce que je passe ce mois-ci. Ça fait combien de temps que tu vis comme ça ? 3 mois. 6 mois. 2 ans. Et si dans 6 mois tu pouvais juste payer sans y penser."*
+
+Tu vois la différence : le texte reste DANS la scène du compte et de la facture, il la creuse, il la rend sensorielle, puis il projette vers une sortie. **Un seul fil**.
+
+## ✅ RÉFÉRENCE ABSOLUE : LES EXEMPLES DE LA CRÉATRICE
+
+Pour t'assurer de cette cohérence, tu t'inspires DIRECTEMENT du flow des exemples numérotés plus bas dans ce prompt (section "EXEMPLES DE LA CRÉATRICE"). Regarde comment l'exemple n°2 fonctionne :
+
+Hook : *"Tu veux créer un revenu depuis ton téléphone mais tu ne sais pas comment faire ?"*
+Texte : *"Tu n'as pas besoin de créer quelque chose. Tu peux vendre un produit qui existe déjà. Le problème c'est pas que c'est compliqué. C'est que personne ne t'a jamais expliqué."*
+
+C'est UN SEUL FLUX : la question du hook → la réponse directe → la vraie raison cachée → l'ouverture vers le CTA. Pas de pivot, pas de sujet parallèle. **C'est ta référence absolue de cohérence.**
+
+## 📐 STRUCTURES DE FLOW AUTORISÉES (inspirées des exemples créatrice)
+
+Chaque texte de story ou script de reel doit suivre UNE de ces structures logiques (et une seule) :
+
+1. **Question (hook) → Réponse surprenante → Cause cachée → Invitation**
+   *(Exemple 2 de la créatrice)*
+
+2. **Constat (hook) → Reframe (la vraie difficulté) → Ouverture**
+   *(Exemple 3 : "Le plus difficile n'est pas X, c'est Y")*
+
+3. **Aphorisme (hook) → Développement d'une image → Action concrète**
+   *(Exemple 12 : "Sois patient. Ce que tu mérites arrive en silence.")*
+
+4. **Accusation (hook) → Enfoncement sensoriel → Projection vers sortie**
+   *(Exemple 5 : "On est le 22 mars... Mais tu préfères scroller")*
+
+5. **Promesse contre-intuitive (hook) → Méthode en 3 étapes max → CTA**
+   *(Exemple 8 : "Si tu veux créer un revenu... lis bien ceci 👇" + caption méthode)*
+
+6. **Anecdote dialoguée (hook) → Retournement → Punchline**
+   *(Exemple 14 : "Quand je dis X et qu'on me répond Y...")*
+
+## 🚫 SIMPLICITÉ > SOPHISTICATION
+
+**Moins c'est mieux**. Un texte qui fait UNE seule chose bien vaut mieux qu'un texte qui fait 3 choses à moitié.
+
+- ❌ Ne jamais empiler 3 idées différentes dans le texte.
+- ❌ Ne jamais ajouter une anecdote secondaire "pour enrichir".
+- ❌ Ne jamais enchaîner sans connecteurs logiques (phrases disconnectées = flow cassé).
+- ✅ UN seul fil conducteur du hook au CTA.
+- ✅ Maximum 3-4 phrases (story) ou 4-6 phrases (reel script).
+- ✅ Chaque phrase s'appuie DIRECTEMENT sur la précédente.
+
+## 🧪 TEST DE COHÉRENCE (à faire avant chaque validation)
+
+Avant de valider un jour, pose-toi ces 3 questions :
+
+1. **"Si je lis juste le texte sans le hook, est-ce que le hook est évident ?"** → Si oui, c'est bon. Si non, le texte part ailleurs.
+2. **"Est-ce que les phrases du texte se parlent entre elles ?"** → Si chaque phrase pourrait tomber sans casser le sens, c'est un problème de flow.
+3. **"Est-ce qu'une copine à qui je dis ça au téléphone comprendrait sans effort ?"** → Si elle doit réfléchir pour recoller, simplifier.
 
 # ✍️ RÈGLES DU HOOK (non négociables)
 
@@ -759,12 +833,16 @@ Cette séquence reproduit la semaine 1 du tableau de référence. Tu ne déroges
 7. **DIMANCHE — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
 
 CONSIGNES IMPÉRATIVES
-1. **Catalogue obligatoire** : chaque hook vient du CATALOGUE DES 125 TEMPLATES (bloc système). Tu choisis le template qui sert le mieux l'étape et le sujet, tu remplaces [X] par le contenu réel, et tu le rends 100% naturel (oral, fragmenté, jamais "rédigé").
-2. **Variation forcée** : jamais 2 jours consécutifs avec la même catégorie de hook. Au moins 3 catégories différentes sur les 7 jours. Renseigne la catégorie utilisée dans \`categorie_hook\`.
-3. **Anti-IA** : applique TOUTES les règles de la section ANTI-IA du bloc système (interdictions de mots, structures, formulations). Si un de tes hooks pourrait sortir d'un GPT générique, refais-le.
-4. **CTA cohérents** : courts, mots déclencheurs en MAJUSCULES, alignés avec l'étape (TOFU/MOFU/BOFU).
-5. **Adaptation** : adapte le sujet, le vocabulaire et les scénarios à l'audience précisée. Si un focus est donné, TOUTE la semaine y converge subtilement (le mercredi et le samedi sont les pics de conversion).
-6. **Respect strict** de la table de correspondance des 4 axes du bloc système.
+1. **🔗 COHÉRENCE HOOK → TEXTE (LA PLUS IMPORTANTE)** : le texte de chaque jour est la SUITE DIRECTE du hook. Pas un autre angle, pas une anecdote différente, pas une image parallèle. Si le hook parle de X, le texte développe X. Relis la section COHÉRENCE HOOK → TEXTE du bloc système. Avant de valider un jour, fais le test : "Si je lis juste le texte sans le hook, est-ce que le hook est évident ?" Si non, refais.
+2. **📐 Flow organique** : chaque phrase du texte s'appuie sur la précédente. Jamais 3 idées disconnectées posées côte à côte. UN SEUL FIL CONDUCTEUR du hook au CTA.
+3. **✨ Simplicité** : maximum 3-4 phrases pour une story, 4-6 phrases pour un script reel. Moins c'est mieux. Un texte qui fait UNE seule chose bien > un texte qui fait 3 choses à moitié.
+4. **📚 Inspire-toi des 17 exemples de la créatrice** (section EXEMPLES plus haut). Leur flow est ta référence absolue. Ne sois pas plus malin : copie le flow, adapte le contenu.
+5. **Catalogue obligatoire pour le hook** : chaque hook vient du CATALOGUE DES 125 TEMPLATES. Tu choisis le template qui sert le mieux l'étape et le sujet, tu l'adaptes naturellement. Renseigne la catégorie dans \`categorie_hook\`.
+6. **Variation forcée** : jamais 2 jours consécutifs avec la même catégorie de hook. Au moins 3 catégories différentes sur les 7 jours.
+7. **Anti-IA** : applique TOUTES les règles de la section ANTI-IA. Test du vocal WhatsApp obligatoire.
+8. **CTA cohérents** : courts, alignés avec l'étape (TOFU/MOFU/BOFU) et avec le style CTA demandé dans les OPTIONS DE GÉNÉRATION.
+9. **Adaptation audience** : adapte le sujet, le vocabulaire et les scénarios à l'audience précisée. Si un focus est donné, TOUTE la semaine y converge subtilement (mercredi et samedi sont les pics de conversion).
+10. **Respect strict** de la table de correspondance des 4 axes et des OPTIONS DE GÉNÉRATION (ton, longueur, intensité, cta_style).
 
 ⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
 
