@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brille & Vibre Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8CC80;
+      --gold-pale:  #F5EDD4;
+      --gold-dark:  #9A7530;
+      --cream:      #FAF6EF;
+      --beige:      #EDE4D3;
+      --black:      #0D0D0D;
+      --text:       #3A2E24;
+      --text-light: #8C7560;
+      --border:     rgba(201,168,76,0.2);
+      --card:       #ffffff;
+      --shadow:     rgba(58,46,36,0.08);
+      --success:    #10b981;
+      --error:      #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes popIn  { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes pulse  { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* ── PAGE WRAP ── */
+    .page { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* ── TYPOGRAPHY HELPERS ── */
+    .section-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .section-body {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      margin: 40px 0;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 6px 24px var(--shadow);
+      margin-bottom: 20px;
+    }
+    .card-dark {
+      background: var(--black);
+      border: 1px solid rgba(201, 168, 76, 0.2);
+      border-radius: 18px;
+      padding: 24px;
+      color: var(--cream);
+      margin-bottom: 20px;
+    }
+
+    /* ── LABELS & INPUTS ── */
+    .field { margin-bottom: 16px; }
+    .field-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 8px;
+    }
+    .field-hint {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+    .field-input,
+    .field-textarea,
+    .field-select {
+      width: 100%;
+      background: var(--cream);
+      border: 1.5px solid var(--beige);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .field-textarea { min-height: 72px; resize: vertical; }
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-select:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: #fff;
+    }
+    .field-input::placeholder,
+    .field-textarea::placeholder { color: var(--text-light); }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 22px rgba(201, 168, 76, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(201, 168, 76, 0.1);
+      color: var(--gold-dark);
+      border: 1px solid rgba(201, 168, 76, 0.35);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--black);
+      border-color: var(--gold);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--beige);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
+
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 8px; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .badge-success { background: rgba(16, 185, 129, 0.12); color: #047857; }
+    .badge-warn    { background: rgba(239, 68, 68, 0.1); color: #b91c1c; }
+    .badge-gold    { background: rgba(201, 168, 76, 0.15); color: var(--gold-dark); }
+
+    /* ── TOASTS ── */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 340px;
+    }
+    .toast {
+      background: var(--black);
+      color: var(--cream);
+      border-left: 4px solid var(--gold);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      animation: slideInRight 0.3s ease;
+      pointer-events: auto;
+    }
+    .toast-success { border-left-color: var(--success); }
+    .toast-error   { border-left-color: var(--error); }
+
+    /* ── BACK BAR ── */
+    .back-bar {
+      background: var(--black);
+      padding: 13px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(250, 246, 239, 0.6);
+      text-decoration: none;
+      padding: 7px 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      background: rgba(201, 168, 76, 0.08);
+      transition: all 0.2s ease;
+    }
+    .back-link:hover {
+      background: rgba(201, 168, 76, 0.18);
+      border-color: rgba(201, 168, 76, 0.5);
+      color: var(--gold-light);
+      transform: translateX(-2px);
+    }
+    .back-link svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+    .profile-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .profile-status.complete {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .profile-status.incomplete {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .profile-status:hover { transform: translateY(-1px); }
+
+    /* ── COVER ── */
+    .cover {
+      background: var(--black);
+      padding: 48px 24px 44px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo-ring {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 18px;
+    }
+    .logo-ring::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold), var(--gold-light), var(--gold-pale), var(--gold), var(--gold-light), var(--gold));
+      animation: spin 8s linear infinite;
+    }
+    .logo-ring::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: var(--black);
+    }
+    .logo-img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .cover-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 12px;
+      font-style: italic;
+      letter-spacing: 2px;
+      color: var(--gold);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .cover-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(34px, 8vw, 56px);
+      font-weight: 900;
+      line-height: 0.95;
+      color: var(--cream);
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+    .cover-title em { color: var(--gold); font-style: italic; }
+    .cover-title .outline {
+      -webkit-text-stroke: 2px var(--gold);
+      color: transparent;
+    }
+    .cover-sub {
+      font-size: 14px;
+      color: rgba(250, 246, 239, 0.55);
+      max-width: 440px;
+      margin: 18px auto 0;
+      line-height: 1.65;
+      position: relative;
+      z-index: 1;
+      border-left: 2px solid var(--gold);
+      padding-left: 14px;
+      text-align: left;
+    }
+
+    /* ── TAB NAV ── */
+    .tab-nav {
+      background: var(--card);
+      border-bottom: 1.5px solid var(--beige);
+      position: sticky;
+      top: 47px;
+      z-index: 40;
+      box-shadow: 0 4px 18px var(--shadow);
+    }
+    .tab-nav-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      gap: 4px;
+      padding: 0 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav-inner::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 18px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      margin-bottom: -1.5px;
+    }
+    .tab-btn:hover { color: var(--gold-dark); }
+    .tab-btn.active {
+      color: var(--gold-dark);
+      border-bottom-color: var(--gold);
+      font-weight: 700;
+    }
+    .tab-btn .tab-icon { font-size: 16px; }
+
+    /* ── TAB PANELS ── */
+    .tab-panel { display: none; animation: fadeUp 0.3s ease; }
+    .tab-panel.active { display: block; }
+
+    /* ── FORMAT GRID (Posts tab) ── */
+    .format-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .format-grid { grid-template-columns: 1fr; }
+    }
+    .format-card {
+      background: var(--cream);
+      border: 1.5px solid var(--beige);
+      border-radius: 12px;
+      padding: 18px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .format-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(201, 168, 76, 0.15);
+    }
+    .format-card.selected {
+      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
+      border-color: var(--gold);
+      box-shadow: 0 4px 14px rgba(201, 168, 76, 0.25);
+    }
+    .format-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .format-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .format-desc {
+      font-size: 11px;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    /* ── LOADING ── */
+    .loading-card {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .loading-dots {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .loading-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.2s ease infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-light);
+      font-style: italic;
+    }
+
+    /* ── VARIANTS DISPLAY ── */
+    .variants-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+      margin: 24px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .variants-header em { color: var(--gold); font-style: italic; }
+
+    .variant-card {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 18px var(--shadow);
+      animation: fadeUp 0.4s ease;
+    }
+    .variant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--beige);
+    }
+    .variant-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .variant-block {
+      margin-bottom: 16px;
+    }
+    .variant-block:last-child { margin-bottom: 0; }
+    .variant-block-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 6px;
+    }
+    .variant-block-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .variant-hook {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--gold-dark);
+      background: rgba(201, 168, 76, 0.07);
+      border-left: 3px solid var(--gold);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+    }
+    .variant-citation {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--text);
+      text-align: center;
+      padding: 24px 16px;
+      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
+      border-radius: 12px;
+    }
+    .variant-citation::before { content: '« '; color: var(--gold); }
+    .variant-citation::after  { content: ' »'; color: var(--gold); }
+
+    .variant-overlays {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .variant-overlay-pill {
+      background: var(--cream);
+      border: 1px dashed rgba(201, 168, 76, 0.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .variant-overlay-pill::before {
+      content: '▸';
+      color: var(--gold);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .variant-slides {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .variant-slide {
+      background: var(--cream);
+      border: 1px solid var(--beige);
+      border-left: 3px solid var(--gold);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .variant-slide-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .variant-slide-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.15);
+      padding: 3px 7px;
+      border-radius: 5px;
+    }
+    .variant-slide-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .variant-slide-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .variant-hashtags {
+      font-size: 13px;
+      color: var(--gold-dark);
+      line-height: 1.6;
+      word-spacing: 4px;
+      background: rgba(201, 168, 76, 0.05);
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .variant-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--beige);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── BACK BAR ── -->
+  <header id="back-bar" class="back-bar">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Retour aux Hooks
+    </a>
+    <span id="profile-status" class="profile-status incomplete">⚠ Profil incomplet</span>
+  </header>
+
+  <!-- ── COVER ── -->
+  <section id="cover" class="cover">
+    <div class="logo-ring">
+      <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
+    </div>
+    <p class="cover-brand">Brille &amp; Vibre</p>
+    <div class="cover-tag">Studio Éditorial</div>
+    <h1 class="cover-title">
+      Brille &amp; Vibre<br>
+      <em>Studio</em>
+    </h1>
+    <p class="cover-sub">Ton studio pour créer des hooks, posts, légendes et stories qui captivent — propulsé par Claude AI et la psychologie de la vente.</p>
+  </section>
+
+  <!-- ── TAB NAV ── -->
+  <nav id="tab-nav" class="tab-nav">
+    <div class="tab-nav-inner">
+      <button class="tab-btn active" data-tab="profil">
+        <span class="tab-icon">⚙️</span>
+        <span>Profil</span>
+      </button>
+      <button class="tab-btn" data-tab="posts">
+        <span class="tab-icon">📝</span>
+        <span>Posts</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main id="main">
+
+    <!-- Onglet : Profil / Brand Voice -->
+    <section id="tab-profil" class="tab-panel active">
+      <div class="page">
+
+        <div class="section-eyebrow">Brand Voice</div>
+        <div class="section-title">Ton profil <em>permanent</em></div>
+        <div class="section-body">
+          Remplis ces champs <strong>une seule fois</strong>. Ils seront utilisés automatiquement par tous les modules de génération (posts, hooks, stories) pour que Claude écrive avec ta voix, pour ton audience, sur tes offres.
+        </div>
+
+        <!-- ── Carte 1 — Ta marque ── -->
+        <div class="card">
+          <div class="section-eyebrow">01 — Ta marque</div>
+
+          <div class="field">
+            <label class="field-label" for="p-nom">Nom de marque</label>
+            <input id="p-nom" type="text" class="field-input" placeholder="Ex : Brille & Vibre">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-niche">Niche / Domaine</label>
+            <input id="p-niche" type="text" class="field-input" placeholder="Ex : coaching pour créatrices de contenu Instagram">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mission">Mission / Promesse</label>
+            <textarea id="p-mission" class="field-textarea" placeholder="Ex : aider les femmes entrepreneures à transformer leur contenu en impact réel et en clientes"></textarea>
+            <div class="field-hint">Une phrase qui résume pourquoi ta marque existe.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 2 — Ton audience ── -->
+        <div class="card">
+          <div class="section-eyebrow">02 — Ton audience</div>
+
+          <div class="field">
+            <label class="field-label" for="p-audience">Qui est ton audience ?</label>
+            <textarea id="p-audience" class="field-textarea" placeholder="Ex : femmes coachs/entrepreneures de 25-45 ans qui débutent sur Instagram et veulent vendre leurs offres"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-douleurs">Ses douleurs principales</label>
+            <textarea id="p-douleurs" class="field-textarea" placeholder="Ex : poste tous les jours sans aucun retour, sentiment d'invisibilité, peur de paraître commerciale"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-desirs">Ses désirs profonds</label>
+            <textarea id="p-desirs" class="field-textarea" placeholder="Ex : être reconnue comme experte, vivre de sa passion, attirer des clientes alignées sans forcer"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-objections">Ses objections fréquentes</label>
+            <textarea id="p-objections" class="field-textarea" placeholder="Ex : « j'ai pas le temps », « j'ai pas assez d'abonnés », « le marketing c'est pas pour moi »"></textarea>
+          </div>
+        </div>
+
+        <!-- ── Carte 3 — Tes offres ── -->
+        <div class="card">
+          <div class="section-eyebrow">03 — Tes offres</div>
+
+          <div class="field">
+            <label class="field-label" for="p-offres">Ce que tu vends</label>
+            <textarea id="p-offres" class="field-textarea" style="min-height: 100px;" placeholder="Ex :&#10;- Programme « Brille & Vibre » (12 semaines de coaching)&#10;- Masterclass « L'Art du Hook » (gratuite)&#10;- Accompagnement individuel premium"></textarea>
+            <div class="field-hint">Liste tes offres avec une ligne par offre. Tu peux mettre prix, format, durée si tu veux.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 4 — Ton style ── -->
+        <div class="card">
+          <div class="section-eyebrow">04 — Ton style éditorial</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="p-tutoiement">Niveau de langue</label>
+              <select id="p-tutoiement" class="field-select">
+                <option value="tutoiement">Tutoiement</option>
+                <option value="vouvoiement">Vouvoiement</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="p-emojis">Émojis</label>
+              <select id="p-emojis" class="field-select">
+                <option value="aucun">Aucun</option>
+                <option value="moderes" selected>Modérés (1 par bloc)</option>
+                <option value="frequents">Fréquents</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-style">Style général</label>
+            <input id="p-style" type="text" class="field-input" placeholder="Ex : élégant, direct, inspirant, sans jargon">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mots-signature">Mots / expressions signature</label>
+            <input id="p-mots-signature" type="text" class="field-input" placeholder="Ex : brille, vibre, alignement, énergie, transformation">
+            <div class="field-hint">Mots récurrents que tu aimes utiliser. Séparés par des virgules.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mots-bannis">Mots à éviter</label>
+            <input id="p-mots-bannis" type="text" class="field-input" placeholder="Ex : synergie, impactant, engageant, leverage">
+            <div class="field-hint">Le jargon marketing creux que Claude doit bannir.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 5 — Tes preuves ── -->
+        <div class="card">
+          <div class="section-eyebrow">05 — Tes preuves & résultats</div>
+
+          <div class="field">
+            <label class="field-label" for="p-temoignages">Témoignages clés</label>
+            <textarea id="p-temoignages" class="field-textarea" placeholder="Ex : Marie a doublé son CA en 3 mois. Sarah a signé 8 clientes en 6 semaines."></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-chiffres">Chiffres à mettre en avant</label>
+            <textarea id="p-chiffres" class="field-textarea" placeholder="Ex : 50 femmes accompagnées, +40 % d'engagement moyen, 12 témoignages 5 étoiles"></textarea>
+          </div>
+        </div>
+
+        <!-- ── Carte 6 — Ton objectif ── -->
+        <div class="card">
+          <div class="section-eyebrow">06 — Ton objectif principal</div>
+
+          <div class="field">
+            <label class="field-label" for="p-objectif">Objectif business prioritaire</label>
+            <select id="p-objectif" class="field-select">
+              <option value="ventes">💰 Vendre mes offres</option>
+              <option value="engagement">💬 Créer de l'engagement et une communauté</option>
+              <option value="autorite">🎯 Être perçue comme experte / autorité</option>
+              <option value="visibilite">✨ Gagner en visibilité et attirer du monde</option>
+              <option value="liste">📩 Construire ma liste email</option>
+            </select>
+            <div class="field-hint">Claude orientera tous tes contenus vers cet objectif.</div>
+          </div>
+        </div>
+
+        <!-- ── Actions ── -->
+        <div class="card">
+          <div class="section-eyebrow">Actions</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <button id="btn-save-profil" class="btn btn-primary">💾 Sauvegarder le profil</button>
+            <button id="btn-export-profil" class="btn btn-secondary">⬇ Exporter (JSON)</button>
+            <button id="btn-import-profil" class="btn btn-secondary">⬆ Importer (JSON)</button>
+            <button id="btn-reset-profil" class="btn btn-ghost">🗑 Réinitialiser</button>
+          </div>
+          <input type="file" id="file-import-profil" accept="application/json" style="display: none;">
+          <div class="field-hint" style="margin-top: 14px;">
+            Tes données sont stockées <strong>uniquement dans ton navigateur</strong> (localStorage). Aucune donnée n'est envoyée sur un serveur tant que tu ne lances pas une génération.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Onglet : Posts -->
+    <section id="tab-posts" class="tab-panel">
+      <div class="page">
+
+        <div class="section-eyebrow">Générateur de posts</div>
+        <div class="section-title">Crée ton <em>prochain post</em></div>
+        <div class="section-body">
+          Choisis un format, décris ton sujet, et Claude génère <strong>3 variantes</strong> à partir de ton profil. Tu pourras ensuite retravailler la variante que tu préfères.
+        </div>
+
+        <!-- ── Carte 1 — Format ── -->
+        <div class="card">
+          <div class="section-eyebrow">01 — Quel format ?</div>
+          <div class="format-grid">
+            <div class="format-card selected" data-format="reel">
+              <div class="format-icon">🎬</div>
+              <div class="format-name">Reel</div>
+              <div class="format-desc">Vidéo courte avec hook, script et overlays</div>
+            </div>
+            <div class="format-card" data-format="carrousel">
+              <div class="format-icon">🎠</div>
+              <div class="format-name">Carrousel</div>
+              <div class="format-desc">7 slides structurées + caption</div>
+            </div>
+            <div class="format-card" data-format="photo">
+              <div class="format-icon">📸</div>
+              <div class="format-name">Photo</div>
+              <div class="format-desc">Caption longue selon le framework 4 colonnes</div>
+            </div>
+            <div class="format-card" data-format="inspiration">
+              <div class="format-icon">✨</div>
+              <div class="format-name">Inspiration</div>
+              <div class="format-desc">Citation + courte légende</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Carte 2 — Sujet ── -->
+        <div class="card">
+          <div class="section-eyebrow">02 — De quoi tu veux parler ?</div>
+          <div class="field">
+            <label class="field-label" for="post-sujet">Sujet ou angle du post</label>
+            <textarea id="post-sujet" class="field-textarea" style="min-height: 90px;" placeholder="Ex : pourquoi mes anciennes clientes me disent qu'elles ont enfin l'impression d'écrire avec leur vraie voix"></textarea>
+            <div class="field-hint">Plus tu es précise, meilleur sera le résultat. Tu peux décrire un cas, une réflexion, une leçon, un témoignage…</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 3 — Options (facultatif) ── -->
+        <div class="card">
+          <div class="section-eyebrow">03 — Options (facultatif)</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="post-objectif">Objectif spécifique</label>
+              <select id="post-objectif" class="field-select">
+                <option value="">— Utiliser celui du profil —</option>
+                <option value="ventes">💰 Vendre</option>
+                <option value="engagement">💬 Engager</option>
+                <option value="autorite">🎯 Asseoir mon autorité</option>
+                <option value="visibilite">✨ Gagner en visibilité</option>
+                <option value="liste">📩 Construire ma liste</option>
+              </select>
+              <div class="field-hint">Override l'objectif du profil pour ce post uniquement.</div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="post-longueur">Longueur de la caption</label>
+              <select id="post-longueur" class="field-select">
+                <option value="courte">Courte (~80 mots)</option>
+                <option value="moyenne" selected>Moyenne (~180 mots)</option>
+                <option value="longue">Longue (~300 mots)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="post-angle">Angle ou ton particulier</label>
+            <input id="post-angle" type="text" class="field-input" placeholder="Ex : confession personnelle / pédagogique / drôle / vulnérable…">
+            <div class="field-hint">Optionnel — laisse vide pour utiliser ton ton de profil par défaut.</div>
+          </div>
+        </div>
+
+        <!-- ── Bouton de génération ── -->
+        <button id="btn-generate-post" class="btn btn-primary btn-block" style="padding: 16px; font-size: 15px; margin-bottom: 24px;">
+          ✨ Générer 3 variantes
+        </button>
+
+        <!-- ── Loading ── -->
+        <div id="posts-loading" style="display: none;"></div>
+
+        <!-- ── Résultats ── -->
+        <div id="posts-results"></div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── TOAST CONTAINER ── -->
+  <div id="toast-container"></div>
+
+  <script>
+    /* ─────────────────────────────────────────
+       TAB SWITCHING
+       ───────────────────────────────────────── */
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    /* ─────────────────────────────────────────
+       TOAST HELPER
+       ───────────────────────────────────────── */
+    function showToast(message, type = 'info', duration = 3000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    /* ─────────────────────────────────────────
+       PROFILE — localStorage logic
+       ───────────────────────────────────────── */
+    const PROFILE_STORAGE_KEY = 'brille-vibre-studio:profile';
+
+    // Mapping : id du champ HTML → clé dans l'objet profile
+    const PROFILE_FIELDS = {
+      'p-nom':            'nom',
+      'p-niche':          'niche',
+      'p-mission':        'mission',
+      'p-audience':       'audience',
+      'p-douleurs':       'douleurs',
+      'p-desirs':         'desirs',
+      'p-objections':     'objections',
+      'p-offres':         'offres',
+      'p-tutoiement':     'tutoiement',
+      'p-emojis':         'emojis',
+      'p-style':          'style',
+      'p-mots-signature': 'mots_signature',
+      'p-mots-bannis':    'mots_bannis',
+      'p-temoignages':    'temoignages',
+      'p-chiffres':       'chiffres',
+      'p-objectif':       'objectif',
+    };
+
+    // Champs minimum à remplir pour considérer le profil "complet"
+    const REQUIRED_FIELDS = ['nom', 'niche', 'audience', 'offres'];
+
+    function readProfileFromForm() {
+      const profile = {};
+      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el) profile[key] = el.value.trim();
+      }
+      return profile;
+    }
+
+    function writeProfileToForm(profile) {
+      if (!profile) return;
+      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el && profile[key] !== undefined) {
+          el.value = profile[key];
+        }
+      }
+    }
+
+    function getStoredProfile() {
+      try {
+        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        console.error('Failed to parse stored profile', e);
+        return null;
+      }
+    }
+
+    function saveProfile() {
+      const profile = readProfileFromForm();
+      try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+        updateProfileBadge();
+        showToast('✓ Profil sauvegardé', 'success');
+      } catch (e) {
+        showToast('❌ Erreur de sauvegarde', 'error');
+      }
+    }
+
+    function isProfileComplete(profile) {
+      if (!profile) return false;
+      return REQUIRED_FIELDS.every(key => profile[key] && profile[key].length > 0);
+    }
+
+    function updateProfileBadge() {
+      const badge = document.getElementById('profile-status');
+      if (!badge) return;
+      const profile = getStoredProfile();
+      if (isProfileComplete(profile)) {
+        badge.className = 'profile-status complete';
+        badge.textContent = '✓ Profil complet';
+      } else {
+        badge.className = 'profile-status incomplete';
+        badge.textContent = '⚠ Profil incomplet';
+      }
+    }
+
+    function exportProfile() {
+      const profile = readProfileFromForm();
+      const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `brille-vibre-profil-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('✓ Profil exporté', 'success');
+    }
+
+    function importProfile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const profile = JSON.parse(e.target.result);
+          writeProfileToForm(profile);
+          localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+          updateProfileBadge();
+          showToast('✓ Profil importé', 'success');
+        } catch (err) {
+          showToast('❌ Fichier JSON invalide', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetProfile() {
+      if (!confirm('Réinitialiser tout ton profil ? Cette action est irréversible.')) return;
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+      for (const fieldId of Object.keys(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el) {
+          if (el.tagName === 'SELECT') el.selectedIndex = 0;
+          else el.value = '';
+        }
+      }
+      updateProfileBadge();
+      showToast('Profil réinitialisé', 'info');
+    }
+
+    // Profile event listeners
+    document.getElementById('btn-save-profil').addEventListener('click', saveProfile);
+    document.getElementById('btn-export-profil').addEventListener('click', exportProfile);
+    document.getElementById('btn-reset-profil').addEventListener('click', resetProfile);
+    document.getElementById('btn-import-profil').addEventListener('click', () => {
+      document.getElementById('file-import-profil').click();
+    });
+    document.getElementById('file-import-profil').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) importProfile(file);
+      e.target.value = '';
+    });
+
+    // Initial load — restaure le profil et met à jour le badge
+    (function initProfile() {
+      const stored = getStoredProfile();
+      if (stored) writeProfileToForm(stored);
+      updateProfileBadge();
+    })();
+
+    /* ─────────────────────────────────────────
+       POSTS — Format selection + API call
+       ───────────────────────────────────────── */
+    let selectedPostFormat = 'reel';
+
+    document.querySelectorAll('#tab-posts .format-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#tab-posts .format-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedPostFormat = card.dataset.format;
+      });
+    });
+
+    function showPostsLoading(show) {
+      const loading = document.getElementById('posts-loading');
+      const btn = document.getElementById('btn-generate-post');
+      if (show) {
+        loading.style.display = 'block';
+        loading.innerHTML = `
+          <div class="loading-card">
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+            <div class="loading-text">Claude génère 3 variantes de ton ${selectedPostFormat}...</div>
+          </div>
+        `;
+        btn.disabled = true;
+      } else {
+        loading.style.display = 'none';
+        loading.innerHTML = '';
+        btn.disabled = false;
+      }
+    }
+
+    async function generatePost() {
+      // 1. Vérifier le profil
+      const profile = getStoredProfile();
+      if (!isProfileComplete(profile)) {
+        showToast('⚠ Remplis d\'abord ton profil (au minimum nom, niche, audience, offres)', 'error', 4500);
+        switchTab('profil');
+        return;
+      }
+
+      // 2. Vérifier le sujet
+      const sujet = document.getElementById('post-sujet').value.trim();
+      if (!sujet) {
+        showToast('⚠ Décris d\'abord le sujet de ton post', 'error');
+        document.getElementById('post-sujet').focus();
+        return;
+      }
+
+      // 3. Construire le payload
+      const payload = {
+        mode: 'post',
+        format: selectedPostFormat,
+        sujet,
+        options: {
+          objectif: document.getElementById('post-objectif').value || '',
+          longueur: document.getElementById('post-longueur').value || 'moyenne',
+          angle:    document.getElementById('post-angle').value.trim(),
+        },
+        profile,
+      };
+
+      // 4. Vider les résultats précédents et lancer le loader
+      document.getElementById('posts-results').innerHTML = '';
+      showPostsLoading(true);
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 429) {
+          throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
+        }
+        if (!res.ok) {
+          throw new Error(data.error || `Erreur HTTP ${res.status}`);
+        }
+
+        // Quota restant en console
+        const remaining = res.headers.get('X-RateLimit-Remaining');
+        const limit = res.headers.get('X-RateLimit-Limit');
+        if (remaining !== null && limit !== null) {
+          console.log(`[Studio] Quota restant : ${remaining}/${limit}`);
+        }
+
+        const variants = data?.result?.variants || [];
+        if (!variants.length) {
+          throw new Error('Aucune variante reçue de Claude.');
+        }
+
+        renderPostsResults(selectedPostFormat, variants);
+        showToast(`✓ ${variants.length} variantes générées`, 'success');
+
+      } catch (err) {
+        showToast(`❌ ${err.message}`, 'error', 5000);
+      } finally {
+        showPostsLoading(false);
+      }
+    }
+
+    document.getElementById('btn-generate-post').addEventListener('click', generatePost);
+
+    /* ─────────────────────────────────────────
+       POSTS — Format-specific result rendering
+       ───────────────────────────────────────── */
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        if (btn) {
+          const original = btn.textContent;
+          btn.textContent = '✓ Copié';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = original;
+            btn.classList.remove('copied');
+          }, 1800);
+        }
+        showToast('✓ Copié dans le presse-papier', 'success', 1500);
+      }).catch(() => {
+        showToast('❌ Impossible de copier', 'error');
+      });
+    }
+    window.copyToClipboard = copyToClipboard;
+
+    function variantToPlainText(format, v) {
+      if (format === 'reel') {
+        return [
+          '🎬 HOOK VISUEL',
+          v.hook_visuel || '',
+          '',
+          '📜 SCRIPT',
+          v.script || '',
+          '',
+          '💬 OVERLAYS',
+          (v.overlays || []).map((o, i) => `${i + 1}. ${o}`).join('\n'),
+          '',
+          '📝 CAPTION',
+          v.caption || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'carrousel') {
+        const slides = (v.slides || []).map(s => `Slide ${s.numero} — ${s.titre}\n${s.texte}`).join('\n\n');
+        return [
+          `🎠 ${v.titre || ''}`,
+          '',
+          slides,
+          '',
+          '📝 CAPTION',
+          v.caption || '',
+          '',
+          v.cta || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'photo') {
+        return [
+          v.hook || '',
+          '',
+          v.besoin_ressentir || '',
+          '',
+          v.comprendre || '',
+          '',
+          v.guide_ouvrir || '',
+          '',
+          v.rassure_preuves || '',
+          '',
+          v.cta || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'inspiration') {
+        return [
+          `« ${v.citation || ''} »`,
+          '',
+          v.caption || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      return JSON.stringify(v, null, 2);
+    }
+
+    function renderReelVariant(v, index) {
+      const overlays = (v.overlays || []).map(o =>
+        `<div class="variant-overlay-pill">${escapeHtml(o)}</div>`
+      ).join('');
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">🎬 Hook visuel</div>
+          <div class="variant-hook">${escapeHtml(v.hook_visuel || '')}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📜 Script</div>
+          <div class="variant-block-text">${escapeHtml(v.script || '')}</div>
+        </div>
+        ${overlays ? `
+          <div class="variant-block">
+            <div class="variant-block-label">💬 Overlays vidéo</div>
+            <div class="variant-overlays">${overlays}</div>
+          </div>
+        ` : ''}
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Caption</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderCarrouselVariant(v, index) {
+      const slides = (v.slides || []).map(s => `
+        <div class="variant-slide">
+          <div class="variant-slide-head">
+            <span class="variant-slide-num">Slide ${escapeHtml(String(s.numero || ''))}</span>
+            <span class="variant-slide-title">${escapeHtml(s.titre || '')}</span>
+          </div>
+          <div class="variant-slide-text">${escapeHtml(s.texte || '')}</div>
+        </div>
+      `).join('');
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">🎠 Titre principal</div>
+          <div class="variant-hook">${escapeHtml(v.titre || '')}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📑 Slides (${(v.slides || []).length})</div>
+          <div class="variant-slides">${slides}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Caption</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${v.cta ? `
+          <div class="variant-block">
+            <div class="variant-block-label">👉 CTA</div>
+            <div class="variant-block-text">${escapeHtml(v.cta)}</div>
+          </div>
+        ` : ''}
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderPhotoVariant(v, index) {
+      const hashtags = (v.hashtags || []).join(' ');
+      const blocks = [
+        { label: '🎯 Hook',                  key: 'hook',             special: true },
+        { label: '01 — Besoin / Ressentir',  key: 'besoin_ressentir' },
+        { label: '02 — Comprendre',          key: 'comprendre' },
+        { label: '03 — Guide / Ouvrir',      key: 'guide_ouvrir' },
+        { label: '04 — Rassure + Preuves',   key: 'rassure_preuves' },
+        { label: '👉 CTA',                   key: 'cta' },
+      ];
+      const blocksHtml = blocks.map(b => {
+        if (!v[b.key]) return '';
+        if (b.special) {
+          return `
+            <div class="variant-block">
+              <div class="variant-block-label">${b.label}</div>
+              <div class="variant-hook">${escapeHtml(v[b.key])}</div>
+            </div>
+          `;
+        }
+        return `
+          <div class="variant-block">
+            <div class="variant-block-label">${b.label}</div>
+            <div class="variant-block-text">${escapeHtml(v[b.key])}</div>
+          </div>
+        `;
+      }).join('');
+      return `
+        ${blocksHtml}
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderInspirationVariant(v, index) {
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">✨ Citation</div>
+          <div class="variant-citation">${escapeHtml(v.citation || '')}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Légende</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderVariantBody(format, v, index) {
+      switch (format) {
+        case 'reel':        return renderReelVariant(v, index);
+        case 'carrousel':   return renderCarrouselVariant(v, index);
+        case 'photo':       return renderPhotoVariant(v, index);
+        case 'inspiration': return renderInspirationVariant(v, index);
+        default:            return `<pre>${escapeHtml(JSON.stringify(v, null, 2))}</pre>`;
+      }
+    }
+
+    // Stockage temporaire pour le bouton "Copier" sans escape
+    window._lastVariants = [];
+
+    function renderPostsResults(format, variants) {
+      window._lastVariants = variants;
+      const container = document.getElementById('posts-results');
+
+      const formatLabels = {
+        reel: '🎬 Reel',
+        carrousel: '🎠 Carrousel',
+        photo: '📸 Photo',
+        inspiration: '✨ Inspiration',
+      };
+
+      const cards = variants.map((v, i) => `
+        <div class="variant-card">
+          <div class="variant-header">
+            <span class="variant-num">Variante ${i + 1}</span>
+            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier tout</button>
+          </div>
+          ${renderVariantBody(format, v, i)}
+          <div class="variant-actions">
+            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier ce post</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="variants-header">${formatLabels[format] || format} — <em>3 variantes</em></div>
+        ${cards}
+      `;
+    }
+
+    window.copyVariant = function(index) {
+      const v = window._lastVariants[index];
+      if (!v) return;
+      const text = variantToPlainText(selectedPostFormat, v);
+      copyToClipboard(text);
+    };
+  </script>
+
+</body>
+</html>
