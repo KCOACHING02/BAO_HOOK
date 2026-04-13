@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brille & Vibre Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8CC80;
+      --gold-pale:  #F5EDD4;
+      --gold-dark:  #9A7530;
+      --cream:      #FAF6EF;
+      --beige:      #EDE4D3;
+      --black:      #0D0D0D;
+      --text:       #3A2E24;
+      --text-light: #8C7560;
+      --border:     rgba(201,168,76,0.2);
+      --card:       #ffffff;
+      --shadow:     rgba(58,46,36,0.08);
+      --success:    #10b981;
+      --error:      #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── BACK BAR ── -->
+  <header id="back-bar"></header>
+
+  <!-- ── COVER ── -->
+  <section id="cover"></section>
+
+  <!-- ── TAB NAV ── -->
+  <nav id="tab-nav"></nav>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main id="main">
+
+    <!-- Onglet : Profil / Brand Voice -->
+    <section id="tab-profil" class="tab-panel"></section>
+
+    <!-- Onglet : Posts -->
+    <section id="tab-posts" class="tab-panel"></section>
+
+  </main>
+
+  <!-- ── TOAST CONTAINER ── -->
+  <div id="toast-container"></div>
+
+  <script>
+    // JS logic will be added section by section
+  </script>
+
+</body>
+</html>
