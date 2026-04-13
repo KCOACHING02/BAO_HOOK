@@ -535,6 +535,176 @@
       color: var(--text-light);
       font-style: italic;
     }
+
+    /* ── VARIANTS DISPLAY ── */
+    .variants-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+      margin: 24px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .variants-header em { color: var(--gold); font-style: italic; }
+
+    .variant-card {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 18px var(--shadow);
+      animation: fadeUp 0.4s ease;
+    }
+    .variant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--beige);
+    }
+    .variant-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.15);
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    .variant-block {
+      margin-bottom: 16px;
+    }
+    .variant-block:last-child { margin-bottom: 0; }
+    .variant-block-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 6px;
+    }
+    .variant-block-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .variant-hook {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--gold-dark);
+      background: rgba(201, 168, 76, 0.07);
+      border-left: 3px solid var(--gold);
+      padding: 14px 16px;
+      border-radius: 0 10px 10px 0;
+    }
+    .variant-citation {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--text);
+      text-align: center;
+      padding: 24px 16px;
+      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
+      border-radius: 12px;
+    }
+    .variant-citation::before { content: '« '; color: var(--gold); }
+    .variant-citation::after  { content: ' »'; color: var(--gold); }
+
+    .variant-overlays {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .variant-overlay-pill {
+      background: var(--cream);
+      border: 1px dashed rgba(201, 168, 76, 0.4);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .variant-overlay-pill::before {
+      content: '▸';
+      color: var(--gold);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .variant-slides {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .variant-slide {
+      background: var(--cream);
+      border: 1px solid var(--beige);
+      border-left: 3px solid var(--gold);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .variant-slide-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .variant-slide-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(201, 168, 76, 0.15);
+      padding: 3px 7px;
+      border-radius: 5px;
+    }
+    .variant-slide-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .variant-slide-text {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .variant-hashtags {
+      font-size: 13px;
+      color: var(--gold-dark);
+      line-height: 1.6;
+      word-spacing: 4px;
+      background: rgba(201, 168, 76, 0.05);
+      padding: 10px 12px;
+      border-radius: 8px;
+    }
+
+    .variant-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--beige);
+    }
   </style>
 </head>
 <body>
@@ -1131,18 +1301,277 @@
     document.getElementById('btn-generate-post').addEventListener('click', generatePost);
 
     /* ─────────────────────────────────────────
-       POSTS — Render results (placeholder, will be filled in B.2)
+       POSTS — Format-specific result rendering
        ───────────────────────────────────────── */
-    function renderPostsResults(format, variants) {
-      const container = document.getElementById('posts-results');
-      // Placeholder simple : affiche le JSON brut en attendant le rendu format-spécifique
-      container.innerHTML = `
-        <div class="card">
-          <div class="section-eyebrow">Résultat brut (rendu format-spécifique à venir)</div>
-          <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); background: var(--cream); padding: 14px; border-radius: 10px; max-height: 500px; overflow-y: auto;">${JSON.stringify(variants, null, 2).replace(/</g, '&lt;')}</pre>
+    function escapeHtml(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        if (btn) {
+          const original = btn.textContent;
+          btn.textContent = '✓ Copié';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = original;
+            btn.classList.remove('copied');
+          }, 1800);
+        }
+        showToast('✓ Copié dans le presse-papier', 'success', 1500);
+      }).catch(() => {
+        showToast('❌ Impossible de copier', 'error');
+      });
+    }
+    window.copyToClipboard = copyToClipboard;
+
+    function variantToPlainText(format, v) {
+      if (format === 'reel') {
+        return [
+          '🎬 HOOK VISUEL',
+          v.hook_visuel || '',
+          '',
+          '📜 SCRIPT',
+          v.script || '',
+          '',
+          '💬 OVERLAYS',
+          (v.overlays || []).map((o, i) => `${i + 1}. ${o}`).join('\n'),
+          '',
+          '📝 CAPTION',
+          v.caption || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'carrousel') {
+        const slides = (v.slides || []).map(s => `Slide ${s.numero} — ${s.titre}\n${s.texte}`).join('\n\n');
+        return [
+          `🎠 ${v.titre || ''}`,
+          '',
+          slides,
+          '',
+          '📝 CAPTION',
+          v.caption || '',
+          '',
+          v.cta || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'photo') {
+        return [
+          v.hook || '',
+          '',
+          v.besoin_ressentir || '',
+          '',
+          v.comprendre || '',
+          '',
+          v.guide_ouvrir || '',
+          '',
+          v.rassure_preuves || '',
+          '',
+          v.cta || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      if (format === 'inspiration') {
+        return [
+          `« ${v.citation || ''} »`,
+          '',
+          v.caption || '',
+          '',
+          (v.hashtags || []).join(' '),
+        ].join('\n');
+      }
+      return JSON.stringify(v, null, 2);
+    }
+
+    function renderReelVariant(v, index) {
+      const overlays = (v.overlays || []).map(o =>
+        `<div class="variant-overlay-pill">${escapeHtml(o)}</div>`
+      ).join('');
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">🎬 Hook visuel</div>
+          <div class="variant-hook">${escapeHtml(v.hook_visuel || '')}</div>
         </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📜 Script</div>
+          <div class="variant-block-text">${escapeHtml(v.script || '')}</div>
+        </div>
+        ${overlays ? `
+          <div class="variant-block">
+            <div class="variant-block-label">💬 Overlays vidéo</div>
+            <div class="variant-overlays">${overlays}</div>
+          </div>
+        ` : ''}
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Caption</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
       `;
     }
+
+    function renderCarrouselVariant(v, index) {
+      const slides = (v.slides || []).map(s => `
+        <div class="variant-slide">
+          <div class="variant-slide-head">
+            <span class="variant-slide-num">Slide ${escapeHtml(String(s.numero || ''))}</span>
+            <span class="variant-slide-title">${escapeHtml(s.titre || '')}</span>
+          </div>
+          <div class="variant-slide-text">${escapeHtml(s.texte || '')}</div>
+        </div>
+      `).join('');
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">🎠 Titre principal</div>
+          <div class="variant-hook">${escapeHtml(v.titre || '')}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📑 Slides (${(v.slides || []).length})</div>
+          <div class="variant-slides">${slides}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Caption</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${v.cta ? `
+          <div class="variant-block">
+            <div class="variant-block-label">👉 CTA</div>
+            <div class="variant-block-text">${escapeHtml(v.cta)}</div>
+          </div>
+        ` : ''}
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderPhotoVariant(v, index) {
+      const hashtags = (v.hashtags || []).join(' ');
+      const blocks = [
+        { label: '🎯 Hook',                  key: 'hook',             special: true },
+        { label: '01 — Besoin / Ressentir',  key: 'besoin_ressentir' },
+        { label: '02 — Comprendre',          key: 'comprendre' },
+        { label: '03 — Guide / Ouvrir',      key: 'guide_ouvrir' },
+        { label: '04 — Rassure + Preuves',   key: 'rassure_preuves' },
+        { label: '👉 CTA',                   key: 'cta' },
+      ];
+      const blocksHtml = blocks.map(b => {
+        if (!v[b.key]) return '';
+        if (b.special) {
+          return `
+            <div class="variant-block">
+              <div class="variant-block-label">${b.label}</div>
+              <div class="variant-hook">${escapeHtml(v[b.key])}</div>
+            </div>
+          `;
+        }
+        return `
+          <div class="variant-block">
+            <div class="variant-block-label">${b.label}</div>
+            <div class="variant-block-text">${escapeHtml(v[b.key])}</div>
+          </div>
+        `;
+      }).join('');
+      return `
+        ${blocksHtml}
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderInspirationVariant(v, index) {
+      const hashtags = (v.hashtags || []).join(' ');
+      return `
+        <div class="variant-block">
+          <div class="variant-block-label">✨ Citation</div>
+          <div class="variant-citation">${escapeHtml(v.citation || '')}</div>
+        </div>
+        <div class="variant-block">
+          <div class="variant-block-label">📝 Légende</div>
+          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
+        </div>
+        ${hashtags ? `
+          <div class="variant-block">
+            <div class="variant-block-label">#️⃣ Hashtags</div>
+            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    function renderVariantBody(format, v, index) {
+      switch (format) {
+        case 'reel':        return renderReelVariant(v, index);
+        case 'carrousel':   return renderCarrouselVariant(v, index);
+        case 'photo':       return renderPhotoVariant(v, index);
+        case 'inspiration': return renderInspirationVariant(v, index);
+        default:            return `<pre>${escapeHtml(JSON.stringify(v, null, 2))}</pre>`;
+      }
+    }
+
+    // Stockage temporaire pour le bouton "Copier" sans escape
+    window._lastVariants = [];
+
+    function renderPostsResults(format, variants) {
+      window._lastVariants = variants;
+      const container = document.getElementById('posts-results');
+
+      const formatLabels = {
+        reel: '🎬 Reel',
+        carrousel: '🎠 Carrousel',
+        photo: '📸 Photo',
+        inspiration: '✨ Inspiration',
+      };
+
+      const cards = variants.map((v, i) => `
+        <div class="variant-card">
+          <div class="variant-header">
+            <span class="variant-num">Variante ${i + 1}</span>
+            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier tout</button>
+          </div>
+          ${renderVariantBody(format, v, i)}
+          <div class="variant-actions">
+            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier ce post</button>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="variants-header">${formatLabels[format] || format} — <em>3 variantes</em></div>
+        ${cards}
+      `;
+    }
+
+    window.copyVariant = function(index) {
+      const v = window._lastVariants[index];
+      if (!v) return;
+      const text = variantToPlainText(selectedPostFormat, v);
+      copyToClipboard(text);
+    };
   </script>
 
 </body>
