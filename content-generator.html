@@ -647,8 +647,19 @@ async function generate(mode) {
 
     const data = await res.json();
 
+    if (res.status === 429) {
+      throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
+    }
+
     if (!res.ok) {
       throw new Error(data.error || `Erreur HTTP ${res.status}`);
+    }
+
+    // Affiche le quota restant si l'header est présent
+    const remaining = res.headers.get('X-RateLimit-Remaining');
+    const limit = res.headers.get('X-RateLimit-Limit');
+    if (remaining !== null && limit !== null) {
+      console.log(`[Brille & Vibre] Quota restant : ${remaining}/${limit}`);
     }
 
     renderResult(mode, data.result);

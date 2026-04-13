@@ -4,11 +4,19 @@
 //   mode = "hook" | "caption" | "stories"
 //
 // ENV requise sur Vercel:
-//   ANTHROPIC_API_KEY  (obligatoire)
-//   ALLOWED_ORIGINS    (optionnel, CSV — défaut: github.io + localhost + vercel.app)
-//   CLAUDE_MODEL       (optionnel — défaut: claude-sonnet-4-6)
+//   ANTHROPIC_API_KEY        (obligatoire)
+//   ALLOWED_ORIGINS          (optionnel, CSV — défaut: github.io + localhost + vercel.app)
+//   CLAUDE_MODEL             (optionnel — défaut: claude-sonnet-4-6)
+//
+// Rate limiting (optionnel — si non configuré, le rate limit est désactivé) :
+//   UPSTASH_REDIS_REST_URL   (auto-injecté par l'intégration Upstash de Vercel)
+//   UPSTASH_REDIS_REST_TOKEN (auto-injecté par l'intégration Upstash de Vercel)
+//   RATE_LIMIT_MAX           (optionnel — défaut: 20 requêtes)
+//   RATE_LIMIT_WINDOW_SEC    (optionnel — défaut: 600 secondes = 10 minutes)
 
 const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
+const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
+const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600', 10);
 
 const SYSTEM_PROMPT = `Tu es l'expert copywriter et content strategist de "Brille & Vibre", un coaching qui aide les créateurs à transformer leur contenu Instagram en impact réel et en ventes. Tu maîtrises la psychologie de la vente et le copywriting de réponse directe.
 
@@ -173,6 +181,61 @@ function clamp(s, max) {
   return s.slice(0, max);
 }
 
+function getClientIp(req) {
+  const xff = req.headers['x-forwarded-for'];
+  if (xff) return String(xff).split(',')[0].trim();
+  return req.headers['x-real-ip'] || req.socket?.remoteAddress || 'unknown';
+}
+
+// Rate limiting via Upstash Redis (REST API, zéro dépendance npm).
+// Fail-open : si Redis est indisponible ou non configuré, la requête passe.
+async function checkRateLimit(ip) {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  // Pas configuré → on désactive le rate limit (utile en dev local)
+  if (!url || !token) {
+    return { enabled: false, allowed: true };
+  }
+
+  const key = `rl:bao:${ip}`;
+
+  try {
+    const res = await fetch(`${url}/pipeline`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', key],
+        ['EXPIRE', key, String(RATE_LIMIT_WINDOW_SEC), 'NX'],
+        ['TTL', key],
+      ]),
+    });
+
+    if (!res.ok) {
+      // Fail-open en cas d'erreur Upstash
+      return { enabled: true, allowed: true, error: `upstash ${res.status}` };
+    }
+
+    const data = await res.json();
+    const count = Number(data?.[0]?.result ?? 0);
+    const ttl = Number(data?.[2]?.result ?? RATE_LIMIT_WINDOW_SEC);
+
+    return {
+      enabled: true,
+      allowed: count <= RATE_LIMIT_MAX,
+      count,
+      limit: RATE_LIMIT_MAX,
+      remaining: Math.max(0, RATE_LIMIT_MAX - count),
+      resetIn: ttl > 0 ? ttl : RATE_LIMIT_WINDOW_SEC,
+    };
+  } catch (err) {
+    return { enabled: true, allowed: true, error: err.message };
+  }
+}
+
 export default async function handler(req, res) {
   setCors(req, res);
 
@@ -184,6 +247,25 @@ export default async function handler(req, res) {
   if (!process.env.ANTHROPIC_API_KEY) {
     return res.status(500).json({
       error: "ANTHROPIC_API_KEY n'est pas configurée sur le serveur Vercel.",
+    });
+  }
+
+  // ── RATE LIMIT ──
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(ip);
+  if (rl.enabled) {
+    res.setHeader('X-RateLimit-Limit', String(rl.limit));
+    res.setHeader('X-RateLimit-Remaining', String(rl.remaining));
+    if (typeof rl.resetIn === 'number') {
+      res.setHeader('X-RateLimit-Reset', String(rl.resetIn));
+    }
+  }
+  if (!rl.allowed) {
+    res.setHeader('Retry-After', String(rl.resetIn || RATE_LIMIT_WINDOW_SEC));
+    return res.status(429).json({
+      error: `Trop de requêtes. Réessaye dans ${Math.ceil((rl.resetIn || RATE_LIMIT_WINDOW_SEC) / 60)} minutes.`,
+      limit: rl.limit,
+      window_seconds: RATE_LIMIT_WINDOW_SEC,
     });
   }
 
