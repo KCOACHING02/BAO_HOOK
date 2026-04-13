@@ -630,70 +630,54 @@ export default async function handler(req, res) {
       messages: [{ role: 'user', content: userMessage }],
     });
 
-    // Liste des modèles à essayer dans l'ordre.
-    // Si Sonnet échoue (overloaded), on tombe sur Haiku.
+    // Stratégie simple pour rester sous le timeout Vercel (30s) :
+    // Tente Sonnet une seule fois. Si fail (overloaded ou autre), bascule sur Haiku
+    // qui est plus rapide et moins saturé. Pas de retry exponentiel sur le même modèle.
     const MODELS_TO_TRY = [
-      DEFAULT_MODEL,            // claude-sonnet-4-6 par défaut
-      'claude-haiku-4-5-20251001', // fallback rapide et moins saturé
+      DEFAULT_MODEL,                  // claude-sonnet-4-6 par défaut
+      'claude-haiku-4-5-20251001',    // fallback rapide
     ];
-
-    const RETRYABLE_STATUSES = [429, 500, 502, 503, 504, 529];
-    const MAX_RETRIES_PER_MODEL = 2;
-    const BASE_DELAY_MS = 1000;
+    const RETRYABLE_STATUSES = [408, 429, 500, 502, 503, 504, 529];
 
     let apiResponse;
     let lastError;
     let modelUsed;
 
-    outer: for (const model of MODELS_TO_TRY) {
-      for (let attempt = 0; attempt <= MAX_RETRIES_PER_MODEL; attempt++) {
-        try {
-          apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'x-api-key': process.env.ANTHROPIC_API_KEY,
-              'anthropic-version': '2023-06-01',
-              'content-type': 'application/json',
-            },
-            body: buildBody(model),
-          });
+    for (const model of MODELS_TO_TRY) {
+      try {
+        apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': process.env.ANTHROPIC_API_KEY,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+          },
+          body: buildBody(model),
+        });
 
-          // Succès → on garde le modèle et on sort
-          if (apiResponse.ok) {
-            modelUsed = model;
-            break outer;
-          }
-
-          // Erreur retryable → on attend et on retente avec le même modèle
-          if (RETRYABLE_STATUSES.includes(apiResponse.status) && attempt < MAX_RETRIES_PER_MODEL) {
-            const delay = BASE_DELAY_MS * Math.pow(2, attempt); // 1s, 2s, 4s
-            console.log(`[retry] ${model} → ${apiResponse.status}, wait ${delay}ms (${attempt + 1}/${MAX_RETRIES_PER_MODEL})`);
-            await new Promise(r => setTimeout(r, delay));
-            continue;
-          }
-
-          // Erreur retryable mais on a épuisé les retries → on essaie le modèle suivant
-          if (RETRYABLE_STATUSES.includes(apiResponse.status)) {
-            console.log(`[fallback] ${model} échoué après ${MAX_RETRIES_PER_MODEL} retries, on essaie le suivant`);
-            break; // sort de la boucle interne, passe au modèle suivant
-          }
-
-          // Erreur non retryable (4xx) → on sort tout
-          break outer;
-        } catch (fetchErr) {
-          lastError = fetchErr;
-          if (attempt < MAX_RETRIES_PER_MODEL) {
-            await new Promise(r => setTimeout(r, BASE_DELAY_MS * Math.pow(2, attempt)));
-            continue;
-          }
-          // On essaie le modèle suivant
+        if (apiResponse.ok) {
+          modelUsed = model;
           break;
         }
+
+        // Erreur retryable → on essaie le modèle suivant
+        if (RETRYABLE_STATUSES.includes(apiResponse.status)) {
+          console.log(`[fallback] ${model} → HTTP ${apiResponse.status}, on essaie le modèle suivant`);
+          continue;
+        }
+
+        // Erreur non retryable (4xx auth/validation) → on sort
+        break;
+      } catch (fetchErr) {
+        console.log(`[fetch error] ${model} → ${fetchErr.message}`);
+        lastError = fetchErr;
+        // On essaie le modèle suivant
+        continue;
       }
     }
 
     if (!apiResponse) {
-      throw lastError || new Error('Aucune réponse de Claude après retries.');
+      throw lastError || new Error('Aucun modèle Claude n\'a répondu.');
     }
 
     if (!apiResponse.ok) {

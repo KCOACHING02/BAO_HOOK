@@ -682,10 +682,20 @@
           body: JSON.stringify({ mode: 'weekly_plan', audience, focus }),
         });
 
-        const data = await res.json();
+        // Lis le body brut puis essaie de parser comme JSON.
+        // Si le serveur renvoie de l'HTML (timeout, error page Vercel),
+        // on évite l'erreur cryptique de Safari et on affiche un message clair.
+        const rawText = await res.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (parseErr) {
+          const preview = rawText.slice(0, 200).replace(/\s+/g, ' ').trim();
+          throw new Error(`Le serveur n'a pas renvoyé de JSON valide (HTTP ${res.status}). Aperçu : ${preview || '(vide)'}`);
+        }
 
         if (res.status === 429) {
-          throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
+          throw new Error(data.error || 'Trop de requêtes. Réessaye dans quelques minutes.');
         }
         if (!res.ok) {
           throw new Error(data.error || `Erreur HTTP ${res.status}`);
@@ -702,7 +712,9 @@
 
       } catch (err) {
         showScreen('form');
-        showToast(`❌ ${err.message}`, 'error', 5000);
+        const msg = err && err.message ? err.message : String(err);
+        showToast(`❌ ${msg}`, 'error', 8000);
+        console.error('[Studio] Generate error:', err);
       }
     }
 
