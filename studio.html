@@ -866,7 +866,9 @@
           throw new Error(data.error || 'Trop de requêtes. Réessaye dans quelques minutes.');
         }
         if (!res.ok) {
-          throw new Error(data.error || `Erreur HTTP ${res.status}`);
+          // Affiche les détails Anthropic si disponibles (pour debugger les 400)
+          const detail = data.details ? ` — ${String(data.details).slice(0, 250)}` : '';
+          throw new Error((data.error || `Erreur HTTP ${res.status}`) + detail);
         }
 
         const plan = data?.result?.plan || [];
