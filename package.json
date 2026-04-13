@@ -1,0 +1,10 @@
+{
+  "name": "bao-hook",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Brille & Vibre — Outils de création de contenu Instagram",
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}

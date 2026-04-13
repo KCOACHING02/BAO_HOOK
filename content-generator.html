@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Contenu Instagram — Brille & Vibre</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8CC80;
+      --gold-pale:  #F5EDD4;
+      --gold-dark:  #9A7530;
+      --cream:      #FAF6EF;
+      --beige:      #EDE4D3;
+      --black:      #0D0D0D;
+      --text:       #3A2E24;
+      --text-light: #8C7560;
+      --border:     rgba(201,168,76,0.2);
+      --card:       #ffffff;
+      --shadow:     rgba(58,46,36,0.08);
+      --success:    #10b981;
+      --error:      #ef4444;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes fadeUp  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn   { 0% { transform:scale(0.96); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+    @keyframes pulse   { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+
+    /* ── BACK BAR ── */
+    .back-bar {
+      background: var(--black);
+      padding: 13px 24px;
+      display: flex; align-items: center;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 13px; font-weight: 600;
+      color: rgba(250,246,239,0.6);
+      text-decoration: none;
+      padding: 7px 13px; border-radius: 8px;
+      border: 1px solid rgba(201,168,76,0.25);
+      background: rgba(201,168,76,0.08);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover { background: rgba(201,168,76,0.18); border-color: rgba(201,168,76,0.5); color: var(--gold-light); transform: translateX(-2px); }
+    .back-btn svg { width:13px; height:13px; stroke:currentColor; flex-shrink:0; }
+
+    /* ── COVER ── */
+    .cover {
+      background: var(--black);
+      padding: 56px 24px 52px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cover::before { content:''; position:absolute; top:-80px; right:-80px; width:320px; height:320px; background:radial-gradient(circle,rgba(201,168,76,0.2) 0%,transparent 70%); pointer-events:none; }
+    .cover::after  { content:''; position:absolute; bottom:-60px; left:-60px; width:240px; height:240px; background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%); pointer-events:none; }
+
+    .logo-ring { position:relative; width:88px; height:88px; margin:0 auto 20px; }
+    .logo-ring::before { content:''; position:absolute; inset:-5px; border-radius:50%; background:conic-gradient(var(--gold),var(--gold-light),var(--gold-pale),var(--gold),var(--gold-light),var(--gold)); animation:spin 8s linear infinite; }
+    .logo-ring::after  { content:''; position:absolute; inset:-3px; border-radius:50%; background:var(--black); }
+    .logo-img { position:relative; z-index:1; width:100%; height:100%; border-radius:50%; object-fit:cover; object-position:center; display:block; }
+
+    .cover-brand { font-family:'Playfair Display',serif; font-size:12px; font-style:italic; letter-spacing:2px; color:var(--gold); margin-bottom:8px; position:relative; z-index:1; }
+    .cover-tag   { display:inline-block; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--black); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:16px; position:relative; z-index:1; }
+    .cover-title { font-family:'Playfair Display',serif; font-size:clamp(34px,8vw,60px); font-weight:900; line-height:0.95; color:var(--cream); position:relative; z-index:1; margin-bottom:8px; }
+    .cover-title em { color:var(--gold); font-style:italic; }
+    .cover-title .outline { -webkit-text-stroke:2px var(--gold); color:transparent; }
+    .cover-sub { font-size:15px; color:rgba(250,246,239,0.55); max-width:420px; margin:20px auto 0; line-height:1.65; position:relative; z-index:1; border-left:2px solid var(--gold); padding-left:14px; text-align:left; }
+
+    /* ── PAGE WRAP ── */
+    .page { max-width: 820px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    .section-eyebrow { font-size:10px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; font-family:'DM Mono',monospace; }
+    .section-title   { font-family:'Playfair Display',serif; font-size:clamp(22px,5vw,30px); font-weight:900; color:var(--text); line-height:1.2; margin-bottom:8px; }
+    .section-title em { font-style:italic; color:var(--gold); }
+    .section-body    { font-size:15px; line-height:1.7; color:var(--text-light); margin-bottom:24px; }
+    .section-divider { height:1px; background:linear-gradient(90deg,var(--gold),transparent); margin:48px 0; }
+
+    /* ── FORM ── */
+    .form-card {
+      background:var(--card);
+      border:1.5px solid var(--beige);
+      border-radius:18px;
+      padding:28px;
+      margin-bottom:24px;
+      box-shadow:0 6px 24px var(--shadow);
+    }
+    .form-grid { display:grid; gap:18px; }
+    .field-label {
+      display:block;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      color:var(--gold-dark);
+      margin-bottom:8px;
+      font-family:'DM Mono',monospace;
+    }
+    .field-input,
+    .field-textarea {
+      width:100%;
+      background:var(--cream);
+      border:1.5px solid var(--beige);
+      border-radius:10px;
+      padding:12px 14px;
+      font-family:'Space Grotesk',sans-serif;
+      font-size:14px;
+      color:var(--text);
+      transition:border-color 0.2s, background 0.2s;
+      resize:none;
+    }
+    .field-textarea { min-height:64px; }
+    .field-input:focus,
+    .field-textarea:focus { outline:none; border-color:var(--gold); background:#fff; }
+    .field-input::placeholder,
+    .field-textarea::placeholder { color:var(--text-light); }
+
+    .field-row { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    @media (max-width:600px) { .field-row { grid-template-columns:1fr; } }
+
+    /* ── ACTION BUTTONS ── */
+    .actions-row {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-bottom:32px;
+    }
+    @media (max-width:700px) { .actions-row { grid-template-columns:1fr; } }
+
+    .action-btn {
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      padding:18px 14px;
+      background:linear-gradient(135deg,var(--gold),var(--gold-light));
+      color:var(--black);
+      border:none;
+      border-radius:14px;
+      font-family:'Space Grotesk',sans-serif;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.2s;
+      box-shadow:0 4px 16px rgba(201,168,76,0.25);
+      text-align:center;
+    }
+    .action-btn:hover:not(:disabled) {
+      transform:translateY(-2px);
+      box-shadow:0 6px 22px rgba(201,168,76,0.4);
+    }
+    .action-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .action-btn .icon { font-size:22px; }
+    .action-btn .label { font-size:13px; font-weight:700; }
+    .action-btn .sub { font-size:10px; font-weight:500; opacity:0.75; letter-spacing:0.5px; }
+
+    /* ── LOADING ── */
+    .loading {
+      display:none;
+      text-align:center;
+      padding:32px 20px;
+      background:var(--card);
+      border:1.5px solid var(--beige);
+      border-radius:14px;
+      margin-bottom:20px;
+    }
+    .loading.visible { display:block; animation:fadeUp 0.3s ease; }
+    .loading-dots { display:inline-flex; gap:6px; margin-bottom:12px; }
+    .loading-dots span {
+      width:10px; height:10px;
+      border-radius:50%;
+      background:var(--gold);
+      animation:pulse 1.2s ease infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay:0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay:0.4s; }
+    .loading-text {
+      font-size:13px;
+      color:var(--text-light);
+      font-style:italic;
+    }
+
+    /* ── ERROR ── */
+    .error-box {
+      display:none;
+      background:#fef2f2;
+      border:1.5px solid #fca5a5;
+      border-left:4px solid var(--error);
+      border-radius:12px;
+      padding:16px 18px;
+      margin-bottom:20px;
+      color:#991b1b;
+      font-size:13px;
+      line-height:1.6;
+    }
+    .error-box.visible { display:block; animation:fadeUp 0.3s ease; }
+    .error-box strong { display:block; margin-bottom:4px; font-size:12px; text-transform:uppercase; letter-spacing:1px; }
+
+    /* ── RESULTS ── */
+    .results { display:none; }
+    .results.visible { display:block; animation:popIn 0.4s ease; }
+
+    .result-section {
+      background:var(--card);
+      border:1.5px solid var(--beige);
+      border-radius:16px;
+      padding:24px;
+      margin-bottom:18px;
+      box-shadow:0 4px 18px var(--shadow);
+    }
+    .result-header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+      padding-bottom:12px;
+      border-bottom:1px solid var(--beige);
+    }
+    .result-tag {
+      font-family:'DM Mono',monospace;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold);
+      background:rgba(201,168,76,0.12);
+      padding:4px 10px;
+      border-radius:6px;
+    }
+    .result-title {
+      font-family:'Playfair Display',serif;
+      font-size:18px;
+      font-weight:700;
+      color:var(--text);
+      flex:1;
+    }
+    .copy-btn {
+      background:rgba(201,168,76,0.1);
+      border:1px solid rgba(201,168,76,0.35);
+      color:var(--gold-dark);
+      padding:6px 12px;
+      border-radius:8px;
+      font-family:inherit;
+      font-size:11px;
+      font-weight:700;
+      cursor:pointer;
+      transition:all 0.2s;
+      flex-shrink:0;
+      white-space:nowrap;
+    }
+    .copy-btn:hover { background:var(--gold); color:var(--black); border-color:var(--gold); }
+    .copy-btn.copied { background:var(--success); color:white; border-color:var(--success); }
+
+    .result-body {
+      font-size:14px;
+      line-height:1.75;
+      color:var(--text);
+      white-space:pre-wrap;
+    }
+    .result-body strong { color:var(--gold-dark); }
+
+    /* Hook list */
+    .hook-item {
+      background:var(--cream);
+      border:1px dashed rgba(201,168,76,0.4);
+      border-radius:10px;
+      padding:14px 16px;
+      margin-bottom:10px;
+    }
+    .hook-item:last-child { margin-bottom:0; }
+    .hook-item-head {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .hook-item-type {
+      font-family:'DM Mono',monospace;
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      color:var(--gold);
+      background:rgba(201,168,76,0.15);
+      padding:3px 8px;
+      border-radius:5px;
+    }
+    .hook-item-text {
+      font-family:'Playfair Display',serif;
+      font-size:16px;
+      font-style:italic;
+      color:var(--text);
+      line-height:1.5;
+      margin-bottom:8px;
+    }
+    .hook-item-why {
+      font-size:12px;
+      color:var(--text-light);
+      line-height:1.55;
+      padding-top:6px;
+      border-top:1px solid rgba(201,168,76,0.18);
+    }
+    .hook-item-actions {
+      margin-top:10px;
+    }
+
+    /* Caption blocks */
+    .caption-block {
+      margin-bottom:14px;
+      padding-bottom:14px;
+      border-bottom:1px dashed rgba(201,168,76,0.25);
+    }
+    .caption-block:last-child { border-bottom:none; padding-bottom:0; margin-bottom:0; }
+    .caption-block-label {
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-bottom:6px;
+      font-family:'DM Mono',monospace;
+    }
+    .caption-block-text {
+      font-size:14px;
+      line-height:1.7;
+      color:var(--text);
+      white-space:pre-wrap;
+    }
+    .caption-hashtags {
+      font-size:13px;
+      color:var(--gold-dark);
+      line-height:1.6;
+      word-spacing:4px;
+    }
+
+    /* Stories */
+    .story-card {
+      background:var(--cream);
+      border:1.5px solid var(--beige);
+      border-left:4px solid var(--gold);
+      border-radius:12px;
+      padding:16px 18px;
+      margin-bottom:12px;
+    }
+    .story-head {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:8px;
+      margin-bottom:10px;
+    }
+    .story-num {
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      font-weight:700;
+      color:var(--gold);
+      background:rgba(201,168,76,0.15);
+      padding:4px 8px;
+      border-radius:5px;
+    }
+    .story-pill {
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      padding:3px 8px;
+      border-radius:10px;
+      background:rgba(58,46,36,0.08);
+      color:var(--text);
+    }
+    .story-pill.aida { background:rgba(201,168,76,0.18); color:var(--gold-dark); }
+    .story-pill.psy  { background:rgba(16,185,129,0.12); color:#047857; }
+    .story-pill.timing { background:rgba(0,0,0,0.06); color:var(--text-light); }
+    .story-title {
+      font-family:'Playfair Display',serif;
+      font-size:15px;
+      font-weight:700;
+      color:var(--text);
+      margin-bottom:6px;
+    }
+    .story-content {
+      font-size:13px;
+      line-height:1.65;
+      color:var(--text);
+      background:#fff;
+      border:1px solid var(--beige);
+      border-radius:8px;
+      padding:10px 12px;
+      margin-bottom:8px;
+      white-space:pre-wrap;
+    }
+    .story-meta {
+      font-size:11px;
+      color:var(--text-light);
+      line-height:1.55;
+    }
+    .story-meta div { margin-bottom:3px; }
+    .story-meta strong { color:var(--gold-dark); font-weight:700; }
+
+    /* ── CONFIG / NOTE ── */
+    .config-note {
+      font-size:11px;
+      color:var(--text-light);
+      line-height:1.55;
+      padding:12px 14px;
+      background:rgba(201,168,76,0.06);
+      border-left:3px solid var(--gold);
+      border-radius:6px;
+      margin-bottom:24px;
+    }
+    .config-note code {
+      background:rgba(0,0,0,0.06);
+      padding:1px 5px;
+      border-radius:3px;
+      font-family:'DM Mono',monospace;
+      font-size:10px;
+      color:var(--gold-dark);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BACK BAR ── -->
+<div class="back-bar">
+  <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Retour aux Hooks
+  </a>
+</div>
+
+<!-- ── COVER ── -->
+<div class="cover">
+  <div class="logo-ring">
+    <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
+  </div>
+  <p class="cover-brand">Brille &amp; Vibre</p>
+  <div class="cover-tag">Outil · Génération de contenu</div>
+  <div class="cover-title">
+    Ton Contenu<br>
+    <em>Instagram</em><br>
+    <span class="outline">Généré</span>
+  </div>
+  <p class="cover-sub">Hook, légende complète et plan de stories — propulsés par Claude AI et la psychologie de la vente.</p>
+</div>
+
+<!-- ── PAGE ── -->
+<div class="page">
+
+  <div class="section-eyebrow">01 — Brief</div>
+  <div class="section-title">Décris ton<br><em>contexte</em></div>
+  <div class="section-body">Plus tu donnes de contexte précis, plus le contenu généré sera percutant. Le sujet est obligatoire, les autres champs sont fortement recommandés.</div>
+
+  <!-- ── FORM ── -->
+  <div class="form-card">
+    <div class="form-grid">
+
+      <div>
+        <label class="field-label" for="f-sujet">Sujet / Thème <span style="color:var(--error)">*</span></label>
+        <input id="f-sujet" class="field-input" type="text" placeholder="Ex : créer du contenu qui vend sans avoir des milliers d'abonnés">
+      </div>
+
+      <div>
+        <label class="field-label" for="f-audience">Audience cible</label>
+        <input id="f-audience" class="field-input" type="text" placeholder="Ex : femmes coachs/entrepreneures qui débutent sur Instagram">
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="f-douleur">Douleur principale</label>
+          <textarea id="f-douleur" class="field-textarea" placeholder="Ex : poste tous les jours sans aucun retour, sentiment d'invisibilité"></textarea>
+        </div>
+        <div>
+          <label class="field-label" for="f-transformation">Transformation promise</label>
+          <textarea id="f-transformation" class="field-textarea" placeholder="Ex : créer 3 contenus par semaine qui attirent les bons clients"></textarea>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div>
+          <label class="field-label" for="f-preuve">Preuve / Résultat concret</label>
+          <textarea id="f-preuve" class="field-textarea" placeholder="Ex : 12 clientes accompagnées en 6 mois, +40 % d'engagement"></textarea>
+        </div>
+        <div>
+          <label class="field-label" for="f-ton">Ton souhaité</label>
+          <input id="f-ton" class="field-input" type="text" placeholder="Ex : élégant, direct, inspirant, sans jargon">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ACTIONS ── -->
+  <div class="section-eyebrow">02 — Génération</div>
+  <div class="section-title">Choisis ce que<br><em>tu veux générer</em></div>
+  <div class="section-body">3 modes disponibles. Tu peux les enchaîner. Chaque génération prend 5 à 15 secondes selon la longueur.</div>
+
+  <div class="actions-row">
+    <button class="action-btn" id="btn-hook" onclick="generate('hook')">
+      <span class="icon">🎯</span>
+      <span class="label">5 Hooks</span>
+      <span class="sub">Variantes prêtes</span>
+    </button>
+    <button class="action-btn" id="btn-caption" onclick="generate('caption')">
+      <span class="icon">📝</span>
+      <span class="label">Légende complète</span>
+      <span class="sub">Framework 4 colonnes</span>
+    </button>
+    <button class="action-btn" id="btn-stories" onclick="generate('stories')">
+      <span class="icon">📱</span>
+      <span class="label">Plan de Stories</span>
+      <span class="sub">7 stories AIDA</span>
+    </button>
+  </div>
+
+  <!-- ── LOADING ── -->
+  <div class="loading" id="loading">
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+    <div class="loading-text" id="loading-text">Claude rédige ton contenu...</div>
+  </div>
+
+  <!-- ── ERROR ── -->
+  <div class="error-box" id="error-box">
+    <strong>Erreur</strong>
+    <span id="error-text"></span>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div class="results" id="results"></div>
+
+  <div class="config-note">
+    <strong style="color:var(--gold-dark);font-size:10px;letter-spacing:1.5px;">⚙ CONFIG</strong><br>
+    Cette page appelle l'endpoint <code>/api/generate</code> (déployé sur Vercel). Si ta page est servie depuis un domaine différent (ex : GitHub Pages), modifie la constante <code>API_BASE</code> en haut du script ci-dessous pour pointer vers ton URL Vercel.
+  </div>
+
+</div>
+
+<script>
+/* ── CONFIG ──
+ * Si la page est servie par Vercel : laisse '' (chemin relatif → /api/generate).
+ * Si la page est servie par GitHub Pages ou autre : mets l'URL complète de ton déploiement Vercel.
+ *   Ex : 'https://brille-vibre.vercel.app'
+ */
+const API_BASE = '';
+
+const els = {
+  sujet:          document.getElementById('f-sujet'),
+  audience:       document.getElementById('f-audience'),
+  douleur:        document.getElementById('f-douleur'),
+  transformation: document.getElementById('f-transformation'),
+  preuve:         document.getElementById('f-preuve'),
+  ton:            document.getElementById('f-ton'),
+  loading:        document.getElementById('loading'),
+  loadingText:    document.getElementById('loading-text'),
+  errorBox:       document.getElementById('error-box'),
+  errorText:      document.getElementById('error-text'),
+  results:        document.getElementById('results'),
+  btnHook:        document.getElementById('btn-hook'),
+  btnCaption:     document.getElementById('btn-caption'),
+  btnStories:     document.getElementById('btn-stories'),
+};
+
+const LOADING_MESSAGES = {
+  hook:    'Claude cherche les meilleures accroches...',
+  caption: 'Claude rédige ta légende avec le framework 4 colonnes...',
+  stories: 'Claude construit ton parcours de 7 stories...',
+};
+
+function setLoading(mode, isLoading) {
+  if (isLoading) {
+    els.loadingText.textContent = LOADING_MESSAGES[mode] || 'Génération en cours...';
+    els.loading.classList.add('visible');
+    els.errorBox.classList.remove('visible');
+    [els.btnHook, els.btnCaption, els.btnStories].forEach(b => b.disabled = true);
+  } else {
+    els.loading.classList.remove('visible');
+    [els.btnHook, els.btnCaption, els.btnStories].forEach(b => b.disabled = false);
+  }
+}
+
+function showError(msg) {
+  els.errorText.textContent = msg;
+  els.errorBox.classList.add('visible');
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copié';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = original;
+    }, 1800);
+  });
+}
+
+// Expose globally for inline onclick
+window.copyText = copyText;
+
+async function generate(mode) {
+  const sujet = els.sujet.value.trim();
+  if (!sujet) {
+    showError('Le champ "Sujet / Thème" est obligatoire.');
+    els.sujet.focus();
+    return;
+  }
+
+  setLoading(mode, true);
+
+  const payload = {
+    mode,
+    sujet,
+    audience:       els.audience.value.trim(),
+    douleur:        els.douleur.value.trim(),
+    transformation: els.transformation.value.trim(),
+    preuve:         els.preuve.value.trim(),
+    ton:            els.ton.value.trim(),
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || `Erreur HTTP ${res.status}`);
+    }
+
+    renderResult(mode, data.result);
+  } catch (err) {
+    showError(err.message || 'Erreur inconnue.');
+  } finally {
+    setLoading(mode, false);
+  }
+}
+
+window.generate = generate;
+
+function renderResult(mode, result) {
+  els.results.classList.add('visible');
+
+  // Insert at top so latest is first
+  const section = document.createElement('div');
+
+  if (mode === 'hook') {
+    section.innerHTML = renderHooks(result);
+  } else if (mode === 'caption') {
+    section.innerHTML = renderCaption(result);
+  } else if (mode === 'stories') {
+    section.innerHTML = renderStories(result);
+  }
+
+  els.results.insertBefore(section, els.results.firstChild);
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderHooks(result) {
+  const hooks = result.hooks || [];
+  const items = hooks.map((h, i) => {
+    const safeText = escapeHtml(h.texte || '');
+    return `
+      <div class="hook-item">
+        <div class="hook-item-head">
+          <span class="hook-item-type">${escapeHtml(h.type || `Hook ${i+1}`)}</span>
+        </div>
+        <div class="hook-item-text">${safeText}</div>
+        ${h.pourquoi ? `<div class="hook-item-why">${escapeHtml(h.pourquoi)}</div>` : ''}
+        <div class="hook-item-actions">
+          <button class="copy-btn" onclick="copyText(${JSON.stringify(h.texte || '')}, this)">Copier</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="result-section">
+      <div class="result-header">
+        <span class="result-tag">Hooks</span>
+        <div class="result-title">5 variantes générées</div>
+      </div>
+      ${items || '<div class="result-body">Aucun hook généré.</div>'}
+    </div>
+  `;
+}
+
+function renderCaption(result) {
+  const blocks = [
+    { label: '00 — Hook',                    key: 'hook' },
+    { label: '01 — Besoin / Ressentir',      key: 'besoin_ressentir' },
+    { label: '02 — Comprendre',              key: 'comprendre' },
+    { label: '03 — Guide / Ouvrir',          key: 'guide_ouvrir' },
+    { label: '04 — Rassure + Preuves',       key: 'rassure_preuves' },
+    { label: '05 — CTA',                     key: 'cta' },
+  ];
+
+  const blocksHtml = blocks.map(b => {
+    const text = result[b.key] || '';
+    return `
+      <div class="caption-block">
+        <div class="caption-block-label">${b.label}</div>
+        <div class="caption-block-text">${escapeHtml(text)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const hashtags = (result.hashtags || []).join(' ');
+
+  // Full caption text for one-click copy
+  const fullCaption = [
+    result.hook,
+    '',
+    result.besoin_ressentir,
+    '',
+    result.comprendre,
+    '',
+    result.guide_ouvrir,
+    '',
+    result.rassure_preuves,
+    '',
+    result.cta,
+    '',
+    hashtags,
+  ].filter(s => s !== undefined).join('\n');
+
+  return `
+    <div class="result-section">
+      <div class="result-header">
+        <span class="result-tag">Légende</span>
+        <div class="result-title">Framework 4 colonnes</div>
+        <button class="copy-btn" onclick='copyText(${JSON.stringify(fullCaption)}, this)'>Copier tout</button>
+      </div>
+      ${blocksHtml}
+      ${hashtags ? `
+        <div class="caption-block">
+          <div class="caption-block-label">06 — Hashtags</div>
+          <div class="caption-hashtags">${escapeHtml(hashtags)}</div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderStories(result) {
+  const stories = result.stories || [];
+  const items = stories.map(s => {
+    const lines = [
+      s.contenu     ? `📝 ${s.contenu}` : '',
+      s.visuel_suggere ? `Visuel : ${s.visuel_suggere}` : '',
+      s.cta         ? `CTA : ${s.cta}` : '',
+      s.objectif    ? `Objectif : ${s.objectif}` : '',
+    ].filter(Boolean).join('\n');
+
+    return `
+      <div class="story-card">
+        <div class="story-head">
+          <span class="story-num">Story ${escapeHtml(String(s.numero || ''))}</span>
+          ${s.etape_aida ? `<span class="story-pill aida">${escapeHtml(s.etape_aida)}</span>` : ''}
+          ${s.levier_psy ? `<span class="story-pill psy">${escapeHtml(s.levier_psy)}</span>` : ''}
+          ${s.timing_suggere ? `<span class="story-pill timing">${escapeHtml(s.timing_suggere)}</span>` : ''}
+        </div>
+        ${s.titre ? `<div class="story-title">${escapeHtml(s.titre)}</div>` : ''}
+        ${s.contenu ? `<div class="story-content">${escapeHtml(s.contenu)}</div>` : ''}
+        <div class="story-meta">
+          ${s.visuel_suggere ? `<div><strong>Visuel :</strong> ${escapeHtml(s.visuel_suggere)}</div>` : ''}
+          ${s.cta ? `<div><strong>CTA :</strong> ${escapeHtml(s.cta)}</div>` : ''}
+          ${s.objectif ? `<div><strong>Objectif :</strong> ${escapeHtml(s.objectif)}</div>` : ''}
+        </div>
+        <div style="margin-top:10px">
+          <button class="copy-btn" onclick='copyText(${JSON.stringify(lines)}, this)'>Copier cette story</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="result-section">
+      <div class="result-header">
+        <span class="result-tag">Stories</span>
+        <div class="result-title">Plan de 7 stories AIDA + Cialdini</div>
+      </div>
+      ${items || '<div class="result-body">Aucune story générée.</div>'}
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
