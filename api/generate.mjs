@@ -611,37 +611,98 @@ export default async function handler(req, res) {
   }
 
   try {
-    const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: DEFAULT_MODEL,
-        max_tokens: maxTokens,
-        system: [
-          // Bloc 1 — méthodes/règles statiques (cacheable, ~700 mots)
-          {
-            type: 'text',
-            text: SYSTEM_PROMPT,
-            cache_control: { type: 'ephemeral' },
-          },
-          // Bloc 2 — profil utilisateur dynamique (non caché car varie par user)
-          ...(profile ? [{
-            type: 'text',
-            text: formatProfile(profile),
-          }] : []),
-        ],
-        messages: [{ role: 'user', content: userMessage }],
-      }),
+    const buildBody = (model) => JSON.stringify({
+      model,
+      max_tokens: maxTokens,
+      system: [
+        // Bloc 1 — méthodes/règles statiques (cacheable, ~700 mots)
+        {
+          type: 'text',
+          text: SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' },
+        },
+        // Bloc 2 — profil utilisateur dynamique (non caché car varie par user)
+        ...(profile ? [{
+          type: 'text',
+          text: formatProfile(profile),
+        }] : []),
+      ],
+      messages: [{ role: 'user', content: userMessage }],
     });
+
+    // Liste des modèles à essayer dans l'ordre.
+    // Si Sonnet échoue (overloaded), on tombe sur Haiku.
+    const MODELS_TO_TRY = [
+      DEFAULT_MODEL,            // claude-sonnet-4-6 par défaut
+      'claude-haiku-4-5-20251001', // fallback rapide et moins saturé
+    ];
+
+    const RETRYABLE_STATUSES = [429, 500, 502, 503, 504, 529];
+    const MAX_RETRIES_PER_MODEL = 2;
+    const BASE_DELAY_MS = 1000;
+
+    let apiResponse;
+    let lastError;
+    let modelUsed;
+
+    outer: for (const model of MODELS_TO_TRY) {
+      for (let attempt = 0; attempt <= MAX_RETRIES_PER_MODEL; attempt++) {
+        try {
+          apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'x-api-key': process.env.ANTHROPIC_API_KEY,
+              'anthropic-version': '2023-06-01',
+              'content-type': 'application/json',
+            },
+            body: buildBody(model),
+          });
+
+          // Succès → on garde le modèle et on sort
+          if (apiResponse.ok) {
+            modelUsed = model;
+            break outer;
+          }
+
+          // Erreur retryable → on attend et on retente avec le même modèle
+          if (RETRYABLE_STATUSES.includes(apiResponse.status) && attempt < MAX_RETRIES_PER_MODEL) {
+            const delay = BASE_DELAY_MS * Math.pow(2, attempt); // 1s, 2s, 4s
+            console.log(`[retry] ${model} → ${apiResponse.status}, wait ${delay}ms (${attempt + 1}/${MAX_RETRIES_PER_MODEL})`);
+            await new Promise(r => setTimeout(r, delay));
+            continue;
+          }
+
+          // Erreur retryable mais on a épuisé les retries → on essaie le modèle suivant
+          if (RETRYABLE_STATUSES.includes(apiResponse.status)) {
+            console.log(`[fallback] ${model} échoué après ${MAX_RETRIES_PER_MODEL} retries, on essaie le suivant`);
+            break; // sort de la boucle interne, passe au modèle suivant
+          }
+
+          // Erreur non retryable (4xx) → on sort tout
+          break outer;
+        } catch (fetchErr) {
+          lastError = fetchErr;
+          if (attempt < MAX_RETRIES_PER_MODEL) {
+            await new Promise(r => setTimeout(r, BASE_DELAY_MS * Math.pow(2, attempt)));
+            continue;
+          }
+          // On essaie le modèle suivant
+          break;
+        }
+      }
+    }
+
+    if (!apiResponse) {
+      throw lastError || new Error('Aucune réponse de Claude après retries.');
+    }
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
+      const friendlyMessage = apiResponse.status === 529
+        ? 'Les serveurs Claude sont saturés en ce moment. Réessaye dans 2-3 minutes.'
+        : `Erreur API Claude (${apiResponse.status})`;
       return res.status(apiResponse.status).json({
-        error: `Erreur API Claude (${apiResponse.status})`,
+        error: friendlyMessage,
         details: errText,
       });
     }
