@@ -21,7 +21,9 @@
 //   RATE_LIMIT_MAX           (optionnel — défaut: 20 requêtes)
 //   RATE_LIMIT_WINDOW_SEC    (optionnel — défaut: 600 secondes = 10 minutes)
 
-const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
+// Par défaut : Haiku 4.5 — rapide (5-10s), moins saturé, parfait pour la
+// génération structurée de planning. Override possible via env var CLAUDE_MODEL.
+const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
 const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
 const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600', 10);
 
@@ -630,12 +632,10 @@ export default async function handler(req, res) {
       messages: [{ role: 'user', content: userMessage }],
     });
 
-    // Stratégie simple pour rester sous le timeout Vercel (30s) :
-    // Tente Sonnet une seule fois. Si fail (overloaded ou autre), bascule sur Haiku
-    // qui est plus rapide et moins saturé. Pas de retry exponentiel sur le même modèle.
+    // Stratégie simple et robuste : Haiku 4.5 uniquement (5-10s par appel).
+    // Optionnel : si tu veux Sonnet pour plus de qualité, ajoute-le dans la liste.
     const MODELS_TO_TRY = [
-      DEFAULT_MODEL,                  // claude-sonnet-4-6 par défaut
-      'claude-haiku-4-5-20251001',    // fallback rapide
+      DEFAULT_MODEL,                  // claude-haiku-4-5-20251001 par défaut
     ];
     const RETRYABLE_STATUSES = [408, 429, 500, 502, 503, 504, 529];
 
