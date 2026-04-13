@@ -506,6 +506,35 @@
       color: var(--text-light);
       line-height: 1.4;
     }
+
+    /* ── LOADING ── */
+    .loading-card {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .loading-dots {
+      display: inline-flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .loading-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: pulse 1.2s ease infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-text {
+      font-size: 14px;
+      color: var(--text-light);
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -994,6 +1023,126 @@
       if (stored) writeProfileToForm(stored);
       updateProfileBadge();
     })();
+
+    /* ─────────────────────────────────────────
+       POSTS — Format selection + API call
+       ───────────────────────────────────────── */
+    let selectedPostFormat = 'reel';
+
+    document.querySelectorAll('#tab-posts .format-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('#tab-posts .format-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedPostFormat = card.dataset.format;
+      });
+    });
+
+    function showPostsLoading(show) {
+      const loading = document.getElementById('posts-loading');
+      const btn = document.getElementById('btn-generate-post');
+      if (show) {
+        loading.style.display = 'block';
+        loading.innerHTML = `
+          <div class="loading-card">
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+            <div class="loading-text">Claude génère 3 variantes de ton ${selectedPostFormat}...</div>
+          </div>
+        `;
+        btn.disabled = true;
+      } else {
+        loading.style.display = 'none';
+        loading.innerHTML = '';
+        btn.disabled = false;
+      }
+    }
+
+    async function generatePost() {
+      // 1. Vérifier le profil
+      const profile = getStoredProfile();
+      if (!isProfileComplete(profile)) {
+        showToast('⚠ Remplis d\'abord ton profil (au minimum nom, niche, audience, offres)', 'error', 4500);
+        switchTab('profil');
+        return;
+      }
+
+      // 2. Vérifier le sujet
+      const sujet = document.getElementById('post-sujet').value.trim();
+      if (!sujet) {
+        showToast('⚠ Décris d\'abord le sujet de ton post', 'error');
+        document.getElementById('post-sujet').focus();
+        return;
+      }
+
+      // 3. Construire le payload
+      const payload = {
+        mode: 'post',
+        format: selectedPostFormat,
+        sujet,
+        options: {
+          objectif: document.getElementById('post-objectif').value || '',
+          longueur: document.getElementById('post-longueur').value || 'moyenne',
+          angle:    document.getElementById('post-angle').value.trim(),
+        },
+        profile,
+      };
+
+      // 4. Vider les résultats précédents et lancer le loader
+      document.getElementById('posts-results').innerHTML = '';
+      showPostsLoading(true);
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 429) {
+          throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
+        }
+        if (!res.ok) {
+          throw new Error(data.error || `Erreur HTTP ${res.status}`);
+        }
+
+        // Quota restant en console
+        const remaining = res.headers.get('X-RateLimit-Remaining');
+        const limit = res.headers.get('X-RateLimit-Limit');
+        if (remaining !== null && limit !== null) {
+          console.log(`[Studio] Quota restant : ${remaining}/${limit}`);
+        }
+
+        const variants = data?.result?.variants || [];
+        if (!variants.length) {
+          throw new Error('Aucune variante reçue de Claude.');
+        }
+
+        renderPostsResults(selectedPostFormat, variants);
+        showToast(`✓ ${variants.length} variantes générées`, 'success');
+
+      } catch (err) {
+        showToast(`❌ ${err.message}`, 'error', 5000);
+      } finally {
+        showPostsLoading(false);
+      }
+    }
+
+    document.getElementById('btn-generate-post').addEventListener('click', generatePost);
+
+    /* ─────────────────────────────────────────
+       POSTS — Render results (placeholder, will be filled in B.2)
+       ───────────────────────────────────────── */
+    function renderPostsResults(format, variants) {
+      const container = document.getElementById('posts-results');
+      // Placeholder simple : affiche le JSON brut en attendant le rendu format-spécifique
+      container.innerHTML = `
+        <div class="card">
+          <div class="section-eyebrow">Résultat brut (rendu format-spécifique à venir)</div>
+          <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); background: var(--cream); padding: 14px; border-radius: 10px; max-height: 500px; overflow-y: auto;">${JSON.stringify(variants, null, 2).replace(/</g, '&lt;')}</pre>
+        </div>
+      `;
+    }
   </script>
 
 </body>
