@@ -697,10 +697,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
   }
 
-  // ── Construction du message Claude ──
+  // ── Construction du message ──
   const userMessage = buildWeeklyPlanMessage(audience, focus, format);
 
-  // ── Appel API Claude ──
+  // ── Appel API ──
   try {
     const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -733,8 +733,8 @@ export default async function handler(req, res) {
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
       const friendlyMessage = apiResponse.status === 529
-        ? 'Les serveurs Claude sont saturés en ce moment. Réessaye dans 1-2 minutes.'
-        : `Erreur API Claude (${apiResponse.status})`;
+        ? 'Les serveurs sont saturés en ce moment. Réessaye dans 1-2 minutes.'
+        : `Erreur API (${apiResponse.status})`;
       return res.status(apiResponse.status).json({
         error: friendlyMessage,
         details: errText.slice(0, 500),
@@ -776,7 +776,7 @@ export default async function handler(req, res) {
 
     if (!parsed) {
       return res.status(502).json({
-        error: 'Réponse Claude non parsable en JSON.',
+        error: 'Réponse non parsable en JSON.',
         raw: text.slice(0, 800),
       });
     }
@@ -790,7 +790,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     return res.status(500).json({
-      error: 'Erreur serveur lors de l\'appel à Claude.',
+      error: 'Erreur serveur lors de la génération.',
       details: err.message,
     });
   }

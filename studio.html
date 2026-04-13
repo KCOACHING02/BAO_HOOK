@@ -498,7 +498,7 @@
     <!-- ─────── SCREEN 0 — CHOIX FORMAT ─────── -->
     <div id="screen-choice" class="screen active">
       <h2 class="choice-title">Qu'est-ce que tu veux <em>créer</em> ?</h2>
-      <p class="choice-sub">Chaque format a sa propre approche. Choisis pour que Claude adapte ses hooks, rythme et structure.</p>
+      <p class="choice-sub">Chaque format a sa propre approche. Choisis pour que Brille &amp; Vibre adapte ses hooks, rythme et structure.</p>
       <div class="choice-grid">
         <div class="choice-card" data-format="story">
           <div class="choice-icon">📱</div>
@@ -518,7 +518,7 @@
       <div class="form-card">
         <span id="format-indicator" class="format-indicator">← 📱 Stories · Changer</span>
         <h2 class="form-title">Dis-moi 2 choses et je te <em>génère ta semaine</em></h2>
-        <p class="form-intro">Claude appliquera la méthode Brille &amp; Vibre (4 axes croisés + catalogue des 125 templates) pour que tes contenus sonnent naturels et respectent ton style.</p>
+        <p class="form-intro">Brille &amp; Vibre applique sa méthode (4 axes croisés + catalogue des 125 templates) pour que tes contenus sonnent naturels et respectent ton style.</p>
 
         <div class="field">
           <label class="field-label" for="audience">À qui tu parles ?</label>
@@ -540,7 +540,7 @@
     <div id="screen-loading" class="screen">
       <div class="loading-card">
         <div class="loading-dots"><span></span><span></span><span></span></div>
-        <div class="loading-text" id="loading-text">Claude orchestre ta semaine...</div>
+        <div class="loading-text" id="loading-text">Brille &amp; Vibre orchestre ta semaine...</div>
         <div class="loading-sub">Cela prend généralement 10 à 30 secondes.</div>
       </div>
     </div>
@@ -825,8 +825,8 @@
       const loadingText = document.getElementById('loading-text');
       if (loadingText) {
         loadingText.textContent = currentFormat === 'story'
-          ? 'Claude écrit tes 7 stories...'
-          : 'Claude écrit tes 7 reels...';
+          ? 'Brille & Vibre écrit tes 7 stories...'
+          : 'Brille & Vibre écrit tes 7 reels...';
       }
       // Adapter le header des résultats
       const resultsEyebrow = document.getElementById('results-eyebrow');
@@ -873,7 +873,7 @@
 
         const plan = data?.result?.plan || [];
         if (!plan.length) {
-          throw new Error('Aucun planning reçu de Claude.');
+          throw new Error('Aucun planning reçu.');
         }
 
         renderPlan(plan);
