@@ -505,7 +505,162 @@
   <main id="main">
 
     <!-- Onglet : Profil / Brand Voice -->
-    <section id="tab-profil" class="tab-panel active"></section>
+    <section id="tab-profil" class="tab-panel active">
+      <div class="page">
+
+        <div class="section-eyebrow">Brand Voice</div>
+        <div class="section-title">Ton profil <em>permanent</em></div>
+        <div class="section-body">
+          Remplis ces champs <strong>une seule fois</strong>. Ils seront utilisés automatiquement par tous les modules de génération (posts, hooks, stories) pour que Claude écrive avec ta voix, pour ton audience, sur tes offres.
+        </div>
+
+        <!-- ── Carte 1 — Ta marque ── -->
+        <div class="card">
+          <div class="section-eyebrow">01 — Ta marque</div>
+
+          <div class="field">
+            <label class="field-label" for="p-nom">Nom de marque</label>
+            <input id="p-nom" type="text" class="field-input" placeholder="Ex : Brille & Vibre">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-niche">Niche / Domaine</label>
+            <input id="p-niche" type="text" class="field-input" placeholder="Ex : coaching pour créatrices de contenu Instagram">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mission">Mission / Promesse</label>
+            <textarea id="p-mission" class="field-textarea" placeholder="Ex : aider les femmes entrepreneures à transformer leur contenu en impact réel et en clientes"></textarea>
+            <div class="field-hint">Une phrase qui résume pourquoi ta marque existe.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 2 — Ton audience ── -->
+        <div class="card">
+          <div class="section-eyebrow">02 — Ton audience</div>
+
+          <div class="field">
+            <label class="field-label" for="p-audience">Qui est ton audience ?</label>
+            <textarea id="p-audience" class="field-textarea" placeholder="Ex : femmes coachs/entrepreneures de 25-45 ans qui débutent sur Instagram et veulent vendre leurs offres"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-douleurs">Ses douleurs principales</label>
+            <textarea id="p-douleurs" class="field-textarea" placeholder="Ex : poste tous les jours sans aucun retour, sentiment d'invisibilité, peur de paraître commerciale"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-desirs">Ses désirs profonds</label>
+            <textarea id="p-desirs" class="field-textarea" placeholder="Ex : être reconnue comme experte, vivre de sa passion, attirer des clientes alignées sans forcer"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-objections">Ses objections fréquentes</label>
+            <textarea id="p-objections" class="field-textarea" placeholder="Ex : « j'ai pas le temps », « j'ai pas assez d'abonnés », « le marketing c'est pas pour moi »"></textarea>
+          </div>
+        </div>
+
+        <!-- ── Carte 3 — Tes offres ── -->
+        <div class="card">
+          <div class="section-eyebrow">03 — Tes offres</div>
+
+          <div class="field">
+            <label class="field-label" for="p-offres">Ce que tu vends</label>
+            <textarea id="p-offres" class="field-textarea" style="min-height: 100px;" placeholder="Ex :&#10;- Programme « Brille & Vibre » (12 semaines de coaching)&#10;- Masterclass « L'Art du Hook » (gratuite)&#10;- Accompagnement individuel premium"></textarea>
+            <div class="field-hint">Liste tes offres avec une ligne par offre. Tu peux mettre prix, format, durée si tu veux.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 4 — Ton style ── -->
+        <div class="card">
+          <div class="section-eyebrow">04 — Ton style éditorial</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="p-tutoiement">Niveau de langue</label>
+              <select id="p-tutoiement" class="field-select">
+                <option value="tutoiement">Tutoiement</option>
+                <option value="vouvoiement">Vouvoiement</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="p-emojis">Émojis</label>
+              <select id="p-emojis" class="field-select">
+                <option value="aucun">Aucun</option>
+                <option value="moderes" selected>Modérés (1 par bloc)</option>
+                <option value="frequents">Fréquents</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-style">Style général</label>
+            <input id="p-style" type="text" class="field-input" placeholder="Ex : élégant, direct, inspirant, sans jargon">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mots-signature">Mots / expressions signature</label>
+            <input id="p-mots-signature" type="text" class="field-input" placeholder="Ex : brille, vibre, alignement, énergie, transformation">
+            <div class="field-hint">Mots récurrents que tu aimes utiliser. Séparés par des virgules.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-mots-bannis">Mots à éviter</label>
+            <input id="p-mots-bannis" type="text" class="field-input" placeholder="Ex : synergie, impactant, engageant, leverage">
+            <div class="field-hint">Le jargon marketing creux que Claude doit bannir.</div>
+          </div>
+        </div>
+
+        <!-- ── Carte 5 — Tes preuves ── -->
+        <div class="card">
+          <div class="section-eyebrow">05 — Tes preuves & résultats</div>
+
+          <div class="field">
+            <label class="field-label" for="p-temoignages">Témoignages clés</label>
+            <textarea id="p-temoignages" class="field-textarea" placeholder="Ex : Marie a doublé son CA en 3 mois. Sarah a signé 8 clientes en 6 semaines."></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="p-chiffres">Chiffres à mettre en avant</label>
+            <textarea id="p-chiffres" class="field-textarea" placeholder="Ex : 50 femmes accompagnées, +40 % d'engagement moyen, 12 témoignages 5 étoiles"></textarea>
+          </div>
+        </div>
+
+        <!-- ── Carte 6 — Ton objectif ── -->
+        <div class="card">
+          <div class="section-eyebrow">06 — Ton objectif principal</div>
+
+          <div class="field">
+            <label class="field-label" for="p-objectif">Objectif business prioritaire</label>
+            <select id="p-objectif" class="field-select">
+              <option value="ventes">💰 Vendre mes offres</option>
+              <option value="engagement">💬 Créer de l'engagement et une communauté</option>
+              <option value="autorite">🎯 Être perçue comme experte / autorité</option>
+              <option value="visibilite">✨ Gagner en visibilité et attirer du monde</option>
+              <option value="liste">📩 Construire ma liste email</option>
+            </select>
+            <div class="field-hint">Claude orientera tous tes contenus vers cet objectif.</div>
+          </div>
+        </div>
+
+        <!-- ── Actions ── -->
+        <div class="card">
+          <div class="section-eyebrow">Actions</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <button id="btn-save-profil" class="btn btn-primary">💾 Sauvegarder le profil</button>
+            <button id="btn-export-profil" class="btn btn-secondary">⬇ Exporter (JSON)</button>
+            <button id="btn-import-profil" class="btn btn-secondary">⬆ Importer (JSON)</button>
+            <button id="btn-reset-profil" class="btn btn-ghost">🗑 Réinitialiser</button>
+          </div>
+          <input type="file" id="file-import-profil" accept="application/json" style="display: none;">
+          <div class="field-hint" style="margin-top: 14px;">
+            Tes données sont stockées <strong>uniquement dans ton navigateur</strong> (localStorage). Aucune donnée n'est envoyée sur un serveur tant que tu ne lances pas une génération.
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- Onglet : Posts -->
     <section id="tab-posts" class="tab-panel"></section>
