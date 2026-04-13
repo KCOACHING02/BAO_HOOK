@@ -27,7 +27,7 @@ const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600
 const GENERATION_TEMPERATURE = 1.0;
 
 // Tokens max pour 7 jours détaillés (story ou reel)
-const MAX_TOKENS_WEEKLY_PLAN = 6500;
+const MAX_TOKENS_WEEKLY_PLAN = 8000;
 
 
 // ─── 2. SYSTEM PROMPT (méthode Brille & Vibre) ─────────────────
@@ -707,7 +707,14 @@ export default async function handler(req, res) {
             cache_control: { type: 'ephemeral' },
           },
         ],
-        messages: [{ role: 'user', content: userMessage }],
+        messages: [
+          { role: 'user', content: userMessage },
+          // Prefill : on force Claude à commencer sa réponse par '{'
+          // → garantit une sortie JSON sans préambule, plus de "Réponse non parsable"
+          { role: 'assistant', content: '{' },
+        ],
+        // Stop sequence supplémentaire pour éviter que Claude rajoute du texte après le JSON
+        stop_sequences: ['\n\nNote:', '\n\nExplication:'],
       }),
     });
 
@@ -723,23 +730,39 @@ export default async function handler(req, res) {
     }
 
     const data = await apiResponse.json();
-    const text = data?.content?.[0]?.text || '';
+    let text = data?.content?.[0]?.text || '';
 
-    // Parse JSON robuste : essaye direct, puis extraction par regex
+    // Reconstituer le JSON en prepending le '{' du prefill
+    // (Claude a commencé sa réponse par '{' grâce au prefill, donc le text renvoyé
+    //  commence directement après, sans le '{' initial)
+    if (!text.trimStart().startsWith('{')) {
+      text = '{' + text;
+    }
+
+    // Parse JSON robuste : essaye direct, puis cherche le plus grand bloc {...} balancé
     let parsed;
     try {
       parsed = JSON.parse(text);
     } catch {
-      const match = text.match(/\{[\s\S]*\}/);
-      if (match) {
-        try { parsed = JSON.parse(match[0]); } catch { parsed = null; }
+      // Cherche le DERNIER '}' et essaye de parser jusque là
+      const lastBrace = text.lastIndexOf('}');
+      if (lastBrace > 0) {
+        const candidate = text.slice(0, lastBrace + 1);
+        try { parsed = JSON.parse(candidate); } catch { parsed = null; }
+      }
+      // Dernier recours : regex greedy
+      if (!parsed) {
+        const match = text.match(/\{[\s\S]*\}/);
+        if (match) {
+          try { parsed = JSON.parse(match[0]); } catch { parsed = null; }
+        }
       }
     }
 
     if (!parsed) {
       return res.status(502).json({
         error: 'Réponse Claude non parsable en JSON.',
-        raw: text.slice(0, 500),
+        raw: text.slice(0, 800),
       });
     }
 
