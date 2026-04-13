@@ -587,19 +587,22 @@
     window.copyToClipboard = copyToClipboard;
 
     function dayToPlainText(d) {
+      const metaLine = [
+        d.etape,
+        d.niveau_funnel,
+        d.etat_emotionnel,
+        d.niveau_conscience,
+      ].filter(Boolean).join(' · ');
       return [
-        `📅 ${d.jour_nom || 'Jour ' + d.jour} — ${d.objectif_strategique || ''}`,
-        `(${d.type_contenu || ''} · ${d.levier_psy || ''})`,
+        `📅 ${d.jour_nom || 'Jour ' + d.jour}`,
+        metaLine,
         '',
         '🎯 HOOK',
         d.hook || '',
         '',
-        '📝 CONTENU',
-        d.contenu || '',
-        '',
         '👉 CTA',
         d.cta || '',
-      ].join('\n');
+      ].filter(line => line !== null && line !== undefined).join('\n');
     }
 
     /* ───────────────────────────────────────
@@ -616,10 +619,11 @@
               <span class="day-num">JOUR ${escapeHtml(String(d.jour || (i + 1)))}</span>
               <span class="day-name">${escapeHtml(d.jour_nom || '')}</span>
             </div>
-            <div class="day-objectif">${escapeHtml(d.objectif_strategique || '')}</div>
+            <div class="day-objectif">${escapeHtml(d.etape || '')}</div>
             <div class="day-row2">
-              ${d.type_contenu ? `<span class="day-pill">📱 ${escapeHtml(d.type_contenu)}</span>` : ''}
-              ${d.levier_psy ? `<span class="day-pill">🧠 ${escapeHtml(d.levier_psy)}</span>` : ''}
+              ${d.niveau_funnel ? `<span class="day-pill">🎯 ${escapeHtml(d.niveau_funnel)}</span>` : ''}
+              ${d.etat_emotionnel ? `<span class="day-pill">❤️ ${escapeHtml(d.etat_emotionnel)}</span>` : ''}
+              ${d.niveau_conscience ? `<span class="day-pill">🧠 ${escapeHtml(d.niveau_conscience)}</span>` : ''}
             </div>
           </div>
           <div class="day-body">
@@ -627,12 +631,6 @@
               <div class="day-block">
                 <div class="day-block-label">🎯 Hook</div>
                 <div class="day-hook">${escapeHtml(d.hook)}</div>
-              </div>
-            ` : ''}
-            ${d.contenu ? `
-              <div class="day-block">
-                <div class="day-block-label">📝 Contenu</div>
-                <div class="day-content">${escapeHtml(d.contenu)}</div>
               </div>
             ` : ''}
             ${d.cta ? `
