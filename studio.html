@@ -595,6 +595,11 @@
           <div class="choice-name">Une semaine<br>de <em>Reels</em></div>
           <div class="choice-desc">7 reels avec hook visuel et script<br>prêts à tourner</div>
         </div>
+        <div class="choice-card" data-format="carrousel">
+          <div class="choice-icon">🎠</div>
+          <div class="choice-name">Une semaine<br>de <em>Carrousels</em></div>
+          <div class="choice-desc">7 carrousels en 3 slides<br>(Miroir → Déclic → Preuve)</div>
+        </div>
       </div>
     </div>
 
@@ -803,9 +808,13 @@
 
     function setFormat(format) {
       currentFormat = format;
-      const icon = format === 'story' ? '📱' : '🎬';
-      const name = format === 'story' ? 'Stories' : 'Reels';
-      els.formatIndicator.textContent = `← ${icon} ${name} · Changer`;
+      const labels = {
+        story:     { icon: '📱', name: 'Stories' },
+        reel:      { icon: '🎬', name: 'Reels' },
+        carrousel: { icon: '🎠', name: 'Carrousels' },
+      };
+      const lbl = labels[format] || labels.reel;
+      els.formatIndicator.textContent = `← ${lbl.icon} ${lbl.name} · Changer`;
     }
 
     // Clics sur les cartes de choix format
@@ -894,6 +903,22 @@
           if (d.sticker_contenu) lines.push(d.sticker_contenu);
           lines.push('');
         }
+      } else if (currentFormat === 'carrousel') {
+        if (d.slide_1) {
+          lines.push('1️⃣ SLIDE 1 — HOOK + MIROIR');
+          lines.push(d.slide_1);
+          lines.push('');
+        }
+        if (d.slide_2) {
+          lines.push('2️⃣ SLIDE 2 — DÉCLIC + POSSIBILITÉ');
+          lines.push(d.slide_2);
+          lines.push('');
+        }
+        if (d.slide_3) {
+          lines.push('3️⃣ SLIDE 3 — PREUVE + CTA');
+          lines.push(d.slide_3);
+          lines.push('');
+        }
       } else {
         if (d.script) {
           lines.push('🎬 SCRIPT');
@@ -935,6 +960,22 @@
               </div>
             `;
           }
+        } else if (currentFormat === 'carrousel') {
+          const slides = [
+            { label: '1️⃣ Slide 1 — Hook + Miroir',        key: 'slide_1' },
+            { label: '2️⃣ Slide 2 — Déclic + Possibilité', key: 'slide_2' },
+            { label: '3️⃣ Slide 3 — Preuve + CTA',         key: 'slide_3' },
+          ];
+          slides.forEach(s => {
+            if (d[s.key]) {
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">${s.label}</div>
+                  <div class="day-content">${escapeHtml(d[s.key])}</div>
+                </div>
+              `;
+            }
+          });
         } else {
           if (d.script) {
             formatBlock += `
@@ -1009,19 +1050,22 @@
       saveBrief(audience, focus);
 
       // Adapter le texte du loader au format
+      const loadingTexts = {
+        story:     'Brille & Vibre écrit tes 7 stories...',
+        reel:      'Brille & Vibre écrit tes 7 reels...',
+        carrousel: 'Brille & Vibre écrit tes 7 carrousels...',
+      };
       const loadingText = document.getElementById('loading-text');
-      if (loadingText) {
-        loadingText.textContent = currentFormat === 'story'
-          ? 'Brille & Vibre écrit tes 7 stories...'
-          : 'Brille & Vibre écrit tes 7 reels...';
-      }
+      if (loadingText) loadingText.textContent = loadingTexts[currentFormat] || loadingTexts.reel;
+
       // Adapter le header des résultats
+      const resultLabels = {
+        story:     'Ta semaine de stories',
+        reel:      'Ta semaine de reels',
+        carrousel: 'Ta semaine de carrousels',
+      };
       const resultsEyebrow = document.getElementById('results-eyebrow');
-      if (resultsEyebrow) {
-        resultsEyebrow.textContent = currentFormat === 'story'
-          ? 'Ta semaine de stories'
-          : 'Ta semaine de reels';
-      }
+      if (resultsEyebrow) resultsEyebrow.textContent = resultLabels[currentFormat] || resultLabels.reel;
 
       showScreen('loading');
 

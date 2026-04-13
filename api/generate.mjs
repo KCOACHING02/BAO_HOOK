@@ -250,6 +250,60 @@ Voici 9 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
     Caption : "Celles qui réussissent ne sont pas prêtes. Elles ont juste compris un truc."
     → Pattern : négation catégorique ("tu ne te sentiras jamais X") + recadrage conceptuel ("X n'est pas un Y, c'est un Z") + vulgaire assumé pour l'impact. IMPORTANT : la créatrice accepte le vulgaire léger pour ponctuer ("p**tain", "merde", "putain"). À utiliser avec parcimonie (1 fois par semaine max).
 
+18. **(Carrousel — RÉFÉRENCE ABSOLUE DE FLOW en 3 mouvements)**
+
+    **Slide 1 — Hook + Miroir** (on reflète sa réalité)
+    > "T'as envie de te lancer.
+    > Mais t'as même pas encore de produit.
+    > Alors tu regardes les autres vendre.
+    > Tu consommes, tu notes, tu te dis 'bientôt'.
+    > Et bientôt… ça arrive jamais."
+
+    **Slide 2 — Déclic + Possibilité** (on reframe + on ouvre une porte)
+    > "Le vrai blocage c'est pas le manque d'idée.
+    > C'est que t'attends d'être prête.
+    > Mais cette version-là elle arrive jamais.
+    > Et si ton premier produit était déjà créé, testé, validé ?
+    > Toi tu n'as plus qu'à le vendre."
+
+    **Slide 3 — Preuve + CTA** (on montre + on appelle à l'action)
+    > "Elle avait zéro produit.
+    > Zéro audience.
+    > Première vente en 20 jours.
+    > (screenshot)
+    > Tu veux savoir comment ?
+    > Envoie-moi DÉBUT en DM."
+
+    → **CET EXEMPLE EST TA RÉFÉRENCE ABSOLUE DE FLOW.** Observe comment :
+    - Chaque slide a UN rôle clair (miroir → déclic → preuve)
+    - Chaque phrase construit sur la précédente — aucune phrase n'est indépendante
+    - Les phrases sont fragmentées, orales, ponctuées par des retours à la ligne
+    - "Tu consommes, tu notes, tu te dis 'bientôt'" → accumulation sensorielle qui met dans la scène
+    - "Et bientôt… ça arrive jamais" → punchline qui clôt la slide 1
+    - "Le vrai blocage c'est pas X. C'est Y." → reframe explicite slide 2
+    - "Et si [alternative concrète] ?" → ouverture d'une porte, pas une promesse vague
+    - "Zéro produit. Zéro audience. Première vente en 20 jours." → preuve courte et chiffrée
+    - CTA précis avec trigger DÉBUT (pas de formule marketing creuse)
+
+## 🏆 LA STRUCTURE EN 3 MOUVEMENTS (à appliquer à tous les formats)
+
+Quelle que soit le format (story, reel, carrousel), le contenu suit cette progression en 3 mouvements distincts, même si c'est compressé :
+
+**Mouvement 1 — MIROIR** (0 à 40% du texte)
+Tu reflètes sa réalité concrète. Tu la peins dans sa scène quotidienne. Elle se reconnait. *"T'as envie de…", "Tu consommes, tu notes, tu te dis…"*
+
+**Mouvement 2 — DÉCLIC** (40% à 75% du texte)
+Tu identifies le vrai blocage (reframe). Tu ouvres une porte nouvelle. *"Le vrai blocage c'est pas X. C'est Y.", "Et si [alternative] ?"*
+
+**Mouvement 3 — PREUVE + ACTION** (75% à 100% du texte)
+Tu apportes une preuve courte et chiffrée (peut être implicite). Tu appelles à l'action. *"Elle avait zéro X, première vente en Y jours.", "Envoie-moi TRIGGER en DM."*
+
+Pour une **story courte** les 3 mouvements peuvent tenir en 3 phrases (1 par mouvement).
+Pour un **reel** les 3 mouvements prennent 4-6 phrases réparties.
+Pour un **carrousel** chaque mouvement = une slide.
+
+**Règle absolue : aucune ligne ne doit exister HORS d'un mouvement.** Si une phrase ne sert ni à refléter, ni à déclencher, ni à prouver, elle dégage.
+
 ### Les 21 mécaniques de hook à utiliser (curiosity gap + patterns de la créatrice)
 
 1. **PROMESSE + RÉTENTION** : tu promets de révéler quelque chose de précis, mais tu ne révèles PAS dans le hook.
@@ -710,7 +764,8 @@ function buildWeeklyPlanMessage(audience, focus, format, options) {
     ? `- Focus de cette semaine : ${focus}`
     : '- Focus de cette semaine : libre — choisis l\'angle le plus universel pour cette audience';
 
-  const isStory = format === 'story';
+  const isStory     = format === 'story';
+  const isCarrousel = format === 'carrousel';
 
   // ── Bloc d'options avancées ──
   const opts = options || { ton: 'auto', longueur: 'moyen', intensite: 'equilibre', cta_style: 'mixte' };
@@ -753,29 +808,75 @@ ${intensiteInstructions[opts.intensite] || intensiteInstructions.equilibre}
 ${ctaInstructions[opts.cta_style] || ctaInstructions.mixte}`;
 
   // ── Bloc d'instructions spécifique au format ──
-  const formatBlock = isStory
-    ? `FORMAT DEMANDÉ : STORIES INSTAGRAM
+  let formatBlock;
+  if (isStory) {
+    formatBlock = `FORMAT DEMANDÉ : STORIES INSTAGRAM
 
 Tu génères 7 STORIES (une par jour). Une story ça se lit en 5 secondes, c'est court, intime, conversationnel.
 
+**Chaque story suit la STRUCTURE EN 3 MOUVEMENTS compressée** (voir la section du bloc système) :
+- Le HOOK fait le Miroir (mouvement 1)
+- Le TEXTE fait Déclic + Preuve en 2-3 phrases (mouvements 2 et 3)
+- Le STICKER + CTA ferment la boucle
+
 Pour chaque story tu fournis :
 - **hook** : la phrase d'accroche textuelle, c'est ce qu'elle voit en ouvrant la story. 1 ligne courte, percutante, naturelle. Choisie/adaptée d'un des 125 templates du catalogue.
-- **texte** : le contenu de la story, 2 à 4 lignes max. Aère avec des retours à la ligne \\\\n. Ton oral, fragmenté, comme si tu parlais à une copine en vocal.
+- **texte** : le contenu de la story, 2 à 4 lignes max. Aère avec des retours à la ligne \\\\n. Ton oral, fragmenté, comme si tu parlais à une copine en vocal. **DOIT PROLONGER le hook, pas pivoter.**
 - **sticker** : le type d'interactivité — choisis parmi : "sondage", "question", "quiz", "curseur émoji", "compte à rebours", "lien", "aucun"
 - **sticker_contenu** : le texte exact qui va dans le sticker (ex : "Tu te reconnais ?", "Oui / Non", "Swipe Up", "0-100")
-- **cta** : l'appel à l'action (souvent c'est le sticker lui-même, ou bien "Réponds-moi en DM")`
-    : `FORMAT DEMANDÉ : REELS INSTAGRAM
+- **cta** : l'appel à l'action (souvent c'est le sticker lui-même, ou bien "Réponds-moi en DM")`;
+  } else if (isCarrousel) {
+    formatBlock = `FORMAT DEMANDÉ : CARROUSELS INSTAGRAM (3 slides)
 
-Tu génères 7 REELS (une par jour). Un reel ça doit arrêter le scroll dans les 1-2 premières secondes, raconter une mini-histoire, et finir par un appel à l'action.
+Tu génères 7 CARROUSELS (un par jour). Chaque carrousel fait EXACTEMENT **3 slides** et suit la STRUCTURE EN 3 MOUVEMENTS de la créatrice :
+
+**Slide 1 — Hook + Miroir** (on reflète sa réalité quotidienne)
+- 4 à 6 lignes courtes et fragmentées
+- On peint une scène où elle se reconnait immédiatement
+- Ponctué par des retours à la ligne \\\\n
+- La dernière ligne est une mini-punchline qui clôt la slide
+
+**Slide 2 — Déclic + Possibilité** (reframe + ouverture)
+- 4 à 6 lignes courtes
+- Tu identifies le VRAI blocage avec "C'est pas X, c'est Y"
+- Tu ouvres une porte avec "Et si [alternative concrète] ?"
+- Tu positionnes implicitement l'offre ("Toi t'as plus qu'à…")
+
+**Slide 3 — Preuve + CTA** (social proof + action)
+- 4 à 6 lignes courtes
+- Preuve avec chiffres spécifiques ("Elle avait zéro X. Première vente en Y jours.")
+- Mention "(screenshot)" ou "(visuel)" possible comme placeholder visuel
+- Question rhétorique bait : "Tu veux savoir comment ?"
+- CTA avec trigger word en MAJUSCULES
+
+Pour chaque carrousel tu fournis :
+- **hook** : la phrase d'accroche principale de la slide 1 (sert aussi d'overlay titre). Choisie/adaptée d'un des 125 templates.
+- **slide_1** : le texte complet de la slide 1 (Hook + Miroir)
+- **slide_2** : le texte complet de la slide 2 (Déclic + Possibilité)
+- **slide_3** : le texte complet de la slide 3 (Preuve + CTA)
+- **cta** : le CTA final avec mot-déclencheur (ex : "Envoie-moi DÉBUT en DM")
+
+**RÉFÉRENCE ABSOLUE** : tu t'inspires directement de l'exemple 18 du bloc système ("T'as envie de te lancer… Mais t'as même pas encore de produit…"). Copie le flow, adapte le contenu.`;
+  } else {
+    formatBlock = `FORMAT DEMANDÉ : REELS INSTAGRAM
+
+Tu génères 7 REELS (un par jour). Un reel ça doit arrêter le scroll dans les 1-2 premières secondes, raconter une mini-histoire, et finir par un appel à l'action.
+
+**Chaque reel suit la STRUCTURE EN 3 MOUVEMENTS** (voir la section du bloc système) :
+- Le HOOK fait le Miroir (mouvement 1)
+- Le SCRIPT développe Déclic puis Preuve (mouvements 2 et 3)
+- Le CTA ferme la boucle
 
 Pour chaque reel tu fournis :
 - **hook** : la première phrase qui s'affiche/que tu dis. C'est ce qui arrête le scroll. Choisie/adaptée d'un des 125 templates du catalogue.
-- **script** : 4 à 8 lignes de texte parlé, structurées comme une mini-narration : situation → tension → révélation → ouverture. Une scène par ligne (retours à la ligne \\\\n). Ton oral, naturel, comme si tu parlais à quelqu'un en face.
+- **script** : 4 à 8 lignes de texte parlé, structurées en Déclic → Preuve. Une scène par ligne (retours à la ligne \\\\n). Ton oral, naturel, comme si tu parlais à quelqu'un en face. **DOIT PROLONGER le hook, pas pivoter.**
 - **cta** : l'appel à l'action final (à dire en voix + à mettre en caption)`;
+  }
 
   // ── Schémas JSON distincts ──
-  const schema = isStory
-    ? `{
+  let schema;
+  if (isStory) {
+    schema = `{
   "plan": [
     {
       "jour": 1,
@@ -792,8 +893,28 @@ Pour chaque reel tu fournis :
       "cta": "..."
     }
   ]
-}`
-    : `{
+}`;
+  } else if (isCarrousel) {
+    schema = `{
+  "plan": [
+    {
+      "jour": 1,
+      "jour_nom": "Lundi",
+      "etape": "Attirer",
+      "niveau_funnel": "TOFU",
+      "etat_emotionnel": "Besoin de ressentir",
+      "niveau_conscience": "Pas consciente du problème",
+      "categorie_hook": "Interpellation directe",
+      "hook": "...",
+      "slide_1": "le texte complet de la slide 1 (Hook + Miroir), avec retours à la ligne \\\\n",
+      "slide_2": "le texte complet de la slide 2 (Déclic + Possibilité), avec retours à la ligne \\\\n",
+      "slide_3": "le texte complet de la slide 3 (Preuve + CTA), avec retours à la ligne \\\\n",
+      "cta": "..."
+    }
+  ]
+}`;
+  } else {
+    schema = `{
   "plan": [
     {
       "jour": 1,
@@ -809,6 +930,7 @@ Pour chaque reel tu fournis :
     }
   ]
 }`;
+  }
 
   return `CONTEXTE
 ${audienceLine}
@@ -1000,8 +1122,8 @@ export default async function handler(req, res) {
   }
 
   const format = String(body.format || 'reel').toLowerCase();
-  if (!['story', 'reel'].includes(format)) {
-    return res.status(400).json({ error: 'format requis : "story" ou "reel".' });
+  if (!['story', 'reel', 'carrousel'].includes(format)) {
+    return res.status(400).json({ error: 'format requis : "story", "reel" ou "carrousel".' });
   }
 
   const audience = clamp(body.audience, 300);
