@@ -136,7 +136,47 @@ Voici 9 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
    Caption : "Regarder les autres réussir ne changera pas ta vie. Le point commun entre ces femmes ? Elles ont arrêté d'attendre le bon moment..."
    → Pattern : titre en majuscules + flèches qui poussent au swipe + preuve sociale collective au féminin ("elles") + truth-bomb d'ouverture en caption + révélation de pattern commun
 
-### Les 13 mécaniques de hook à utiliser (curiosity gap + patterns de la créatrice)
+10. **(Reel — recadrage de la peur)**
+    "Tu as peur uniquement parce que c'est nouveau. Pas parce que tu n'es pas capable."
+    Caption : "Ose et lance toi. Personne ne pourra le faire pour toi."
+    → Pattern : recadrage psychologique. Distingue 2 causes possibles (nouveauté vs incapacité) et désamorce la 2ème.
+
+11. **(Story — Rappel du jour, format affirmation)**
+    "Rappel du jour : Tu as peur uniquement parce que c'est nouveau. Pas parce que tu n'en es pas capable."
+    Caption : "Celles qui réussissent en ligne n'ont pas attendu de ne plus avoir peur."
+    → Pattern : "Rappel du jour :" comme framing soft d'une vérité qui pique. Plus l'effet "petite voix amie" que "leçon".
+
+12. **(Reel — aphorisme court inspirant)**
+    "Sois patient. Ce que tu mérites, arrive en silence."
+    Caption : "Sois patiente. Mais surtout, passe à l'action. Ce que tu mérites n'arrive pas par hasard…"
+    → Pattern : aphorisme court (8-10 mots), très évocateur, presque lyrique. Le hook contient une image (le silence). La caption recadre vers l'action.
+
+13. **(Story photo — FOMO concurrentiel + truth-bomb)**
+    "Pendant que tu hésites, quelqu'un de moins talentueux que toi prend ta place. Le monde ne récompense pas le potentiel. Il récompense ceux qui osent."
+    Caption : "Arrête d'attendre d'être prêt(e). Les gens qui ont changé de vie ne se sentaient pas prêts non plus."
+    → Pattern : FOMO concurrentiel ("quelqu'un d'autre…") + truth-bomb réflexive ("le monde ne récompense pas X, il récompense Y").
+
+14. **(Reel — anecdote dialoguée + analogie cinglante)**
+    "Quand je dis que j'ai besoin de réserver un voyage et qu'on me répond : « Mais t'es déjà parti le mois dernier ». Et toi t'as déjà mangé ce midi et pourtant tu vas encore manger ce soir ?"
+    Caption : "Pourquoi se priver quand mon travail tient dans la poche ?"
+    → Pattern : anecdote vraie avec dialogue rapporté, puis analogie qui retourne la critique en absurdité. Ton oral, tac au tac, ironique.
+
+15. **(Reel — pendant que tu X, d'autres Y + punchline factures)**
+    "Pendant que tu réfléchis encore… D'autres ont compris comment utiliser les réseaux sociaux autrement. L'hésitation ne paie pas les factures."
+    Caption : "GO si tu veux des infos. Des ventes depuis ton téléphone."
+    → Pattern : "Pendant que tu X, d'autres Y" (FOMO) + punchline métaphorique ("l'hésitation ne paie pas les factures"). Note : "ne paie pas les factures" est ici une MÉTAPHORE acceptée, pas une promesse d'argent.
+
+16. **(Story photo — conditional premium + différenciation sociale)**
+    "Tu peux le faire mais uniquement si tu acceptes de faire ce que les autres n'ont pas le courage de faire."
+    Caption : "Tu veux générer des revenus en ligne mais tu ne sais pas par où commencer ? Code Liberté te montre exactement quoi faire."
+    → Pattern : "Tu peux X mais uniquement si Y" (conditionnel qui filtre) + différenciation par le courage ("ce que les autres n'ont pas le courage de faire"). Elle positionne son offre comme premium.
+
+17. **(Reel — recadrage conceptuel + vulgaire assumé)**
+    "Tu ne te sentiras jamais prête car être prête n'est pas un sentiment, mais une p**tain de décision."
+    Caption : "Celles qui réussissent ne sont pas prêtes. Elles ont juste compris un truc."
+    → Pattern : négation catégorique ("tu ne te sentiras jamais X") + recadrage conceptuel ("X n'est pas un Y, c'est un Z") + vulgaire assumé pour l'impact. IMPORTANT : la créatrice accepte le vulgaire léger pour ponctuer ("p**tain", "merde", "putain"). À utiliser avec parcimonie (1 fois par semaine max).
+
+### Les 21 mécaniques de hook à utiliser (curiosity gap + patterns de la créatrice)
 
 1. **PROMESSE + RÉTENTION** : tu promets de révéler quelque chose de précis, mais tu ne révèles PAS dans le hook.
    - ❌ "Tu scroll toute la journée et tu n'avances pas." (descriptif, pas de tension — elle peut fermer l'app)
@@ -200,6 +240,58 @@ Voici 9 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
     - ✅ "Elles ont arrêté de poster au hasard. Voici leurs résultats."
     - ✅ "Le point commun entre ces 12 femmes qui se sont lancées en 2025 ? Elles ont toutes fait LA MÊME chose au début."
     - ✅ "Elles n'avaient ni audience, ni expérience, ni temps. Et pourtant."
+
+14. **RECADRAGE DE LA PEUR (uniquement A, pas B)** : tu distingues 2 causes possibles d'un blocage et tu désamorces la mauvaise.
+    - ❌ "T'inquiète pas, tu es capable."
+    - ✅ "Tu as peur uniquement parce que c'est nouveau. Pas parce que tu n'es pas capable."
+    - ✅ "Si tu hésites c'est uniquement par habitude. Pas parce que c'est dangereux."
+    - ✅ "Ce qui te bloque, c'est uniquement le manque d'exemple. Pas le manque de talent."
+
+15. **RAPPEL DU JOUR / AFFIRMATION DOUCE** : tu commences par "Rappel du jour :" ou équivalent pour donner à un truth-bomb une enveloppe douce, comme une voix amie.
+    - ❌ "Tu dois comprendre que..."
+    - ✅ "Rappel du jour : ce que tu attends ne viendra pas tant que tu attends."
+    - ✅ "Petit rappel : tu n'as jamais perdu de temps. Tu as juste mis du temps à comprendre."
+    - ✅ "Note pour ce matin : la peur de mal faire est juste de la peur de commencer."
+
+16. **APHORISME COURT ÉVOCATEUR** : 6 à 12 mots maximum. Une image visuelle dans la phrase. Lyrique mais jamais cucu. Le hook AMORCE une émotion, la caption fait le travail d'explication.
+    - ❌ "Il faut être patiente dans la vie pour réussir."
+    - ✅ "Sois patient. Ce que tu mérites, arrive en silence."
+    - ✅ "Le doute, c'est juste le bruit avant la décision."
+    - ✅ "Ta peur n'a jamais rien créé. Ton 'oui' si."
+
+17. **FOMO CONCURRENTIEL + RECADRAGE TALENT/ACTION** : tu pointes que pendant que la lectrice hésite, d'autres avancent. Souvent suivi d'un recadrage du genre "le monde récompense X, pas Y".
+    - ❌ "Si tu attends trop, tu vas regretter."
+    - ✅ "Pendant que tu hésites, quelqu'un de moins talentueux que toi prend ta place."
+    - ✅ "Le monde ne récompense pas le potentiel. Il récompense ceux qui osent."
+    - ✅ "Pendant que tu peaufines ta bio, une autre vient de signer sa première cliente avec une bio bancale."
+
+18. **ANECDOTE DIALOGUÉE + ANALOGIE CINGLANTE** : tu rapportes une vraie phrase qu'on t'a dite (entre guillemets), et tu retournes la critique avec une analogie qui la rend absurde.
+    - ❌ "Les gens ne comprennent pas mon mode de vie."
+    - ✅ "Quand je dis que je vais réserver un voyage et qu'on me répond : 'Mais t'es déjà partie le mois dernier'. Et toi t'as déjà mangé ce midi et pourtant tu vas encore manger ce soir ?"
+    - ✅ "Quand je dis que je travaille depuis mon canapé et qu'on me sort : 'Ouais mais c'est pas un vrai job'. Et toi t'as un open space, t'as un vrai patron ?"
+
+19. **PENDANT QUE TU X, D'AUTRES Y + PUNCHLINE** : tu opposes son inaction à l'action des autres, puis tu cognes avec une métaphore courte et punchy.
+    - ❌ "Si tu attends trop, tu vas rester bloquée."
+    - ✅ "Pendant que tu réfléchis encore… D'autres ont compris comment utiliser les réseaux autrement. L'hésitation ne paie pas les factures."
+    - ✅ "Pendant que tu te compares, une autre a publié son premier post sans se comparer à personne. Le doute prend ta place à ta table."
+
+20. **CONDITIONAL PREMIUM + DIFFÉRENCIATION PAR LE COURAGE** : tu poses un "tu peux X mais uniquement si Y" pour filtrer et positionner ton offre comme premium.
+    - ❌ "C'est dur mais c'est possible."
+    - ✅ "Tu peux le faire mais uniquement si tu acceptes de faire ce que les autres n'ont pas le courage de faire."
+    - ✅ "Tu peux signer ta première cliente ce mois-ci. Mais uniquement si tu arrêtes de refaire ta bio à l'infini."
+
+21. **RECADRAGE CONCEPTUEL "X N'EST PAS UN Y, C'EST UN Z"** : tu retournes une catégorie mentale. Souvent couplé à une négation catégorique ("tu ne te sentiras jamais…").
+    - ❌ "Attendre d'être prête est une erreur."
+    - ✅ "Tu ne te sentiras jamais prête car être prête n'est pas un sentiment, mais une décision."
+    - ✅ "La confiance n'est pas un prérequis. C'est une conséquence."
+    - ✅ "L'inspiration n'est pas un état. C'est une discipline."
+
+### 🗣️ Note sur le VULGAIRE LÉGER (uniquement quand ça sert)
+
+La créatrice accepte et utilise ponctuellement un vocabulaire un peu cash : "merde", "putain", "p**tain", "foutu", "chier". **À utiliser avec parcimonie** : 1 occurrence par semaine maximum, uniquement quand elle amplifie la vérité au lieu de la diluer. Exemple validé :
+> "Tu ne te sentiras jamais prête car être prête n'est pas un sentiment, mais une p**tain de décision."
+
+Jamais de vulgaire gratuit, jamais d'insultes à l'audience, jamais de dégradant. C'est juste un outil d'intensité rare qui donne le ton d'une vraie amie qui en a marre.
 
 ### Test du "open loop"
 
