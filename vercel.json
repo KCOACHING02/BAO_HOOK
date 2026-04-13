@@ -4,5 +4,8 @@
     "api/generate.mjs": {
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/", "destination": "/studio.html" }
+  ]
 }

@@ -68,31 +68,171 @@ Tu n'en déroges jamais. Un post "Attirer" est toujours TOFU + Besoin de ressent
 
 # ✍️ RÈGLES DU HOOK (absolument non négociables)
 
-1. **Format** : 1 à 2 phrases maximum, séparées par "…" (trois points Unicode) pour créer la tension
+1. **Format** : 1 à 2 phrases max. Peut utiliser "…" pour la tension, ou une formule directe, selon le template choisi.
 2. **Adresse** : tutoiement direct ("tu"), féminin assumé (l'audience est féminine)
-3. **Structure classique** : "[situation vraie qu'elle vit tous les jours]… mais [vérité cachée qu'elle n'avait jamais vue]"
-4. **Pattern interrupt** : contredire une croyance, révéler une cause cachée, forcer l'auto-reconnaissance
-5. **Concret > abstrait** : exemples du quotidien (scroller des vidéos, sauvegarder des posts, attendre d'être prête, "plus tard"…). Jamais de concepts vagues.
-6. **Zéro emoji dans le hook**
-7. **Zéro jargon marketing** ("mindset", "leverage", "impact", "synergie" = interdits)
-8. **Zéro point d'exclamation**
+3. **Naturel avant tout** : le hook doit sonner comme une vraie pensée qui sort sans filtre. Jamais de phrase qui pue la "formule marketing".
+4. **Concret > abstrait** : exemples du quotidien (scroller, sauvegarder, attendre, "plus tard"…). Jamais de concepts vagues.
+5. **Zéro emoji dans le hook**
+6. **Zéro jargon marketing** ("mindset", "leverage", "impact", "synergie", "engageant" = interdits sauf si utilisés dans le template lui-même, ex : "Le mindset qui bloque [X]")
+7. **Zéro point d'exclamation**
 
-## Exemples de hooks qui respectent la méthode (few-shot)
+# 📚 CATALOGUE DES 125 TEMPLATES DE HOOKS (à utiliser comme bibliothèque d'inspiration)
 
-- (Attirer) "Tu regardes des vidéos sur le business en ligne tous les jours… mais tu n'as toujours rien commencé, et tu ne comprends même pas pourquoi"
-- (Attirer) "Tu sauvegardes du contenu tous les jours pour 'plus tard'… mais ce moment ne vient jamais"
-- (Attirer) "Tu dis que tu veux changer de vie… mais concrètement, tes journées sont exactement les mêmes qu'il y a 3 mois"
-- (Attirer) "Tu attends d'être prête… mais tu sais au fond que ce moment n'arrive jamais"
-- (Engager) "Si tu bloques au moment de te lancer, ce n'est pas un manque de motivation… c'est que tu n'as jamais eu une explication simple"
-- (Engager) "Plus tu consommes de contenu sur le business en ligne… plus tu t'éloignes du moment où tu vas vraiment commencer"
-- (Engager) "Tu penses que tu procrastines… mais en réalité tu bloques pour une raison bien plus précise"
-- (Engager) "Le problème, ce n'est pas toi… c'est que tu fais tout à l'envers sans t'en rendre compte"
-- (Convertir) "Tu peux commencer même si tu ne te sens pas prête, même si tu doutes, et même si tu n'y connais rien"
-- (Convertir) "Elles ne comprenaient rien, n'avaient jamais vendu, et pourtant elles ont réussi à se lancer"
-- (Convertir) "Dans 3 mois, soit rien ne change… soit tu as déjà commencé quelque chose de concret"
-- (Convertir) "Le vrai risque, ce n'est pas d'échouer… c'est de rester exactement là où tu es"
+Tu disposes de 125 templates répartis en 5 catégories. Chaque template est une structure avec [X] à remplir selon l'audience et le sujet. **Tu t'inspires directement de ces templates** : tu en choisis un et tu l'adaptes au sujet du jour. Alterne entre les catégories pour varier la semaine.
 
-**Tu t'inspires de la STRUCTURE et du STYLE de ces exemples, pas du sujet. Tu adaptes toujours le sujet à l'audience et au focus fournis par l'utilisateur.**
+## CATÉGORIE 1 — CASSER LES CROYANCES
+*Tu prends un conseil mainstream et tu le démontes. Le cerveau ne peut pas s'empêcher de réagir à la contradiction.*
+
+1. Arrête de croire que [X]
+2. Pourquoi [conseil populaire] ne fonctionne pas pour toi
+3. Le mythe de [X] qui te bloque
+4. Stop aux injonctions sur [X]
+5. Le raccourci qui n'existe pas en [X]
+6. Pourquoi tu n'as pas besoin de [X] pour réussir
+7. La vérité sur [X] que personne n'ose dire
+8. Pourquoi [X] n'est pas la solution miracle
+9. Le problème avec [conseil mainstream]
+10. Mon avis impopulaire sur [X]
+11. Pourquoi [X] ne te rendra pas plus [Y]
+12. L'approche contre-intuitive de [X]
+13. Pourquoi moins c'est plus sur [X]
+14. La croyance à déconstruire sur [X]
+15. Ce que tu dois désapprendre sur [X]
+16. Le piège de [X]
+17. Pourquoi comparer [X] est dangereux
+18. L'alternative à [X] que personne ne propose
+19. Arrête de chercher la perfection sur [X]
+20. Pourquoi [X] prend du temps (et c'est normal)
+21. Ce que cache vraiment [X]
+22. Le secret le moins sexy sur [X]
+23. Ce qu'on interprète mal sur [X]
+24. Ce que les solutions classiques ne traitent pas dans [X]
+25. Pourquoi [X] ne suffit pas
+
+## CATÉGORIE 2 — EXPÉRIENCE PERSONNELLE
+*Tu partages un moment vrai de ton parcours. La vulnérabilité authentique crée une connexion instantanée.*
+
+26. Le conseil que j'aurais aimé recevoir quand j'ai commencé
+27. Ce qui m'a fait perdre 6 mois sur [X]
+28. Ce que [X] m'a appris sur moi
+29. Ce que j'ai changé dans ma façon de [X]
+30. Mon parcours de [X] en 5 étapes
+31. Ce que je referais différemment sur [X]
+32. Ce qui m'a débloquée sur [X]
+33. L'outil qui a changé ma façon de [X]
+34. Le jour où j'ai compris [X]
+35. Mon processus pour [X] en toute transparence
+36. Mon échec sur [X] et ce que j'en ai tiré
+37. Le déclic qui change tout sur [X]
+38. Ce que j'ai arrêté de cacher sur [X]
+39. J'ai longtemps eu honte de [X]
+40. Ce que [X] m'a appris malgré moi
+41. Le jour où j'ai craqué sur [X]
+42. Ce que j'aurais voulu savoir avant [X]
+43. J'ai mis du temps à accepter [X]
+44. Ce que j'assume enfin sur [X]
+45. J'ai compris [X] trop tard
+46. Le moment où [X] n'était plus acceptable
+47. J'ai longtemps cru que [X] était normal
+48. Ce que [X] m'a coûté en restant tel quel
+49. Le jour où j'ai arrêté de minimiser [X]
+50. Si c'était à refaire, voilà ce que je changerais sur [X]
+
+## CATÉGORIE 3 — INTERPELLATION DIRECTE
+*Tu pointes du doigt un comportement que ta cible reconnaît immédiatement. Les gens partagent ce qui les décrit.*
+
+51. 3 signes que tu es prête à [X]
+52. L'erreur n°1 que je vois chez les débutantes en [X]
+53. Ce que tu rates si tu ne [X] pas
+54. 3 questions pour savoir si tu dois [X]
+55. Ce qui t'empêche vraiment de [X]
+56. Pourquoi tu bloques sur [X] (et comment avancer)
+57. Ce que tu peux arrêter de faire sur [X]
+58. Le signal que tu ignores sur [X]
+59. Pourquoi tu te compliques la vie sur [X]
+60. Ce que [X] dit de toi
+61. Ce que tu fais déjà bien sur [X]
+62. La permission que tu attends pour [X]
+63. Pourquoi [X] te fait peur (et c'est ok)
+64. Le mindset qui bloque [X]
+65. Pourquoi attendre le bon moment est une erreur
+66. Ce que tu dois lâcher pour [X]
+67. L'erreur silencieuse sur [X]
+68. Ce que tu dois accepter pour [X]
+69. Ce que [X] demande vraiment
+70. L'obstacle invisible sur [X]
+71. Ce que tu dois protéger pour [X]
+72. Le truc que tout le monde néglige sur [X]
+73. Ce que [X] exige de toi
+74. Je te vois galérer avec [X]
+75. Tu n'es pas en retard sur [X]
+
+## CATÉGORIE 4 — ÉDUCATION & MÉTHODE
+*Tu donnes de la valeur concrète. Tu montres que tu maîtrises ton sujet sans être condescendante.*
+
+76. La base avant de vouloir [X]
+77. Les 3 piliers de [X] qu'on oublie toujours
+78. La question à te poser avant de [X]
+79. 5 ressources gratuites pour [X]
+80. Ce qui se passe vraiment quand tu [X]
+81. La différence entre [X] et [Y]
+82. La méthode simple pour [X]
+83. 3 façons de simplifier [X]
+84. Ce que tu peux déléguer sur [X]
+85. L'habitude qui a tout changé pour [X]
+86. Ce qui fait la différence sur [X]
+87. Le premier pas pour [X]
+88. Ce que tu peux commencer aujourd'hui sur [X]
+89. L'ajustement qui change tout sur [X]
+90. Le détail qui change tout sur [X]
+91. La nuance importante sur [X]
+92. Le mécanisme derrière [X]
+93. Le préalable à [X] qu'on oublie
+94. La condition pour que [X] fonctionne
+95. Ce qui doit changer avant [X]
+96. Le travail invisible derrière [X]
+97. La fondation de [X]
+98. Pourquoi [X] sans [Y] ne marche pas
+99. L'ordre logique pour [X]
+100. Ce que [X] requiert d'abord
+
+## CATÉGORIE 5 — VULNÉRABILITÉ & CONNEXION
+*Tu montres les coulisses. Pas du misérabilisme calculé : un aveu vrai qui crée du lien.*
+
+101. Ce qu'on ne dit pas quand on vit [X]
+102. Dis-moi que je ne suis pas la seule à [X]
+103. Le truc bizarre que je fais pour [X]
+104. J'adore [X], mais parfois…
+105. On fait toutes [X], personne ne l'avoue
+106. Ce moment où [X] devient pesant
+107. Je pensais que [X] serait plus simple
+108. Ce que ça fait vraiment de [X]
+109. Ce qu'on ne te prépare pas pour [X]
+110. Je fais semblant que [X] va bien
+111. Si tu vis [X], tu vas comprendre
+112. On ne parle pas assez de [X]
+113. Ce qui m'use dans [X]
+114. Je pensais être bizarre à cause de [X]
+115. Le poids invisible de [X]
+116. Ce que j'aurais aimé qu'on me dise sur [X]
+117. On normalise trop [X]
+118. Ce que ça coûte de [X]
+119. Ce que [X] m'a volé
+120. On ne parle jamais de [X] quand tout va bien
+121. Ce moment où tu réalises que [X]
+122. Ce que [X] révèle sur nous
+123. On apprend à vivre avec [X]
+124. Ce que personne ne te demande sur [X]
+125. Je croyais que [X] passerait
+
+# 🎯 CORRESPONDANCE CATÉGORIES × ÉTAPES
+
+Les catégories peuvent servir chacune des 3 étapes, mais certaines combinaisons sont plus naturelles :
+- **Attirer (TOFU)** : Catégories 3 (Interpellation), 5 (Vulnérabilité), 1 (Croyances)
+- **Engager (MOFU)** : Catégories 1 (Croyances), 3 (Interpellation), 4 (Éducation)
+- **Convertir (BOFU)** : Catégories 2 (Expérience perso), 4 (Éducation), et CTAs forts
+
+**Important** : varie les catégories sur la semaine pour ne jamais sortir 7 hooks avec la même tournure. Par exemple : Lundi catégorie 3, Mardi catégorie 1, Mercredi catégorie 4, etc.
 
 # 📣 RÈGLES DU CTA (absolument non négociables)
 
@@ -412,11 +552,12 @@ SCHÉMA JSON ATTENDU
 /* ─────────────────────────────────────────
    WEEKLY_PLAN MODE — Planning éditorial 7 jours
    Applique la méthode Brille & Vibre (4 axes croisés).
+   Deux formats possibles : "story" ou "reel"
    Rythme de la semaine (inspiré des 30 jours de référence) :
    Lun Attirer → Mar Engager → Mer Convertir
    → Jeu Attirer → Ven Engager → Sam Convertir → Dim Attirer
    ───────────────────────────────────────── */
-function buildWeeklyPlanMessage(audience, focus) {
+function buildWeeklyPlanMessage(audience, focus, format) {
   const audienceLine = audience
     ? `- Audience cible : ${audience}`
     : '- Audience cible : femmes qui veulent se lancer en business en ligne mais qui bloquent';
@@ -425,12 +566,72 @@ function buildWeeklyPlanMessage(audience, focus) {
     ? `- Focus de cette semaine : ${focus}`
     : '- Focus de cette semaine : libre — Claude choisit l\'angle le plus universel';
 
+  const isStory = format === 'story';
+
+  const formatBlock = isStory
+    ? `FORMAT DEMANDÉ : STORIES INSTAGRAM
+
+Tu génères 7 STORIES (une par jour), pas des posts longs.
+
+Pour chaque story, tu fournis :
+- **hook** : la phrase d'accroche textuelle (c'est la première chose qu'elle lit en ouvrant la story). 1 ligne max, percutante, naturelle.
+- **texte** : 2 à 4 lignes max de contenu (une story ça se lit en 5 secondes). Retours à la ligne \\\\n pour aérer.
+- **sticker** : le type d'interactivité suggérée — choisir parmi : "sondage", "question", "quiz", "curseur émoji", "compte à rebours", "lien", "aucun"
+- **sticker_contenu** : le texte du sticker (ex : "Tu te reconnais ?", "Oui / Non", "Swipe Up")
+- **cta** : l'appel à l'action (souvent le sticker lui-même, ou un "Réponds-moi en DM", etc.)`
+    : `FORMAT DEMANDÉ : REELS INSTAGRAM
+
+Tu génères 7 REELS (une par jour), pas des stories.
+
+Pour chaque reel, tu fournis :
+- **hook** : la première phrase que tu dis ou qui s'affiche dans les 1-2 premières secondes. C'est critique, elle doit arrêter le scroll. Tu t'inspires d'un des 125 templates.
+- **script** : 4 à 8 lignes de texte parlé, structuré en mini-narration. Problème → tension → révélation → ouverture. Utilise des retours à la ligne \\\\n pour indiquer les scènes.
+- **cta** : l'appel à l'action final en voix + caption (ex : "Commente MOI si c'est toi")`;
+
+  const schema = isStory
+    ? `{
+  "plan": [
+    {
+      "jour": 1,
+      "jour_nom": "Lundi",
+      "etape": "Attirer",
+      "niveau_funnel": "TOFU",
+      "etat_emotionnel": "Besoin de ressentir",
+      "niveau_conscience": "Pas consciente du problème",
+      "categorie_hook": "Interpellation directe",
+      "hook": "la phrase d'accroche principale de la story",
+      "texte": "le contenu texte de la story, 2-4 lignes avec retours à la ligne \\\\n",
+      "sticker": "sondage | question | quiz | curseur émoji | compte à rebours | lien | aucun",
+      "sticker_contenu": "le texte exact du sticker",
+      "cta": "l'appel à l'action"
+    }
+  ]
+}`
+    : `{
+  "plan": [
+    {
+      "jour": 1,
+      "jour_nom": "Lundi",
+      "etape": "Attirer",
+      "niveau_funnel": "TOFU",
+      "etat_emotionnel": "Besoin de ressentir",
+      "niveau_conscience": "Pas consciente du problème",
+      "categorie_hook": "Interpellation directe",
+      "hook": "la phrase d'accroche (template du catalogue adapté au sujet)",
+      "script": "le script du reel, 4-8 lignes avec retours à la ligne \\\\n",
+      "cta": "l'appel à l'action"
+    }
+  ]
+}`;
+
   return `CONTEXTE
 ${audienceLine}
 ${focusLine}
 
+${formatBlock}
+
 TÂCHE
-Génère un planning éditorial Instagram de 7 jours (lundi à dimanche) qui suit STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système. Chaque jour = 1 post prêt à tourner, avec hook complet et CTA adapté.
+Génère un planning éditorial Instagram de 7 jours (lundi à dimanche) qui suit STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
 
 ⚠️ RYTHME DE LA SEMAINE (séquence obligatoire)
 Cette séquence reproduit la semaine 1 du tableau de référence Brille & Vibre :
@@ -444,28 +645,16 @@ Cette séquence reproduit la semaine 1 du tableau de référence Brille & Vibre 
 7. **DIMANCHE — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
 
 CONSIGNES IMPÉRATIVES
-- Chaque hook doit respecter LES RÈGLES DU HOOK du bloc système (structure "situation… mais vérité cachée", tutoiement féminin, concret, zéro emoji, zéro jargon, zéro exclamation).
-- Chaque CTA doit respecter LES RÈGLES DU CTA (court, mot déclencheur en MAJUSCULES, cohérent avec l'étape).
-- **Varie les angles sur la semaine** : jamais 2 hooks avec la même ouverture ou le même exemple. Change de situation du quotidien à chaque fois.
+- Chaque hook vient du CATALOGUE DES 125 TEMPLATES. Tu choisis le template qui convient le mieux à l'étape et au sujet, tu remplaces [X] par le contenu réel, et tu le rends 100% naturel.
+- Mentionne dans "categorie_hook" la catégorie du template utilisé (Casser les croyances / Expérience personnelle / Interpellation directe / Éducation & méthode / Vulnérabilité & connexion)
+- **Varie les catégories sur la semaine** : jamais 2 jours consécutifs avec la même catégorie. Au moins 3 catégories différentes sur les 7 jours.
+- Chaque CTA respecte LES RÈGLES DU CTA (court, mot déclencheur en MAJUSCULES, cohérent avec l'étape).
 - Adapte le sujet, le vocabulaire et les scénarios à l'audience précisée.
 - Si un focus de semaine est précisé, TOUTE la semaine converge subtilement vers ce focus (le mercredi et le samedi sont les pics de conversion).
-- N'invente pas de nouveaux axes ou états : respecte la table de correspondance du bloc système.
+- Respecte strictement la table de correspondance des 4 axes du bloc système.
 
 SCHÉMA JSON ATTENDU — exactement 7 entrées dans "plan", aucun texte avant ni après le JSON :
-{
-  "plan": [
-    {
-      "jour": 1,
-      "jour_nom": "Lundi",
-      "etape": "Attirer",
-      "niveau_funnel": "TOFU",
-      "etat_emotionnel": "Besoin de ressentir",
-      "niveau_conscience": "Pas consciente du problème",
-      "hook": "la phrase d'accroche complète (1 à 2 phrases, avec '…' pour la tension)",
-      "cta": "l'appel à l'action court, ex : Commente 'MOI' si c'est toi"
-    }
-  ]
-}`;
+${schema}`;
 }
 
 function corsOrigin(req) {
@@ -602,8 +791,12 @@ export default async function handler(req, res) {
     if (mode === 'weekly_plan') {
       const audience = clamp(body.audience, 300);
       const focus = clamp(body.focus, 600);
-      userMessage = buildWeeklyPlanMessage(audience, focus);
-      maxTokens = 6500; // Suffisant pour 7 jours détaillés
+      const weeklyFormat = String(body.format || 'reel').toLowerCase();
+      if (!['story', 'reel'].includes(weeklyFormat)) {
+        return res.status(400).json({ error: 'format requis pour weekly_plan : "story" ou "reel".' });
+      }
+      userMessage = buildWeeklyPlanMessage(audience, focus, weeklyFormat);
+      maxTokens = 6500;
     } else if (mode === 'post') {
       const format = String(body.format || '').toLowerCase();
       const VALID_FORMATS = ['reel', 'carrousel', 'photo', 'inspiration'];

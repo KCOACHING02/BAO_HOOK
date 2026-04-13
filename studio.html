@@ -35,37 +35,6 @@
     @keyframes pulse  { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* ── BACK BAR ── */
-    .back-bar {
-      background: var(--black);
-      padding: 13px 20px;
-      display: flex;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-    }
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(250,246,239,0.6);
-      text-decoration: none;
-      padding: 7px 13px;
-      border-radius: 8px;
-      border: 1px solid rgba(201,168,76,0.25);
-      background: rgba(201,168,76,0.08);
-      transition: all 0.2s;
-    }
-    .back-link:hover {
-      background: rgba(201,168,76,0.18);
-      color: var(--gold-light);
-      transform: translateX(-2px);
-    }
-    .back-link svg { width: 13px; height: 13px; stroke: currentColor; }
-
     /* ── COVER ── */
     .cover {
       background: var(--black);
@@ -92,6 +61,92 @@
     /* ── SCREENS ── */
     .screen { display: none; animation: fadeUp 0.4s ease; }
     .screen.active { display: block; }
+
+    /* ── CHOIX FORMAT ── */
+    .choice-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 900;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .choice-title em { color: var(--gold); font-style: italic; }
+    .choice-sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    @media (max-width: 480px) {
+      .choice-grid { grid-template-columns: 1fr; }
+    }
+    .choice-card {
+      background: var(--card);
+      border: 2px solid var(--beige);
+      border-radius: 20px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 6px 22px var(--shadow);
+    }
+    .choice-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(201,168,76,0.25);
+    }
+    .choice-icon {
+      font-size: 52px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .choice-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .choice-name em { color: var(--gold); font-style: italic; }
+    .choice-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    /* ── FORMAT PILL DANS LE HEADER ── */
+    .format-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      background: rgba(201,168,76,0.12);
+      border: 1px solid rgba(201,168,76,0.3);
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .format-indicator:hover {
+      background: rgba(201,168,76,0.22);
+      border-color: var(--gold);
+    }
 
     /* ── FORM ── */
     .form-card {
@@ -428,13 +483,6 @@
 </head>
 <body>
 
-  <header class="back-bar">
-    <a href="index.html" class="back-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Retour
-    </a>
-  </header>
-
   <section class="cover">
     <div class="logo-ring">
       <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
@@ -447,25 +495,44 @@
 
   <main class="page">
 
+    <!-- ─────── SCREEN 0 — CHOIX FORMAT ─────── -->
+    <div id="screen-choice" class="screen active">
+      <h2 class="choice-title">Qu'est-ce que tu veux <em>créer</em> ?</h2>
+      <p class="choice-sub">Chaque format a sa propre approche. Choisis pour que Claude adapte ses hooks, rythme et structure.</p>
+      <div class="choice-grid">
+        <div class="choice-card" data-format="story">
+          <div class="choice-icon">📱</div>
+          <div class="choice-name">Une semaine<br>de <em>Stories</em></div>
+          <div class="choice-desc">7 stories courtes et interactives<br>(sondages, questions, stickers)</div>
+        </div>
+        <div class="choice-card" data-format="reel">
+          <div class="choice-icon">🎬</div>
+          <div class="choice-name">Une semaine<br>de <em>Reels</em></div>
+          <div class="choice-desc">7 reels avec hook visuel et script<br>prêts à tourner</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ─────── SCREEN 1 — FORM ─────── -->
-    <div id="screen-form" class="screen active">
+    <div id="screen-form" class="screen">
       <div class="form-card">
+        <span id="format-indicator" class="format-indicator">← 📱 Stories · Changer</span>
         <h2 class="form-title">Dis-moi 2 choses et je te <em>génère ta semaine</em></h2>
-        <p class="form-intro">Inspirer · Éduquer · Engager · Prouver · Vendre · Connecter · Récapituler — Claude orchestre toute la séquence stratégique pour toi.</p>
+        <p class="form-intro">Claude appliquera la méthode Brille &amp; Vibre (4 axes croisés + catalogue des 125 templates) pour que tes contenus sonnent naturels et respectent ton style.</p>
 
         <div class="field">
           <label class="field-label" for="audience">À qui tu parles ?</label>
-          <input id="audience" class="field-input" type="text" placeholder="Ex : femmes coachs débutantes sur Instagram">
+          <input id="audience" class="field-input" type="text" placeholder="Ex : femmes qui veulent se lancer en business en ligne">
           <div class="field-hint">Sauvegardé pour la prochaine fois.</div>
         </div>
 
         <div class="field">
           <label class="field-label" for="focus">Tu veux mettre quoi en avant cette semaine ?</label>
-          <textarea id="focus" class="field-textarea" placeholder="Ex : le lancement de ma masterclass sur les hooks le vendredi"></textarea>
+          <textarea id="focus" class="field-textarea" placeholder="Ex : le lancement de ma masterclass sur les hooks vendredi"></textarea>
           <div class="field-hint">Facultatif — laisse vide pour un planning généraliste.</div>
         </div>
 
-        <button id="btn-generate" class="btn btn-primary btn-block">✨ Génère mon planning</button>
+        <button id="btn-generate" class="btn btn-primary btn-block">✨ Génère ma semaine</button>
       </div>
     </div>
 
@@ -473,23 +540,24 @@
     <div id="screen-loading" class="screen">
       <div class="loading-card">
         <div class="loading-dots"><span></span><span></span><span></span></div>
-        <div class="loading-text">Claude orchestre ta semaine...</div>
-        <div class="loading-sub">Cela prend généralement 20 à 40 secondes.</div>
+        <div class="loading-text" id="loading-text">Claude orchestre ta semaine...</div>
+        <div class="loading-sub">Cela prend généralement 10 à 30 secondes.</div>
       </div>
     </div>
 
     <!-- ─────── SCREEN 3 — RESULTS ─────── -->
     <div id="screen-results" class="screen">
       <div class="results-header">
-        <div class="results-eyebrow">Ta stratégie de la semaine</div>
-        <h2 class="results-title">7 jours, <em>7 leviers psychologiques</em></h2>
+        <div class="results-eyebrow" id="results-eyebrow">Ta semaine</div>
+        <h2 class="results-title">7 jours, <em>méthode Brille &amp; Vibre</em></h2>
       </div>
 
       <div id="days-container"></div>
 
       <div class="results-actions">
-        <button id="btn-regenerate" class="btn btn-primary">🔄 Regénérer une autre semaine</button>
+        <button id="btn-regenerate" class="btn btn-primary">🔄 Regénérer</button>
         <button id="btn-back" class="btn btn-ghost">← Modifier le brief</button>
+        <button id="btn-change-format" class="btn btn-ghost">🔀 Changer le format</button>
       </div>
     </div>
 
@@ -502,16 +570,20 @@
        STATE & STORAGE
        ─────────────────────────────────────── */
     const STORAGE_KEY = 'brille-vibre-studio:brief';
+    let currentFormat = 'reel'; // 'story' ou 'reel'
+
     const els = {
-      screenForm:    document.getElementById('screen-form'),
-      screenLoading: document.getElementById('screen-loading'),
-      screenResults: document.getElementById('screen-results'),
-      audience:      document.getElementById('audience'),
-      focus:         document.getElementById('focus'),
-      btnGenerate:   document.getElementById('btn-generate'),
-      btnRegen:      document.getElementById('btn-regenerate'),
-      btnBack:       document.getElementById('btn-back'),
-      daysContainer: document.getElementById('days-container'),
+      screenChoice:    document.getElementById('screen-choice'),
+      screenForm:      document.getElementById('screen-form'),
+      screenLoading:   document.getElementById('screen-loading'),
+      screenResults:   document.getElementById('screen-results'),
+      audience:        document.getElementById('audience'),
+      focus:           document.getElementById('focus'),
+      formatIndicator: document.getElementById('format-indicator'),
+      btnGenerate:     document.getElementById('btn-generate'),
+      btnRegen:        document.getElementById('btn-regenerate'),
+      btnBack:         document.getElementById('btn-back'),
+      daysContainer:   document.getElementById('days-container'),
     };
 
     // Restaure le brief précédent (audience + focus)
@@ -535,11 +607,30 @@
        SCREENS
        ─────────────────────────────────────── */
     function showScreen(name) {
+      els.screenChoice.classList.toggle('active', name === 'choice');
       els.screenForm.classList.toggle('active', name === 'form');
       els.screenLoading.classList.toggle('active', name === 'loading');
       els.screenResults.classList.toggle('active', name === 'results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    function setFormat(format) {
+      currentFormat = format;
+      const icon = format === 'story' ? '📱' : '🎬';
+      const name = format === 'story' ? 'Stories' : 'Reels';
+      els.formatIndicator.textContent = `← ${icon} ${name} · Changer`;
+    }
+
+    // Clics sur les cartes de choix format
+    document.querySelectorAll('.choice-card').forEach(card => {
+      card.addEventListener('click', () => {
+        setFormat(card.dataset.format);
+        showScreen('form');
+      });
+    });
+
+    // Retour à l'écran de choix depuis le format indicator
+    els.formatIndicator.addEventListener('click', () => showScreen('choice'));
 
     /* ───────────────────────────────────────
        TOAST
@@ -593,16 +684,41 @@
         d.etat_emotionnel,
         d.niveau_conscience,
       ].filter(Boolean).join(' · ');
-      return [
+
+      const lines = [
         `📅 ${d.jour_nom || 'Jour ' + d.jour}`,
         metaLine,
-        '',
-        '🎯 HOOK',
-        d.hook || '',
-        '',
-        '👉 CTA',
-        d.cta || '',
-      ].filter(line => line !== null && line !== undefined).join('\n');
+      ];
+
+      if (d.categorie_hook) lines.push(`Catégorie : ${d.categorie_hook}`);
+      lines.push('');
+      lines.push('🎯 HOOK');
+      lines.push(d.hook || '');
+      lines.push('');
+
+      if (currentFormat === 'story') {
+        if (d.texte) {
+          lines.push('📱 TEXTE DE LA STORY');
+          lines.push(d.texte);
+          lines.push('');
+        }
+        if (d.sticker && d.sticker !== 'aucun') {
+          lines.push(`🎨 STICKER — ${d.sticker}`);
+          if (d.sticker_contenu) lines.push(d.sticker_contenu);
+          lines.push('');
+        }
+      } else {
+        if (d.script) {
+          lines.push('🎬 SCRIPT');
+          lines.push(d.script);
+          lines.push('');
+        }
+      }
+
+      lines.push('👉 CTA');
+      lines.push(d.cta || '');
+
+      return lines.filter(l => l !== null && l !== undefined).join('\n');
     }
 
     /* ───────────────────────────────────────
@@ -612,39 +728,72 @@
 
     function renderPlan(plan) {
       lastPlan = plan;
-      const cards = plan.map((d, i) => `
-        <div class="day-card">
-          <div class="day-header">
-            <div class="day-row1">
-              <span class="day-num">JOUR ${escapeHtml(String(d.jour || (i + 1)))}</span>
-              <span class="day-name">${escapeHtml(d.jour_nom || '')}</span>
-            </div>
-            <div class="day-objectif">${escapeHtml(d.etape || '')}</div>
-            <div class="day-row2">
-              ${d.niveau_funnel ? `<span class="day-pill">🎯 ${escapeHtml(d.niveau_funnel)}</span>` : ''}
-              ${d.etat_emotionnel ? `<span class="day-pill">❤️ ${escapeHtml(d.etat_emotionnel)}</span>` : ''}
-              ${d.niveau_conscience ? `<span class="day-pill">🧠 ${escapeHtml(d.niveau_conscience)}</span>` : ''}
-            </div>
-          </div>
-          <div class="day-body">
-            ${d.hook ? `
+      const cards = plan.map((d, i) => {
+        // Bloc spécifique au format
+        let formatBlock = '';
+        if (currentFormat === 'story') {
+          if (d.texte) {
+            formatBlock += `
               <div class="day-block">
-                <div class="day-block-label">🎯 Hook</div>
-                <div class="day-hook">${escapeHtml(d.hook)}</div>
+                <div class="day-block-label">📱 Texte de la story</div>
+                <div class="day-content">${escapeHtml(d.texte)}</div>
               </div>
-            ` : ''}
-            ${d.cta ? `
+            `;
+          }
+          if (d.sticker && d.sticker !== 'aucun') {
+            formatBlock += `
               <div class="day-block">
-                <div class="day-block-label">👉 CTA</div>
-                <div class="day-cta">${escapeHtml(d.cta)}</div>
+                <div class="day-block-label">🎨 Sticker — ${escapeHtml(d.sticker)}</div>
+                <div class="day-cta">${escapeHtml(d.sticker_contenu || '')}</div>
               </div>
-            ` : ''}
+            `;
+          }
+        } else {
+          if (d.script) {
+            formatBlock += `
+              <div class="day-block">
+                <div class="day-block-label">🎬 Script</div>
+                <div class="day-content">${escapeHtml(d.script)}</div>
+              </div>
+            `;
+          }
+        }
+
+        return `
+          <div class="day-card">
+            <div class="day-header">
+              <div class="day-row1">
+                <span class="day-num">JOUR ${escapeHtml(String(d.jour || (i + 1)))}</span>
+                <span class="day-name">${escapeHtml(d.jour_nom || '')}</span>
+              </div>
+              <div class="day-objectif">${escapeHtml(d.etape || '')}</div>
+              <div class="day-row2">
+                ${d.niveau_funnel ? `<span class="day-pill">🎯 ${escapeHtml(d.niveau_funnel)}</span>` : ''}
+                ${d.etat_emotionnel ? `<span class="day-pill">❤️ ${escapeHtml(d.etat_emotionnel)}</span>` : ''}
+                ${d.categorie_hook ? `<span class="day-pill">📚 ${escapeHtml(d.categorie_hook)}</span>` : ''}
+              </div>
+            </div>
+            <div class="day-body">
+              ${d.hook ? `
+                <div class="day-block">
+                  <div class="day-block-label">🎯 Hook</div>
+                  <div class="day-hook">${escapeHtml(d.hook)}</div>
+                </div>
+              ` : ''}
+              ${formatBlock}
+              ${d.cta ? `
+                <div class="day-block">
+                  <div class="day-block-label">👉 CTA</div>
+                  <div class="day-cta">${escapeHtml(d.cta)}</div>
+                </div>
+              ` : ''}
+            </div>
+            <div class="day-actions">
+              <button class="copy-btn" onclick="copyDay(${i})">📋 Copier ce jour</button>
+            </div>
           </div>
-          <div class="day-actions">
-            <button class="copy-btn" onclick="copyDay(${i})">📋 Copier ce jour</button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       els.daysContainer.innerHTML = cards;
     }
 
@@ -671,13 +820,34 @@
       }
 
       saveBrief(audience, focus);
+
+      // Adapter le texte du loader au format
+      const loadingText = document.getElementById('loading-text');
+      if (loadingText) {
+        loadingText.textContent = currentFormat === 'story'
+          ? 'Claude écrit tes 7 stories...'
+          : 'Claude écrit tes 7 reels...';
+      }
+      // Adapter le header des résultats
+      const resultsEyebrow = document.getElementById('results-eyebrow');
+      if (resultsEyebrow) {
+        resultsEyebrow.textContent = currentFormat === 'story'
+          ? 'Ta semaine de stories'
+          : 'Ta semaine de reels';
+      }
+
       showScreen('loading');
 
       try {
         const res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mode: 'weekly_plan', audience, focus }),
+          body: JSON.stringify({
+            mode: 'weekly_plan',
+            format: currentFormat,
+            audience,
+            focus,
+          }),
         });
 
         // Lis le body brut puis essaie de parser comme JSON.
@@ -719,6 +889,7 @@
     els.btnGenerate.addEventListener('click', generatePlan);
     els.btnRegen.addEventListener('click', generatePlan);
     els.btnBack.addEventListener('click', () => showScreen('form'));
+    document.getElementById('btn-change-format').addEventListener('click', () => showScreen('choice'));
   </script>
 
 </body>
