@@ -671,7 +671,9 @@
   <div id="toast-container"></div>
 
   <script>
-    /* ── TAB SWITCHING ── */
+    /* ─────────────────────────────────────────
+       TAB SWITCHING
+       ───────────────────────────────────────── */
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
@@ -685,6 +687,174 @@
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
+
+    /* ─────────────────────────────────────────
+       TOAST HELPER
+       ───────────────────────────────────────── */
+    function showToast(message, type = 'info', duration = 3000) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    /* ─────────────────────────────────────────
+       PROFILE — localStorage logic
+       ───────────────────────────────────────── */
+    const PROFILE_STORAGE_KEY = 'brille-vibre-studio:profile';
+
+    // Mapping : id du champ HTML → clé dans l'objet profile
+    const PROFILE_FIELDS = {
+      'p-nom':            'nom',
+      'p-niche':          'niche',
+      'p-mission':        'mission',
+      'p-audience':       'audience',
+      'p-douleurs':       'douleurs',
+      'p-desirs':         'desirs',
+      'p-objections':     'objections',
+      'p-offres':         'offres',
+      'p-tutoiement':     'tutoiement',
+      'p-emojis':         'emojis',
+      'p-style':          'style',
+      'p-mots-signature': 'mots_signature',
+      'p-mots-bannis':    'mots_bannis',
+      'p-temoignages':    'temoignages',
+      'p-chiffres':       'chiffres',
+      'p-objectif':       'objectif',
+    };
+
+    // Champs minimum à remplir pour considérer le profil "complet"
+    const REQUIRED_FIELDS = ['nom', 'niche', 'audience', 'offres'];
+
+    function readProfileFromForm() {
+      const profile = {};
+      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el) profile[key] = el.value.trim();
+      }
+      return profile;
+    }
+
+    function writeProfileToForm(profile) {
+      if (!profile) return;
+      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el && profile[key] !== undefined) {
+          el.value = profile[key];
+        }
+      }
+    }
+
+    function getStoredProfile() {
+      try {
+        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        console.error('Failed to parse stored profile', e);
+        return null;
+      }
+    }
+
+    function saveProfile() {
+      const profile = readProfileFromForm();
+      try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+        updateProfileBadge();
+        showToast('✓ Profil sauvegardé', 'success');
+      } catch (e) {
+        showToast('❌ Erreur de sauvegarde', 'error');
+      }
+    }
+
+    function isProfileComplete(profile) {
+      if (!profile) return false;
+      return REQUIRED_FIELDS.every(key => profile[key] && profile[key].length > 0);
+    }
+
+    function updateProfileBadge() {
+      const badge = document.getElementById('profile-status');
+      if (!badge) return;
+      const profile = getStoredProfile();
+      if (isProfileComplete(profile)) {
+        badge.className = 'profile-status complete';
+        badge.textContent = '✓ Profil complet';
+      } else {
+        badge.className = 'profile-status incomplete';
+        badge.textContent = '⚠ Profil incomplet';
+      }
+    }
+
+    function exportProfile() {
+      const profile = readProfileFromForm();
+      const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `brille-vibre-profil-${date}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('✓ Profil exporté', 'success');
+    }
+
+    function importProfile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const profile = JSON.parse(e.target.result);
+          writeProfileToForm(profile);
+          localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+          updateProfileBadge();
+          showToast('✓ Profil importé', 'success');
+        } catch (err) {
+          showToast('❌ Fichier JSON invalide', 'error');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetProfile() {
+      if (!confirm('Réinitialiser tout ton profil ? Cette action est irréversible.')) return;
+      localStorage.removeItem(PROFILE_STORAGE_KEY);
+      for (const fieldId of Object.keys(PROFILE_FIELDS)) {
+        const el = document.getElementById(fieldId);
+        if (el) {
+          if (el.tagName === 'SELECT') el.selectedIndex = 0;
+          else el.value = '';
+        }
+      }
+      updateProfileBadge();
+      showToast('Profil réinitialisé', 'info');
+    }
+
+    // Profile event listeners
+    document.getElementById('btn-save-profil').addEventListener('click', saveProfile);
+    document.getElementById('btn-export-profil').addEventListener('click', exportProfile);
+    document.getElementById('btn-reset-profil').addEventListener('click', resetProfile);
+    document.getElementById('btn-import-profil').addEventListener('click', () => {
+      document.getElementById('file-import-profil').click();
+    });
+    document.getElementById('file-import-profil').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) importProfile(file);
+      e.target.value = '';
+    });
+
+    // Initial load — restaure le profil et met à jour le badge
+    (function initProfile() {
+      const stored = getStoredProfile();
+      if (stored) writeProfileToForm(stored);
+      updateProfileBadge();
+    })();
   </script>
 
 </body>
