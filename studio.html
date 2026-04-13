@@ -453,6 +453,91 @@
     }
     .results-actions .btn { flex: 1; min-width: 200px; }
 
+    /* ── OPTIONS AVANCÉES ── */
+    .advanced-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: transparent;
+      border: 1px dashed var(--beige);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 18px;
+    }
+    .advanced-toggle:hover {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
+    .advanced-toggle .chevron {
+      transition: transform 0.2s;
+      font-size: 11px;
+    }
+    .advanced-toggle.open .chevron {
+      transform: rotate(180deg);
+    }
+    .advanced-panel {
+      display: none;
+      background: var(--cream);
+      border: 1px solid var(--beige);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease;
+    }
+    .advanced-panel.open { display: block; }
+    .option-group {
+      margin-bottom: 18px;
+    }
+    .option-group:last-child { margin-bottom: 0; }
+    .option-group-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 8px;
+    }
+    .option-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .option-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 20px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .option-pill:hover {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
+    .option-pill.selected {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-color: var(--gold);
+      color: var(--black);
+      font-weight: 700;
+    }
+
     /* ── TOAST ── */
     #toast-container {
       position: fixed;
@@ -532,6 +617,54 @@
           <div class="field-hint">Facultatif — laisse vide pour un planning généraliste.</div>
         </div>
 
+        <!-- ── OPTIONS AVANCÉES (repliées par défaut) ── -->
+        <button type="button" id="btn-toggle-advanced" class="advanced-toggle">
+          ⚙️ Options avancées <span class="chevron">▼</span>
+        </button>
+
+        <div id="advanced-panel" class="advanced-panel">
+
+          <div class="option-group" data-option="ton">
+            <label class="option-group-label">🎭 Ton général</label>
+            <div class="option-pills">
+              <button type="button" class="option-pill selected" data-value="auto">Auto</button>
+              <button type="button" class="option-pill" data-value="doux">Doux</button>
+              <button type="button" class="option-pill" data-value="direct">Direct</button>
+              <button type="button" class="option-pill" data-value="expert">Expert</button>
+              <button type="button" class="option-pill" data-value="vulnerable">Vulnérable</button>
+              <button type="button" class="option-pill" data-value="challengeant">Challengeant</button>
+            </div>
+          </div>
+
+          <div class="option-group" data-option="longueur">
+            <label class="option-group-label">📏 Longueur des hooks</label>
+            <div class="option-pills">
+              <button type="button" class="option-pill" data-value="court">Court (aphorisme)</button>
+              <button type="button" class="option-pill selected" data-value="moyen">Moyen</button>
+              <button type="button" class="option-pill" data-value="long">Long (setup + révélation)</button>
+            </div>
+          </div>
+
+          <div class="option-group" data-option="intensite">
+            <label class="option-group-label">🔥 Intensité</label>
+            <div class="option-pills">
+              <button type="button" class="option-pill" data-value="soft">Soft (bienveillant)</button>
+              <button type="button" class="option-pill selected" data-value="equilibre">Équilibré</button>
+              <button type="button" class="option-pill" data-value="intense">Intense (truth-bomb)</button>
+            </div>
+          </div>
+
+          <div class="option-group" data-option="cta_style">
+            <label class="option-group-label">📣 Style de CTA</label>
+            <div class="option-pills">
+              <button type="button" class="option-pill selected" data-value="mixte">Mixte</button>
+              <button type="button" class="option-pill" data-value="formel">Formel (MOI, INFO…)</button>
+              <button type="button" class="option-pill" data-value="soft">Soft (écris moi 🦋)</button>
+            </div>
+          </div>
+
+        </div>
+
         <button id="btn-generate" class="btn btn-primary btn-block">✨ Génère ma semaine</button>
       </div>
     </div>
@@ -570,7 +703,17 @@
        STATE & STORAGE
        ─────────────────────────────────────── */
     const STORAGE_KEY = 'brille-vibre-studio:brief';
+    const OPTIONS_STORAGE_KEY = 'brille-vibre-studio:options';
     let currentFormat = 'reel'; // 'story' ou 'reel'
+
+    // Options avancées — valeurs par défaut
+    const DEFAULT_OPTIONS = {
+      ton: 'auto',
+      longueur: 'moyen',
+      intensite: 'equilibre',
+      cta_style: 'mixte',
+    };
+    let currentOptions = { ...DEFAULT_OPTIONS };
 
     const els = {
       screenChoice:    document.getElementById('screen-choice'),
@@ -584,6 +727,8 @@
       btnRegen:        document.getElementById('btn-regenerate'),
       btnBack:         document.getElementById('btn-back'),
       daysContainer:   document.getElementById('days-container'),
+      btnToggleAdv:    document.getElementById('btn-toggle-advanced'),
+      advancedPanel:   document.getElementById('advanced-panel'),
     };
 
     // Restaure le brief précédent (audience + focus)
@@ -602,6 +747,48 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience, focus }));
       } catch (e) { /* ignore */ }
     }
+
+    // ── Options avancées : restore + UI sync ──
+    (function restoreOptions() {
+      try {
+        const raw = localStorage.getItem(OPTIONS_STORAGE_KEY);
+        if (raw) currentOptions = { ...DEFAULT_OPTIONS, ...JSON.parse(raw) };
+      } catch (e) { /* ignore */ }
+      // Sync UI avec les options chargées
+      Object.entries(currentOptions).forEach(([optName, optValue]) => {
+        const group = document.querySelector(`.option-group[data-option="${optName}"]`);
+        if (!group) return;
+        group.querySelectorAll('.option-pill').forEach(p => {
+          p.classList.toggle('selected', p.dataset.value === optValue);
+        });
+      });
+    })();
+
+    function saveOptions() {
+      try {
+        localStorage.setItem(OPTIONS_STORAGE_KEY, JSON.stringify(currentOptions));
+      } catch (e) { /* ignore */ }
+    }
+
+    // Clic sur les pills des options
+    document.querySelectorAll('.option-group .option-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const group = pill.closest('.option-group');
+        const optName = group.dataset.option;
+        const optValue = pill.dataset.value;
+        currentOptions[optName] = optValue;
+        group.querySelectorAll('.option-pill').forEach(p => {
+          p.classList.toggle('selected', p === pill);
+        });
+        saveOptions();
+      });
+    });
+
+    // Toggle panneau avancé
+    els.btnToggleAdv.addEventListener('click', () => {
+      els.btnToggleAdv.classList.toggle('open');
+      els.advancedPanel.classList.toggle('open');
+    });
 
     /* ───────────────────────────────────────
        SCREENS
@@ -847,6 +1034,7 @@
             format: currentFormat,
             audience,
             focus,
+            options: currentOptions,
           }),
         });
 

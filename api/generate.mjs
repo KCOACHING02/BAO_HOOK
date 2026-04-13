@@ -625,9 +625,9 @@ Tu réponds TOUJOURS et UNIQUEMENT par un objet JSON valide, sans texte avant ni
 // ─── 3. BUILD USER MESSAGE (weekly_plan story|reel) ────────────
 //
 // Construit le message utilisateur pour une demande de planning de 7 jours.
-// Le format ("story" ou "reel") détermine le schéma JSON attendu et les
-// instructions spécifiques au format.
-function buildWeeklyPlanMessage(audience, focus, format) {
+// Le format ("story" ou "reel") détermine le schéma JSON attendu.
+// Les options (ton, longueur, intensité, cta_style) affinent le style de génération.
+function buildWeeklyPlanMessage(audience, focus, format, options) {
   const audienceLine = audience
     ? `- Audience cible : ${audience}`
     : '- Audience cible : femmes qui veulent se lancer en business en ligne mais qui bloquent';
@@ -637,6 +637,46 @@ function buildWeeklyPlanMessage(audience, focus, format) {
     : '- Focus de cette semaine : libre — choisis l\'angle le plus universel pour cette audience';
 
   const isStory = format === 'story';
+
+  // ── Bloc d'options avancées ──
+  const opts = options || { ton: 'auto', longueur: 'moyen', intensite: 'equilibre', cta_style: 'mixte' };
+
+  const tonInstructions = {
+    auto:        'Varie les tons sur la semaine pour ne pas lasser.',
+    doux:        'TON IMPOSÉ : DOUX ET BIENVEILLANT. Jamais de reproche. Utilise beaucoup les templates de Vulnérabilité & Connexion et les "Rappel du jour :". Pas de truth-bomb cinglants cette semaine.',
+    direct:      'TON IMPOSÉ : DIRECT ET CASH. Aucun détour, aucune formule pour adoucir. Va droit au but. Privilégie les templates Interpellation directe et Casser les croyances. Tac au tac.',
+    expert:      'TON IMPOSÉ : EXPERT / PÉDAGOGIQUE. Tu donnes de la valeur concrète avec autorité mais sans condescendance. Privilégie les templates Éducation & méthode et la mécanique "Le mécanisme derrière [X]".',
+    vulnerable:  'TON IMPOSÉ : VULNÉRABLE ET INTIME. Tu partages tes failles, tes doutes, tes moments d\'échec. Privilégie les templates Expérience personnelle et Vulnérabilité & connexion. "Je" obligatoire, presque tout le temps.',
+    challengeant:'TON IMPOSÉ : CHALLENGEANT. Tu provoques gentiment, tu accuses avec tendresse, tu réveilles. Privilégie les mécaniques FOMO concurrentiel, "Pendant que tu X, d\'autres Y", et "Le plus difficile n\'est pas X, c\'est Y".',
+  };
+
+  const longueurInstructions = {
+    court: 'LONGUEUR DES HOOKS : COURT. Maximum 1 phrase de 8 à 12 mots. Priorise la mécanique APHORISME ÉVOCATEUR. Exemple validé : "Sois patient. Ce que tu mérites arrive en silence."',
+    moyen: 'LONGUEUR DES HOOKS : MOYEN. 1 à 2 phrases, 15 à 30 mots au total.',
+    long:  'LONGUEUR DES HOOKS : LONG. 2 à 4 phrases avec setup clair + tension + révélation partielle. Autorisé à aller jusqu\'à 50 mots. Exemple : "Pendant que tu hésites, quelqu\'un de moins talentueux que toi prend ta place. Le monde ne récompense pas le potentiel. Il récompense ceux qui osent."',
+  };
+
+  const intensiteInstructions = {
+    soft:      'INTENSITÉ : SOFT / BIENVEILLANT. Ton de voix amie qui rappelle une vérité sans blesser. AUCUN vulgaire cette semaine. Les templates Casser les croyances s\'utilisent en version douce.',
+    equilibre: 'INTENSITÉ : ÉQUILIBRÉE. Tu mixes moments doux et moments plus cash sur la semaine. Vulgaire léger autorisé maximum 1 fois sur les 7 jours (si ça amplifie vraiment la vérité).',
+    intense:   'INTENSITÉ : INTENSE / TRUTH-BOMB. Tu peux être cash, direct, et utiliser le vulgaire léger ("putain", "merde", "p**tain de décision") jusqu\'à 2-3 fois sur la semaine, MAIS JAMAIS gratuit. Priorise les mécaniques FOMO concurrentiel, recadrage conceptuel, accusation implicite.',
+  };
+
+  const ctaInstructions = {
+    mixte:  'STYLE DE CTA : MIXTE. Alterne entre formel (mot-clé en MAJUSCULES) et soft ("écris moi 🦋") sur les 7 jours.',
+    formel: 'STYLE DE CTA : FORMEL UNIQUEMENT. Tous les CTA de la semaine utilisent un mot-clé en MAJUSCULES entre guillemets. Ex : Commente "MOI", Écris "INFO", DM "START".',
+    soft:   'STYLE DE CTA : SOFT UNIQUEMENT. Tous les CTA de la semaine sont conversationnels avec emoji animal/nature. Ex : "Écris moi 🦋", "Tu veux des infos, écris moi ;)", "DM moi pour que je te montre".',
+  };
+
+  const optionsBlock = `⚙️ OPTIONS DE GÉNÉRATION (à respecter strictement)
+
+${tonInstructions[opts.ton] || tonInstructions.auto}
+
+${longueurInstructions[opts.longueur] || longueurInstructions.moyen}
+
+${intensiteInstructions[opts.intensite] || intensiteInstructions.equilibre}
+
+${ctaInstructions[opts.cta_style] || ctaInstructions.mixte}`;
 
   // ── Bloc d'instructions spécifique au format ──
   const formatBlock = isStory
@@ -701,6 +741,8 @@ ${audienceLine}
 ${focusLine}
 
 ${formatBlock}
+
+${optionsBlock}
 
 TÂCHE
 Génère un planning éditorial Instagram de 7 jours (lundi à dimanche), en suivant STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
@@ -891,8 +933,22 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
   }
 
+  // ── Options avancées (ton, longueur, intensité, style CTA) ──
+  const VALID_TON       = ['auto', 'doux', 'direct', 'expert', 'vulnerable', 'challengeant'];
+  const VALID_LONGUEUR  = ['court', 'moyen', 'long'];
+  const VALID_INTENSITE = ['soft', 'equilibre', 'intense'];
+  const VALID_CTA       = ['mixte', 'formel', 'soft'];
+
+  const rawOpts = (body.options && typeof body.options === 'object') ? body.options : {};
+  const options = {
+    ton:       VALID_TON.includes(rawOpts.ton)             ? rawOpts.ton       : 'auto',
+    longueur:  VALID_LONGUEUR.includes(rawOpts.longueur)   ? rawOpts.longueur  : 'moyen',
+    intensite: VALID_INTENSITE.includes(rawOpts.intensite) ? rawOpts.intensite : 'equilibre',
+    cta_style: VALID_CTA.includes(rawOpts.cta_style)       ? rawOpts.cta_style : 'mixte',
+  };
+
   // ── Construction du message ──
-  const userMessage = buildWeeklyPlanMessage(audience, focus, format);
+  const userMessage = buildWeeklyPlanMessage(audience, focus, format, options);
 
   // ── Appel API ──
   try {
