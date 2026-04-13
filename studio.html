@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brille & Vibre Studio</title>
+  <title>Brille & Vibre Studio — Planning éditorial</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -16,7 +16,6 @@
       --black:      #0D0D0D;
       --text:       #3A2E24;
       --text-light: #8C7560;
-      --border:     rgba(201,168,76,0.2);
       --card:       #ffffff;
       --shadow:     rgba(58,46,36,0.08);
       --success:    #10b981;
@@ -31,211 +30,10 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── ANIMATIONS ── */
     @keyframes spin   { to { transform: rotate(360deg); } }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes popIn  { 0% { transform: scale(0.96); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     @keyframes pulse  { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-    /* ── PAGE WRAP ── */
-    .page { max-width: 820px; margin: 0 auto; padding: 40px 20px 80px; }
-
-    /* ── TYPOGRAPHY HELPERS ── */
-    .section-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(22px, 5vw, 30px);
-      font-weight: 900;
-      color: var(--text);
-      line-height: 1.2;
-      margin-bottom: 10px;
-    }
-    .section-title em { font-style: italic; color: var(--gold); }
-    .section-body {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--text-light);
-      margin-bottom: 24px;
-    }
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(90deg, var(--gold), transparent);
-      margin: 40px 0;
-    }
-
-    /* ── CARDS ── */
-    .card {
-      background: var(--card);
-      border: 1.5px solid var(--beige);
-      border-radius: 18px;
-      padding: 24px;
-      box-shadow: 0 6px 24px var(--shadow);
-      margin-bottom: 20px;
-    }
-    .card-dark {
-      background: var(--black);
-      border: 1px solid rgba(201, 168, 76, 0.2);
-      border-radius: 18px;
-      padding: 24px;
-      color: var(--cream);
-      margin-bottom: 20px;
-    }
-
-    /* ── LABELS & INPUTS ── */
-    .field { margin-bottom: 16px; }
-    .field-label {
-      display: block;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      margin-bottom: 8px;
-    }
-    .field-hint {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-    .field-input,
-    .field-textarea,
-    .field-select {
-      width: 100%;
-      background: var(--cream);
-      border: 1.5px solid var(--beige);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      color: var(--text);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .field-textarea { min-height: 72px; resize: vertical; }
-    .field-input:focus,
-    .field-textarea:focus,
-    .field-select:focus {
-      outline: none;
-      border-color: var(--gold);
-      background: #fff;
-    }
-    .field-input::placeholder,
-    .field-textarea::placeholder { color: var(--text-light); }
-
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    @media (max-width: 600px) {
-      .field-row { grid-template-columns: 1fr; }
-    }
-
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 22px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-    }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--black);
-      box-shadow: 0 4px 16px rgba(201, 168, 76, 0.25);
-    }
-    .btn-primary:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(201, 168, 76, 0.4);
-    }
-
-    .btn-secondary {
-      background: rgba(201, 168, 76, 0.1);
-      color: var(--gold-dark);
-      border: 1px solid rgba(201, 168, 76, 0.35);
-    }
-    .btn-secondary:hover:not(:disabled) {
-      background: var(--gold);
-      color: var(--black);
-      border-color: var(--gold);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-light);
-      border: 1px solid var(--beige);
-    }
-    .btn-ghost:hover:not(:disabled) {
-      border-color: var(--gold);
-      color: var(--gold-dark);
-    }
-
-    .btn-block { width: 100%; }
-    .btn-sm { padding: 8px 14px; font-size: 12px; border-radius: 8px; }
-
-    /* ── BADGES ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .badge-success { background: rgba(16, 185, 129, 0.12); color: #047857; }
-    .badge-warn    { background: rgba(239, 68, 68, 0.1); color: #b91c1c; }
-    .badge-gold    { background: rgba(201, 168, 76, 0.15); color: var(--gold-dark); }
-
-    /* ── TOASTS ── */
-    #toast-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-      max-width: 340px;
-    }
-    .toast {
-      background: var(--black);
-      color: var(--cream);
-      border-left: 4px solid var(--gold);
-      border-radius: 10px;
-      padding: 14px 18px;
-      font-size: 13px;
-      line-height: 1.5;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      animation: slideInRight 0.3s ease;
-      pointer-events: auto;
-    }
-    .toast-success { border-left-color: var(--success); }
-    .toast-error   { border-left-color: var(--error); }
 
     /* ── BACK BAR ── */
     .back-bar {
@@ -243,8 +41,6 @@
       padding: 13px 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
       position: sticky;
       top: 0;
       z-index: 50;
@@ -255,275 +51,166 @@
       gap: 7px;
       font-size: 13px;
       font-weight: 600;
-      color: rgba(250, 246, 239, 0.6);
+      color: rgba(250,246,239,0.6);
       text-decoration: none;
       padding: 7px 13px;
       border-radius: 8px;
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      background: rgba(201, 168, 76, 0.08);
-      transition: all 0.2s ease;
+      border: 1px solid rgba(201,168,76,0.25);
+      background: rgba(201,168,76,0.08);
+      transition: all 0.2s;
     }
     .back-link:hover {
-      background: rgba(201, 168, 76, 0.18);
-      border-color: rgba(201, 168, 76, 0.5);
+      background: rgba(201,168,76,0.18);
       color: var(--gold-light);
       transform: translateX(-2px);
     }
-    .back-link svg {
-      width: 13px;
-      height: 13px;
-      stroke: currentColor;
-      flex-shrink: 0;
-    }
-    .profile-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-    }
-    .profile-status.complete {
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-      border-color: rgba(16, 185, 129, 0.3);
-    }
-    .profile-status.incomplete {
-      background: rgba(239, 68, 68, 0.12);
-      color: #fca5a5;
-      border-color: rgba(239, 68, 68, 0.3);
-    }
-    .profile-status:hover { transform: translateY(-1px); }
+    .back-link svg { width: 13px; height: 13px; stroke: currentColor; }
 
     /* ── COVER ── */
     .cover {
       background: var(--black);
-      padding: 48px 24px 44px;
+      padding: 44px 24px 38px;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-    .cover::before {
-      content: '';
-      position: absolute;
-      top: -80px;
-      right: -80px;
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, rgba(201, 168, 76, 0.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cover::after {
-      content: '';
-      position: absolute;
-      bottom: -60px;
-      left: -60px;
-      width: 240px;
-      height: 240px;
-      background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .logo-ring {
-      position: relative;
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 18px;
-    }
-    .logo-ring::before {
-      content: '';
-      position: absolute;
-      inset: -5px;
-      border-radius: 50%;
-      background: conic-gradient(var(--gold), var(--gold-light), var(--gold-pale), var(--gold), var(--gold-light), var(--gold));
-      animation: spin 8s linear infinite;
-    }
-    .logo-ring::after {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      background: var(--black);
-    }
-    .logo-img {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-    .cover-brand {
-      font-family: 'Playfair Display', serif;
-      font-size: 12px;
-      font-style: italic;
-      letter-spacing: 2px;
-      color: var(--gold);
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
-    }
-    .cover-tag {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--gold), var(--gold-light));
-      color: var(--black);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 20px;
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 1;
-    }
-    .cover-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(34px, 8vw, 56px);
-      font-weight: 900;
-      line-height: 0.95;
-      color: var(--cream);
-      position: relative;
-      z-index: 1;
-      margin-bottom: 8px;
-    }
-    .cover-title em { color: var(--gold); font-style: italic; }
-    .cover-title .outline {
-      -webkit-text-stroke: 2px var(--gold);
-      color: transparent;
-    }
-    .cover-sub {
-      font-size: 14px;
-      color: rgba(250, 246, 239, 0.55);
-      max-width: 440px;
-      margin: 18px auto 0;
-      line-height: 1.65;
-      position: relative;
-      z-index: 1;
-      border-left: 2px solid var(--gold);
-      padding-left: 14px;
-      text-align: left;
-    }
+    .cover::before { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; background:radial-gradient(circle,rgba(201,168,76,0.18) 0%,transparent 70%); }
+    .cover::after  { content:''; position:absolute; bottom:-60px; left:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%); }
+    .logo-ring { position:relative; width:72px; height:72px; margin:0 auto 14px; }
+    .logo-ring::before { content:''; position:absolute; inset:-5px; border-radius:50%; background:conic-gradient(var(--gold),var(--gold-light),var(--gold-pale),var(--gold)); animation:spin 8s linear infinite; }
+    .logo-ring::after  { content:''; position:absolute; inset:-3px; border-radius:50%; background:var(--black); }
+    .logo-img { position:relative; z-index:1; width:100%; height:100%; border-radius:50%; object-fit:cover; }
+    .cover-brand { font-family:'Playfair Display',serif; font-size:11px; font-style:italic; letter-spacing:2px; color:var(--gold); margin-bottom:6px; position:relative; z-index:1; }
+    .cover-tag { display:inline-block; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--black); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:14px; position:relative; z-index:1; }
+    .cover-title { font-family:'Playfair Display',serif; font-size:clamp(28px,7vw,44px); font-weight:900; line-height:1; color:var(--cream); position:relative; z-index:1; }
+    .cover-title em { color:var(--gold); font-style:italic; }
+    .cover-sub { font-size:13px; color:rgba(250,246,239,0.6); max-width:380px; margin:14px auto 0; line-height:1.6; position:relative; z-index:1; }
 
-    /* ── TAB NAV ── */
-    .tab-nav {
+    /* ── PAGE ── */
+    .page { max-width: 760px; margin: 0 auto; padding: 36px 20px 80px; }
+
+    /* ── SCREENS ── */
+    .screen { display: none; animation: fadeUp 0.4s ease; }
+    .screen.active { display: block; }
+
+    /* ── FORM ── */
+    .form-card {
       background: var(--card);
-      border-bottom: 1.5px solid var(--beige);
-      position: sticky;
-      top: 47px;
-      z-index: 40;
-      box-shadow: 0 4px 18px var(--shadow);
+      border: 1.5px solid var(--beige);
+      border-radius: 18px;
+      padding: 28px 24px;
+      box-shadow: 0 8px 28px var(--shadow);
     }
-    .tab-nav-inner {
-      max-width: 820px;
-      margin: 0 auto;
-      display: flex;
-      gap: 4px;
-      padding: 0 12px;
-      overflow-x: auto;
-      scrollbar-width: none;
+    .form-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 5vw, 28px);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 6px;
+      line-height: 1.2;
     }
-    .tab-nav-inner::-webkit-scrollbar { display: none; }
-    .tab-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 18px;
-      background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
-      font-family: 'Space Grotesk', sans-serif;
+    .form-title em { color: var(--gold); font-style: italic; }
+    .form-intro {
       font-size: 14px;
-      font-weight: 600;
       color: var(--text-light);
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      margin-bottom: -1.5px;
+      line-height: 1.65;
+      margin-bottom: 24px;
     }
-    .tab-btn:hover { color: var(--gold-dark); }
-    .tab-btn.active {
-      color: var(--gold-dark);
-      border-bottom-color: var(--gold);
+    .field { margin-bottom: 18px; }
+    .field-label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
       font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 8px;
     }
-    .tab-btn .tab-icon { font-size: 16px; }
-
-    /* ── TAB PANELS ── */
-    .tab-panel { display: none; animation: fadeUp 0.3s ease; }
-    .tab-panel.active { display: block; }
-
-    /* ── FORMAT GRID (Posts tab) ── */
-    .format-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    @media (max-width: 480px) {
-      .format-grid { grid-template-columns: 1fr; }
-    }
-    .format-card {
+    .field-input,
+    .field-textarea {
+      width: 100%;
       background: var(--cream);
       border: 1.5px solid var(--beige);
       border-radius: 12px;
-      padding: 18px 16px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-    }
-    .format-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 18px rgba(201, 168, 76, 0.15);
-    }
-    .format-card.selected {
-      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
-      border-color: var(--gold);
-      box-shadow: 0 4px 14px rgba(201, 168, 76, 0.25);
-    }
-    .format-icon {
-      font-size: 28px;
-      margin-bottom: 8px;
-      line-height: 1;
-    }
-    .format-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      font-weight: 700;
+      padding: 14px 16px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
       color: var(--text);
-      margin-bottom: 4px;
+      transition: all 0.2s;
     }
-    .format-desc {
+    .field-textarea { min-height: 90px; resize: vertical; }
+    .field-input:focus,
+    .field-textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .field-input::placeholder,
+    .field-textarea::placeholder { color: var(--text-light); }
+    .field-hint {
       font-size: 11px;
       color: var(--text-light);
-      line-height: 1.4;
+      margin-top: 6px;
+      font-style: italic;
     }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 26px;
+      border: none;
+      border-radius: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: var(--black);
+      box-shadow: 0 6px 20px rgba(201,168,76,0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(201,168,76,0.45);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-light);
+      border: 1.5px solid var(--beige);
+    }
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
 
     /* ── LOADING ── */
     .loading-card {
       background: var(--card);
       border: 1.5px solid var(--beige);
-      border-radius: 16px;
-      padding: 32px 24px;
+      border-radius: 18px;
+      padding: 48px 24px;
       text-align: center;
-      margin-bottom: 20px;
+      box-shadow: 0 6px 22px var(--shadow);
     }
     .loading-dots {
       display: inline-flex;
-      gap: 6px;
-      margin-bottom: 14px;
+      gap: 8px;
+      margin-bottom: 18px;
     }
     .loading-dots span {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: var(--gold);
       animation: pulse 1.2s ease infinite;
@@ -531,504 +218,332 @@
     .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
     .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
     .loading-text {
-      font-size: 14px;
-      color: var(--text-light);
+      font-family: 'Playfair Display', serif;
       font-style: italic;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-light);
     }
 
-    /* ── VARIANTS DISPLAY ── */
-    .variants-header {
+    /* ── RESULTS HEADER ── */
+    .results-header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .results-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .results-title {
       font-family: 'Playfair Display', serif;
-      font-size: 20px;
+      font-size: clamp(22px, 5vw, 30px);
       font-weight: 900;
       color: var(--text);
-      margin: 24px 0 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      line-height: 1.2;
+      margin-bottom: 8px;
     }
-    .variants-header em { color: var(--gold); font-style: italic; }
+    .results-title em { color: var(--gold); font-style: italic; }
 
-    .variant-card {
+    /* ── DAY CARDS ── */
+    .day-card {
       background: var(--card);
       border: 1.5px solid var(--beige);
       border-radius: 16px;
-      padding: 22px;
       margin-bottom: 16px;
+      overflow: hidden;
       box-shadow: 0 4px 18px var(--shadow);
       animation: fadeUp 0.4s ease;
     }
-    .variant-header {
+    .day-header {
+      background: linear-gradient(135deg, var(--black), #1a1a1a);
+      padding: 16px 20px;
+      color: var(--cream);
+      position: relative;
+    }
+    .day-header::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+    .day-row1 {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 10px;
-      padding-bottom: 14px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--beige);
+      margin-bottom: 6px;
+      flex-wrap: wrap;
     }
-    .variant-num {
+    .day-num {
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gold);
-      background: rgba(201, 168, 76, 0.15);
-      padding: 5px 12px;
-      border-radius: 20px;
-    }
-
-    .variant-block {
-      margin-bottom: 16px;
-    }
-    .variant-block:last-child { margin-bottom: 0; }
-    .variant-block-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       letter-spacing: 2px;
+      color: var(--gold);
+      background: rgba(201,168,76,0.12);
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+    .day-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .day-row2 {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .day-objectif {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      padding: 3px 0;
+    }
+    .day-pill {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+      background: rgba(250,246,239,0.1);
+      color: rgba(250,246,239,0.7);
+      border: 1px solid rgba(250,246,239,0.15);
+    }
+    .day-body {
+      padding: 20px;
+    }
+    .day-block {
+      margin-bottom: 16px;
+    }
+    .day-block:last-child { margin-bottom: 0; }
+    .day-block-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--gold-dark);
       margin-bottom: 6px;
     }
-    .variant-block-text {
-      font-size: 14px;
-      line-height: 1.7;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-    .variant-hook {
+    .day-hook {
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 17px;
       line-height: 1.5;
       color: var(--gold-dark);
-      background: rgba(201, 168, 76, 0.07);
+      background: linear-gradient(135deg, var(--gold-pale), rgba(245,237,212,0.5));
       border-left: 3px solid var(--gold);
       padding: 14px 16px;
-      border-radius: 0 10px 10px 0;
+      border-radius: 0 12px 12px 0;
     }
-    .variant-citation {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 700;
-      font-style: italic;
-      line-height: 1.4;
-      color: var(--text);
-      text-align: center;
-      padding: 24px 16px;
-      background: linear-gradient(135deg, var(--gold-pale), var(--beige));
-      border-radius: 12px;
-    }
-    .variant-citation::before { content: '« '; color: var(--gold); }
-    .variant-citation::after  { content: ' »'; color: var(--gold); }
-
-    .variant-overlays {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .variant-overlay-pill {
-      background: var(--cream);
-      border: 1px dashed rgba(201, 168, 76, 0.4);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 13px;
-      color: var(--text);
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .variant-overlay-pill::before {
-      content: '▸';
-      color: var(--gold);
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .variant-slides {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .variant-slide {
-      background: var(--cream);
-      border: 1px solid var(--beige);
-      border-left: 3px solid var(--gold);
-      border-radius: 10px;
-      padding: 12px 14px;
-    }
-    .variant-slide-head {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .variant-slide-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--gold);
-      background: rgba(201, 168, 76, 0.15);
-      padding: 3px 7px;
-      border-radius: 5px;
-    }
-    .variant-slide-title {
-      font-family: 'Playfair Display', serif;
+    .day-content {
       font-size: 14px;
-      font-weight: 700;
+      line-height: 1.7;
       color: var(--text);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      background: var(--cream);
+      padding: 14px 16px;
+      border-radius: 10px;
     }
-    .variant-slide-text {
+    .day-cta {
       font-size: 13px;
-      line-height: 1.6;
       color: var(--text);
+      background: rgba(201,168,76,0.08);
+      border: 1px dashed rgba(201,168,76,0.4);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
     }
-
-    .variant-hashtags {
-      font-size: 13px;
-      color: var(--gold-dark);
-      line-height: 1.6;
-      word-spacing: 4px;
-      background: rgba(201, 168, 76, 0.05);
-      padding: 10px 12px;
-      border-radius: 8px;
-    }
-
-    .variant-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-      padding-top: 14px;
+    .day-actions {
+      padding: 14px 20px;
       border-top: 1px solid var(--beige);
+      background: var(--cream);
     }
+    .copy-btn {
+      background: rgba(201,168,76,0.12);
+      color: var(--gold-dark);
+      border: 1px solid rgba(201,168,76,0.35);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+    .copy-btn.copied { background: var(--success); color: white; border-color: var(--success); }
+
+    /* ── RESULTS ACTIONS ── */
+    .results-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .results-actions .btn { flex: 1; min-width: 200px; }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 320px;
+    }
+    .toast {
+      background: var(--black);
+      color: var(--cream);
+      border-left: 4px solid var(--gold);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      animation: slideInRight 0.3s ease;
+      pointer-events: auto;
+    }
+    .toast-success { border-left-color: var(--success); }
+    .toast-error   { border-left-color: var(--error); }
   </style>
 </head>
 <body>
 
-  <!-- ── BACK BAR ── -->
-  <header id="back-bar" class="back-bar">
+  <header class="back-bar">
     <a href="index.html" class="back-link">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Retour aux Hooks
+      Retour
     </a>
-    <span id="profile-status" class="profile-status incomplete">⚠ Profil incomplet</span>
   </header>
 
-  <!-- ── COVER ── -->
-  <section id="cover" class="cover">
+  <section class="cover">
     <div class="logo-ring">
       <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
     </div>
     <p class="cover-brand">Brille &amp; Vibre</p>
-    <div class="cover-tag">Studio Éditorial</div>
-    <h1 class="cover-title">
-      Brille &amp; Vibre<br>
-      <em>Studio</em>
-    </h1>
-    <p class="cover-sub">Ton studio pour créer des hooks, posts, légendes et stories qui captivent — propulsé par Claude AI et la psychologie de la vente.</p>
+    <div class="cover-tag">Studio éditorial</div>
+    <h1 class="cover-title">Ton planning de la <em>semaine</em></h1>
+    <p class="cover-sub">7 jours stratégiques basés sur la psychologie de la vente.</p>
   </section>
 
-  <!-- ── TAB NAV ── -->
-  <nav id="tab-nav" class="tab-nav">
-    <div class="tab-nav-inner">
-      <button class="tab-btn active" data-tab="profil">
-        <span class="tab-icon">⚙️</span>
-        <span>Profil</span>
-      </button>
-      <button class="tab-btn" data-tab="posts">
-        <span class="tab-icon">📝</span>
-        <span>Posts</span>
-      </button>
+  <main class="page">
+
+    <!-- ─────── SCREEN 1 — FORM ─────── -->
+    <div id="screen-form" class="screen active">
+      <div class="form-card">
+        <h2 class="form-title">Dis-moi 2 choses et je te <em>génère ta semaine</em></h2>
+        <p class="form-intro">Inspirer · Éduquer · Engager · Prouver · Vendre · Connecter · Récapituler — Claude orchestre toute la séquence stratégique pour toi.</p>
+
+        <div class="field">
+          <label class="field-label" for="audience">À qui tu parles ?</label>
+          <input id="audience" class="field-input" type="text" placeholder="Ex : femmes coachs débutantes sur Instagram">
+          <div class="field-hint">Sauvegardé pour la prochaine fois.</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="focus">Tu veux mettre quoi en avant cette semaine ?</label>
+          <textarea id="focus" class="field-textarea" placeholder="Ex : le lancement de ma masterclass sur les hooks le vendredi"></textarea>
+          <div class="field-hint">Facultatif — laisse vide pour un planning généraliste.</div>
+        </div>
+
+        <button id="btn-generate" class="btn btn-primary btn-block">✨ Génère mon planning</button>
+      </div>
     </div>
-  </nav>
 
-  <!-- ── MAIN CONTENT ── -->
-  <main id="main">
-
-    <!-- Onglet : Profil / Brand Voice -->
-    <section id="tab-profil" class="tab-panel active">
-      <div class="page">
-
-        <div class="section-eyebrow">Brand Voice</div>
-        <div class="section-title">Ton profil <em>permanent</em></div>
-        <div class="section-body">
-          Remplis ces champs <strong>une seule fois</strong>. Ils seront utilisés automatiquement par tous les modules de génération (posts, hooks, stories) pour que Claude écrive avec ta voix, pour ton audience, sur tes offres.
-        </div>
-
-        <!-- ── Carte 1 — Ta marque ── -->
-        <div class="card">
-          <div class="section-eyebrow">01 — Ta marque</div>
-
-          <div class="field">
-            <label class="field-label" for="p-nom">Nom de marque</label>
-            <input id="p-nom" type="text" class="field-input" placeholder="Ex : Brille & Vibre">
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-niche">Niche / Domaine</label>
-            <input id="p-niche" type="text" class="field-input" placeholder="Ex : coaching pour créatrices de contenu Instagram">
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-mission">Mission / Promesse</label>
-            <textarea id="p-mission" class="field-textarea" placeholder="Ex : aider les femmes entrepreneures à transformer leur contenu en impact réel et en clientes"></textarea>
-            <div class="field-hint">Une phrase qui résume pourquoi ta marque existe.</div>
-          </div>
-        </div>
-
-        <!-- ── Carte 2 — Ton audience ── -->
-        <div class="card">
-          <div class="section-eyebrow">02 — Ton audience</div>
-
-          <div class="field">
-            <label class="field-label" for="p-audience">Qui est ton audience ?</label>
-            <textarea id="p-audience" class="field-textarea" placeholder="Ex : femmes coachs/entrepreneures de 25-45 ans qui débutent sur Instagram et veulent vendre leurs offres"></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-douleurs">Ses douleurs principales</label>
-            <textarea id="p-douleurs" class="field-textarea" placeholder="Ex : poste tous les jours sans aucun retour, sentiment d'invisibilité, peur de paraître commerciale"></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-desirs">Ses désirs profonds</label>
-            <textarea id="p-desirs" class="field-textarea" placeholder="Ex : être reconnue comme experte, vivre de sa passion, attirer des clientes alignées sans forcer"></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-objections">Ses objections fréquentes</label>
-            <textarea id="p-objections" class="field-textarea" placeholder="Ex : « j'ai pas le temps », « j'ai pas assez d'abonnés », « le marketing c'est pas pour moi »"></textarea>
-          </div>
-        </div>
-
-        <!-- ── Carte 3 — Tes offres ── -->
-        <div class="card">
-          <div class="section-eyebrow">03 — Tes offres</div>
-
-          <div class="field">
-            <label class="field-label" for="p-offres">Ce que tu vends</label>
-            <textarea id="p-offres" class="field-textarea" style="min-height: 100px;" placeholder="Ex :&#10;- Programme « Brille & Vibre » (12 semaines de coaching)&#10;- Masterclass « L'Art du Hook » (gratuite)&#10;- Accompagnement individuel premium"></textarea>
-            <div class="field-hint">Liste tes offres avec une ligne par offre. Tu peux mettre prix, format, durée si tu veux.</div>
-          </div>
-        </div>
-
-        <!-- ── Carte 4 — Ton style ── -->
-        <div class="card">
-          <div class="section-eyebrow">04 — Ton style éditorial</div>
-
-          <div class="field-row">
-            <div class="field">
-              <label class="field-label" for="p-tutoiement">Niveau de langue</label>
-              <select id="p-tutoiement" class="field-select">
-                <option value="tutoiement">Tutoiement</option>
-                <option value="vouvoiement">Vouvoiement</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label class="field-label" for="p-emojis">Émojis</label>
-              <select id="p-emojis" class="field-select">
-                <option value="aucun">Aucun</option>
-                <option value="moderes" selected>Modérés (1 par bloc)</option>
-                <option value="frequents">Fréquents</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-style">Style général</label>
-            <input id="p-style" type="text" class="field-input" placeholder="Ex : élégant, direct, inspirant, sans jargon">
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-mots-signature">Mots / expressions signature</label>
-            <input id="p-mots-signature" type="text" class="field-input" placeholder="Ex : brille, vibre, alignement, énergie, transformation">
-            <div class="field-hint">Mots récurrents que tu aimes utiliser. Séparés par des virgules.</div>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-mots-bannis">Mots à éviter</label>
-            <input id="p-mots-bannis" type="text" class="field-input" placeholder="Ex : synergie, impactant, engageant, leverage">
-            <div class="field-hint">Le jargon marketing creux que Claude doit bannir.</div>
-          </div>
-        </div>
-
-        <!-- ── Carte 5 — Tes preuves ── -->
-        <div class="card">
-          <div class="section-eyebrow">05 — Tes preuves & résultats</div>
-
-          <div class="field">
-            <label class="field-label" for="p-temoignages">Témoignages clés</label>
-            <textarea id="p-temoignages" class="field-textarea" placeholder="Ex : Marie a doublé son CA en 3 mois. Sarah a signé 8 clientes en 6 semaines."></textarea>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="p-chiffres">Chiffres à mettre en avant</label>
-            <textarea id="p-chiffres" class="field-textarea" placeholder="Ex : 50 femmes accompagnées, +40 % d'engagement moyen, 12 témoignages 5 étoiles"></textarea>
-          </div>
-        </div>
-
-        <!-- ── Carte 6 — Ton objectif ── -->
-        <div class="card">
-          <div class="section-eyebrow">06 — Ton objectif principal</div>
-
-          <div class="field">
-            <label class="field-label" for="p-objectif">Objectif business prioritaire</label>
-            <select id="p-objectif" class="field-select">
-              <option value="ventes">💰 Vendre mes offres</option>
-              <option value="engagement">💬 Créer de l'engagement et une communauté</option>
-              <option value="autorite">🎯 Être perçue comme experte / autorité</option>
-              <option value="visibilite">✨ Gagner en visibilité et attirer du monde</option>
-              <option value="liste">📩 Construire ma liste email</option>
-            </select>
-            <div class="field-hint">Claude orientera tous tes contenus vers cet objectif.</div>
-          </div>
-        </div>
-
-        <!-- ── Actions ── -->
-        <div class="card">
-          <div class="section-eyebrow">Actions</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-            <button id="btn-save-profil" class="btn btn-primary">💾 Sauvegarder le profil</button>
-            <button id="btn-export-profil" class="btn btn-secondary">⬇ Exporter (JSON)</button>
-            <button id="btn-import-profil" class="btn btn-secondary">⬆ Importer (JSON)</button>
-            <button id="btn-reset-profil" class="btn btn-ghost">🗑 Réinitialiser</button>
-          </div>
-          <input type="file" id="file-import-profil" accept="application/json" style="display: none;">
-          <div class="field-hint" style="margin-top: 14px;">
-            Tes données sont stockées <strong>uniquement dans ton navigateur</strong> (localStorage). Aucune donnée n'est envoyée sur un serveur tant que tu ne lances pas une génération.
-          </div>
-        </div>
-
+    <!-- ─────── SCREEN 2 — LOADING ─────── -->
+    <div id="screen-loading" class="screen">
+      <div class="loading-card">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+        <div class="loading-text">Claude orchestre ta semaine...</div>
+        <div class="loading-sub">Cela prend généralement 20 à 40 secondes.</div>
       </div>
-    </section>
+    </div>
 
-    <!-- Onglet : Posts -->
-    <section id="tab-posts" class="tab-panel">
-      <div class="page">
-
-        <div class="section-eyebrow">Générateur de posts</div>
-        <div class="section-title">Crée ton <em>prochain post</em></div>
-        <div class="section-body">
-          Choisis un format, décris ton sujet, et Claude génère <strong>3 variantes</strong> à partir de ton profil. Tu pourras ensuite retravailler la variante que tu préfères.
-        </div>
-
-        <!-- ── Carte 1 — Format ── -->
-        <div class="card">
-          <div class="section-eyebrow">01 — Quel format ?</div>
-          <div class="format-grid">
-            <div class="format-card selected" data-format="reel">
-              <div class="format-icon">🎬</div>
-              <div class="format-name">Reel</div>
-              <div class="format-desc">Vidéo courte avec hook, script et overlays</div>
-            </div>
-            <div class="format-card" data-format="carrousel">
-              <div class="format-icon">🎠</div>
-              <div class="format-name">Carrousel</div>
-              <div class="format-desc">7 slides structurées + caption</div>
-            </div>
-            <div class="format-card" data-format="photo">
-              <div class="format-icon">📸</div>
-              <div class="format-name">Photo</div>
-              <div class="format-desc">Caption longue selon le framework 4 colonnes</div>
-            </div>
-            <div class="format-card" data-format="inspiration">
-              <div class="format-icon">✨</div>
-              <div class="format-name">Inspiration</div>
-              <div class="format-desc">Citation + courte légende</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ── Carte 2 — Sujet ── -->
-        <div class="card">
-          <div class="section-eyebrow">02 — De quoi tu veux parler ?</div>
-          <div class="field">
-            <label class="field-label" for="post-sujet">Sujet ou angle du post</label>
-            <textarea id="post-sujet" class="field-textarea" style="min-height: 90px;" placeholder="Ex : pourquoi mes anciennes clientes me disent qu'elles ont enfin l'impression d'écrire avec leur vraie voix"></textarea>
-            <div class="field-hint">Plus tu es précise, meilleur sera le résultat. Tu peux décrire un cas, une réflexion, une leçon, un témoignage…</div>
-          </div>
-        </div>
-
-        <!-- ── Carte 3 — Options (facultatif) ── -->
-        <div class="card">
-          <div class="section-eyebrow">03 — Options (facultatif)</div>
-
-          <div class="field-row">
-            <div class="field">
-              <label class="field-label" for="post-objectif">Objectif spécifique</label>
-              <select id="post-objectif" class="field-select">
-                <option value="">— Utiliser celui du profil —</option>
-                <option value="ventes">💰 Vendre</option>
-                <option value="engagement">💬 Engager</option>
-                <option value="autorite">🎯 Asseoir mon autorité</option>
-                <option value="visibilite">✨ Gagner en visibilité</option>
-                <option value="liste">📩 Construire ma liste</option>
-              </select>
-              <div class="field-hint">Override l'objectif du profil pour ce post uniquement.</div>
-            </div>
-
-            <div class="field">
-              <label class="field-label" for="post-longueur">Longueur de la caption</label>
-              <select id="post-longueur" class="field-select">
-                <option value="courte">Courte (~80 mots)</option>
-                <option value="moyenne" selected>Moyenne (~180 mots)</option>
-                <option value="longue">Longue (~300 mots)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label class="field-label" for="post-angle">Angle ou ton particulier</label>
-            <input id="post-angle" type="text" class="field-input" placeholder="Ex : confession personnelle / pédagogique / drôle / vulnérable…">
-            <div class="field-hint">Optionnel — laisse vide pour utiliser ton ton de profil par défaut.</div>
-          </div>
-        </div>
-
-        <!-- ── Bouton de génération ── -->
-        <button id="btn-generate-post" class="btn btn-primary btn-block" style="padding: 16px; font-size: 15px; margin-bottom: 24px;">
-          ✨ Générer 3 variantes
-        </button>
-
-        <!-- ── Loading ── -->
-        <div id="posts-loading" style="display: none;"></div>
-
-        <!-- ── Résultats ── -->
-        <div id="posts-results"></div>
-
+    <!-- ─────── SCREEN 3 — RESULTS ─────── -->
+    <div id="screen-results" class="screen">
+      <div class="results-header">
+        <div class="results-eyebrow">Ta stratégie de la semaine</div>
+        <h2 class="results-title">7 jours, <em>7 leviers psychologiques</em></h2>
       </div>
-    </section>
+
+      <div id="days-container"></div>
+
+      <div class="results-actions">
+        <button id="btn-regenerate" class="btn btn-primary">🔄 Regénérer une autre semaine</button>
+        <button id="btn-back" class="btn btn-ghost">← Modifier le brief</button>
+      </div>
+    </div>
 
   </main>
 
-  <!-- ── TOAST CONTAINER ── -->
   <div id="toast-container"></div>
 
   <script>
-    /* ─────────────────────────────────────────
-       TAB SWITCHING
-       ───────────────────────────────────────── */
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
-      });
-      document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.toggle('active', panel.id === `tab-${tabName}`);
-      });
+    /* ───────────────────────────────────────
+       STATE & STORAGE
+       ─────────────────────────────────────── */
+    const STORAGE_KEY = 'brille-vibre-studio:brief';
+    const els = {
+      screenForm:    document.getElementById('screen-form'),
+      screenLoading: document.getElementById('screen-loading'),
+      screenResults: document.getElementById('screen-results'),
+      audience:      document.getElementById('audience'),
+      focus:         document.getElementById('focus'),
+      btnGenerate:   document.getElementById('btn-generate'),
+      btnRegen:      document.getElementById('btn-regenerate'),
+      btnBack:       document.getElementById('btn-back'),
+      daysContainer: document.getElementById('days-container'),
+    };
+
+    // Restaure le brief précédent (audience + focus)
+    (function restoreBrief() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const brief = JSON.parse(raw);
+        if (brief.audience) els.audience.value = brief.audience;
+        if (brief.focus) els.focus.value = brief.focus;
+      } catch (e) { /* ignore */ }
+    })();
+
+    function saveBrief(audience, focus) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience, focus }));
+      } catch (e) { /* ignore */ }
+    }
+
+    /* ───────────────────────────────────────
+       SCREENS
+       ─────────────────────────────────────── */
+    function showScreen(name) {
+      els.screenForm.classList.toggle('active', name === 'form');
+      els.screenLoading.classList.toggle('active', name === 'loading');
+      els.screenResults.classList.toggle('active', name === 'results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
-
-    /* ─────────────────────────────────────────
-       TOAST HELPER
-       ───────────────────────────────────────── */
+    /* ───────────────────────────────────────
+       TOAST
+       ─────────────────────────────────────── */
     function showToast(message, type = 'info', duration = 3000) {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -1043,266 +558,9 @@
       }, duration);
     }
 
-    /* ─────────────────────────────────────────
-       PROFILE — localStorage logic
-       ───────────────────────────────────────── */
-    const PROFILE_STORAGE_KEY = 'brille-vibre-studio:profile';
-
-    // Mapping : id du champ HTML → clé dans l'objet profile
-    const PROFILE_FIELDS = {
-      'p-nom':            'nom',
-      'p-niche':          'niche',
-      'p-mission':        'mission',
-      'p-audience':       'audience',
-      'p-douleurs':       'douleurs',
-      'p-desirs':         'desirs',
-      'p-objections':     'objections',
-      'p-offres':         'offres',
-      'p-tutoiement':     'tutoiement',
-      'p-emojis':         'emojis',
-      'p-style':          'style',
-      'p-mots-signature': 'mots_signature',
-      'p-mots-bannis':    'mots_bannis',
-      'p-temoignages':    'temoignages',
-      'p-chiffres':       'chiffres',
-      'p-objectif':       'objectif',
-    };
-
-    // Champs minimum à remplir pour considérer le profil "complet"
-    const REQUIRED_FIELDS = ['nom', 'niche', 'audience', 'offres'];
-
-    function readProfileFromForm() {
-      const profile = {};
-      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
-        const el = document.getElementById(fieldId);
-        if (el) profile[key] = el.value.trim();
-      }
-      return profile;
-    }
-
-    function writeProfileToForm(profile) {
-      if (!profile) return;
-      for (const [fieldId, key] of Object.entries(PROFILE_FIELDS)) {
-        const el = document.getElementById(fieldId);
-        if (el && profile[key] !== undefined) {
-          el.value = profile[key];
-        }
-      }
-    }
-
-    function getStoredProfile() {
-      try {
-        const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
-        return raw ? JSON.parse(raw) : null;
-      } catch (e) {
-        console.error('Failed to parse stored profile', e);
-        return null;
-      }
-    }
-
-    function saveProfile() {
-      const profile = readProfileFromForm();
-      try {
-        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
-        updateProfileBadge();
-        showToast('✓ Profil sauvegardé', 'success');
-      } catch (e) {
-        showToast('❌ Erreur de sauvegarde', 'error');
-      }
-    }
-
-    function isProfileComplete(profile) {
-      if (!profile) return false;
-      return REQUIRED_FIELDS.every(key => profile[key] && profile[key].length > 0);
-    }
-
-    function updateProfileBadge() {
-      const badge = document.getElementById('profile-status');
-      if (!badge) return;
-      const profile = getStoredProfile();
-      if (isProfileComplete(profile)) {
-        badge.className = 'profile-status complete';
-        badge.textContent = '✓ Profil complet';
-      } else {
-        badge.className = 'profile-status incomplete';
-        badge.textContent = '⚠ Profil incomplet';
-      }
-    }
-
-    function exportProfile() {
-      const profile = readProfileFromForm();
-      const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `brille-vibre-profil-${date}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('✓ Profil exporté', 'success');
-    }
-
-    function importProfile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const profile = JSON.parse(e.target.result);
-          writeProfileToForm(profile);
-          localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
-          updateProfileBadge();
-          showToast('✓ Profil importé', 'success');
-        } catch (err) {
-          showToast('❌ Fichier JSON invalide', 'error');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function resetProfile() {
-      if (!confirm('Réinitialiser tout ton profil ? Cette action est irréversible.')) return;
-      localStorage.removeItem(PROFILE_STORAGE_KEY);
-      for (const fieldId of Object.keys(PROFILE_FIELDS)) {
-        const el = document.getElementById(fieldId);
-        if (el) {
-          if (el.tagName === 'SELECT') el.selectedIndex = 0;
-          else el.value = '';
-        }
-      }
-      updateProfileBadge();
-      showToast('Profil réinitialisé', 'info');
-    }
-
-    // Profile event listeners
-    document.getElementById('btn-save-profil').addEventListener('click', saveProfile);
-    document.getElementById('btn-export-profil').addEventListener('click', exportProfile);
-    document.getElementById('btn-reset-profil').addEventListener('click', resetProfile);
-    document.getElementById('btn-import-profil').addEventListener('click', () => {
-      document.getElementById('file-import-profil').click();
-    });
-    document.getElementById('file-import-profil').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) importProfile(file);
-      e.target.value = '';
-    });
-
-    // Initial load — restaure le profil et met à jour le badge
-    (function initProfile() {
-      const stored = getStoredProfile();
-      if (stored) writeProfileToForm(stored);
-      updateProfileBadge();
-    })();
-
-    /* ─────────────────────────────────────────
-       POSTS — Format selection + API call
-       ───────────────────────────────────────── */
-    let selectedPostFormat = 'reel';
-
-    document.querySelectorAll('#tab-posts .format-card').forEach(card => {
-      card.addEventListener('click', () => {
-        document.querySelectorAll('#tab-posts .format-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-        selectedPostFormat = card.dataset.format;
-      });
-    });
-
-    function showPostsLoading(show) {
-      const loading = document.getElementById('posts-loading');
-      const btn = document.getElementById('btn-generate-post');
-      if (show) {
-        loading.style.display = 'block';
-        loading.innerHTML = `
-          <div class="loading-card">
-            <div class="loading-dots"><span></span><span></span><span></span></div>
-            <div class="loading-text">Claude génère 3 variantes de ton ${selectedPostFormat}...</div>
-          </div>
-        `;
-        btn.disabled = true;
-      } else {
-        loading.style.display = 'none';
-        loading.innerHTML = '';
-        btn.disabled = false;
-      }
-    }
-
-    async function generatePost() {
-      // 1. Vérifier le profil
-      const profile = getStoredProfile();
-      if (!isProfileComplete(profile)) {
-        showToast('⚠ Remplis d\'abord ton profil (au minimum nom, niche, audience, offres)', 'error', 4500);
-        switchTab('profil');
-        return;
-      }
-
-      // 2. Vérifier le sujet
-      const sujet = document.getElementById('post-sujet').value.trim();
-      if (!sujet) {
-        showToast('⚠ Décris d\'abord le sujet de ton post', 'error');
-        document.getElementById('post-sujet').focus();
-        return;
-      }
-
-      // 3. Construire le payload
-      const payload = {
-        mode: 'post',
-        format: selectedPostFormat,
-        sujet,
-        options: {
-          objectif: document.getElementById('post-objectif').value || '',
-          longueur: document.getElementById('post-longueur').value || 'moyenne',
-          angle:    document.getElementById('post-angle').value.trim(),
-        },
-        profile,
-      };
-
-      // 4. Vider les résultats précédents et lancer le loader
-      document.getElementById('posts-results').innerHTML = '';
-      showPostsLoading(true);
-
-      try {
-        const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await res.json();
-
-        if (res.status === 429) {
-          throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
-        }
-        if (!res.ok) {
-          throw new Error(data.error || `Erreur HTTP ${res.status}`);
-        }
-
-        // Quota restant en console
-        const remaining = res.headers.get('X-RateLimit-Remaining');
-        const limit = res.headers.get('X-RateLimit-Limit');
-        if (remaining !== null && limit !== null) {
-          console.log(`[Studio] Quota restant : ${remaining}/${limit}`);
-        }
-
-        const variants = data?.result?.variants || [];
-        if (!variants.length) {
-          throw new Error('Aucune variante reçue de Claude.');
-        }
-
-        renderPostsResults(selectedPostFormat, variants);
-        showToast(`✓ ${variants.length} variantes générées`, 'success');
-
-      } catch (err) {
-        showToast(`❌ ${err.message}`, 'error', 5000);
-      } finally {
-        showPostsLoading(false);
-      }
-    }
-
-    document.getElementById('btn-generate-post').addEventListener('click', generatePost);
-
-    /* ─────────────────────────────────────────
-       POSTS — Format-specific result rendering
-       ───────────────────────────────────────── */
+    /* ───────────────────────────────────────
+       UTILS
+       ─────────────────────────────────────── */
     function escapeHtml(str) {
       if (str == null) return '';
       return String(str)
@@ -1324,254 +582,133 @@
             btn.classList.remove('copied');
           }, 1800);
         }
-        showToast('✓ Copié dans le presse-papier', 'success', 1500);
-      }).catch(() => {
-        showToast('❌ Impossible de copier', 'error');
-      });
+      }).catch(() => showToast('❌ Impossible de copier', 'error'));
     }
     window.copyToClipboard = copyToClipboard;
 
-    function variantToPlainText(format, v) {
-      if (format === 'reel') {
-        return [
-          '🎬 HOOK VISUEL',
-          v.hook_visuel || '',
-          '',
-          '📜 SCRIPT',
-          v.script || '',
-          '',
-          '💬 OVERLAYS',
-          (v.overlays || []).map((o, i) => `${i + 1}. ${o}`).join('\n'),
-          '',
-          '📝 CAPTION',
-          v.caption || '',
-          '',
-          (v.hashtags || []).join(' '),
-        ].join('\n');
-      }
-      if (format === 'carrousel') {
-        const slides = (v.slides || []).map(s => `Slide ${s.numero} — ${s.titre}\n${s.texte}`).join('\n\n');
-        return [
-          `🎠 ${v.titre || ''}`,
-          '',
-          slides,
-          '',
-          '📝 CAPTION',
-          v.caption || '',
-          '',
-          v.cta || '',
-          '',
-          (v.hashtags || []).join(' '),
-        ].join('\n');
-      }
-      if (format === 'photo') {
-        return [
-          v.hook || '',
-          '',
-          v.besoin_ressentir || '',
-          '',
-          v.comprendre || '',
-          '',
-          v.guide_ouvrir || '',
-          '',
-          v.rassure_preuves || '',
-          '',
-          v.cta || '',
-          '',
-          (v.hashtags || []).join(' '),
-        ].join('\n');
-      }
-      if (format === 'inspiration') {
-        return [
-          `« ${v.citation || ''} »`,
-          '',
-          v.caption || '',
-          '',
-          (v.hashtags || []).join(' '),
-        ].join('\n');
-      }
-      return JSON.stringify(v, null, 2);
+    function dayToPlainText(d) {
+      return [
+        `📅 ${d.jour_nom || 'Jour ' + d.jour} — ${d.objectif_strategique || ''}`,
+        `(${d.type_contenu || ''} · ${d.levier_psy || ''})`,
+        '',
+        '🎯 HOOK',
+        d.hook || '',
+        '',
+        '📝 CONTENU',
+        d.contenu || '',
+        '',
+        '👉 CTA',
+        d.cta || '',
+      ].join('\n');
     }
 
-    function renderReelVariant(v, index) {
-      const overlays = (v.overlays || []).map(o =>
-        `<div class="variant-overlay-pill">${escapeHtml(o)}</div>`
-      ).join('');
-      const hashtags = (v.hashtags || []).join(' ');
-      return `
-        <div class="variant-block">
-          <div class="variant-block-label">🎬 Hook visuel</div>
-          <div class="variant-hook">${escapeHtml(v.hook_visuel || '')}</div>
-        </div>
-        <div class="variant-block">
-          <div class="variant-block-label">📜 Script</div>
-          <div class="variant-block-text">${escapeHtml(v.script || '')}</div>
-        </div>
-        ${overlays ? `
-          <div class="variant-block">
-            <div class="variant-block-label">💬 Overlays vidéo</div>
-            <div class="variant-overlays">${overlays}</div>
-          </div>
-        ` : ''}
-        <div class="variant-block">
-          <div class="variant-block-label">📝 Caption</div>
-          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
-        </div>
-        ${hashtags ? `
-          <div class="variant-block">
-            <div class="variant-block-label">#️⃣ Hashtags</div>
-            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
-          </div>
-        ` : ''}
-      `;
-    }
+    /* ───────────────────────────────────────
+       RENDER PLAN
+       ─────────────────────────────────────── */
+    let lastPlan = [];
 
-    function renderCarrouselVariant(v, index) {
-      const slides = (v.slides || []).map(s => `
-        <div class="variant-slide">
-          <div class="variant-slide-head">
-            <span class="variant-slide-num">Slide ${escapeHtml(String(s.numero || ''))}</span>
-            <span class="variant-slide-title">${escapeHtml(s.titre || '')}</span>
-          </div>
-          <div class="variant-slide-text">${escapeHtml(s.texte || '')}</div>
-        </div>
-      `).join('');
-      const hashtags = (v.hashtags || []).join(' ');
-      return `
-        <div class="variant-block">
-          <div class="variant-block-label">🎠 Titre principal</div>
-          <div class="variant-hook">${escapeHtml(v.titre || '')}</div>
-        </div>
-        <div class="variant-block">
-          <div class="variant-block-label">📑 Slides (${(v.slides || []).length})</div>
-          <div class="variant-slides">${slides}</div>
-        </div>
-        <div class="variant-block">
-          <div class="variant-block-label">📝 Caption</div>
-          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
-        </div>
-        ${v.cta ? `
-          <div class="variant-block">
-            <div class="variant-block-label">👉 CTA</div>
-            <div class="variant-block-text">${escapeHtml(v.cta)}</div>
-          </div>
-        ` : ''}
-        ${hashtags ? `
-          <div class="variant-block">
-            <div class="variant-block-label">#️⃣ Hashtags</div>
-            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
-          </div>
-        ` : ''}
-      `;
-    }
-
-    function renderPhotoVariant(v, index) {
-      const hashtags = (v.hashtags || []).join(' ');
-      const blocks = [
-        { label: '🎯 Hook',                  key: 'hook',             special: true },
-        { label: '01 — Besoin / Ressentir',  key: 'besoin_ressentir' },
-        { label: '02 — Comprendre',          key: 'comprendre' },
-        { label: '03 — Guide / Ouvrir',      key: 'guide_ouvrir' },
-        { label: '04 — Rassure + Preuves',   key: 'rassure_preuves' },
-        { label: '👉 CTA',                   key: 'cta' },
-      ];
-      const blocksHtml = blocks.map(b => {
-        if (!v[b.key]) return '';
-        if (b.special) {
-          return `
-            <div class="variant-block">
-              <div class="variant-block-label">${b.label}</div>
-              <div class="variant-hook">${escapeHtml(v[b.key])}</div>
+    function renderPlan(plan) {
+      lastPlan = plan;
+      const cards = plan.map((d, i) => `
+        <div class="day-card">
+          <div class="day-header">
+            <div class="day-row1">
+              <span class="day-num">JOUR ${escapeHtml(String(d.jour || (i + 1)))}</span>
+              <span class="day-name">${escapeHtml(d.jour_nom || '')}</span>
             </div>
-          `;
-        }
-        return `
-          <div class="variant-block">
-            <div class="variant-block-label">${b.label}</div>
-            <div class="variant-block-text">${escapeHtml(v[b.key])}</div>
+            <div class="day-objectif">${escapeHtml(d.objectif_strategique || '')}</div>
+            <div class="day-row2">
+              ${d.type_contenu ? `<span class="day-pill">📱 ${escapeHtml(d.type_contenu)}</span>` : ''}
+              ${d.levier_psy ? `<span class="day-pill">🧠 ${escapeHtml(d.levier_psy)}</span>` : ''}
+            </div>
           </div>
-        `;
-      }).join('');
-      return `
-        ${blocksHtml}
-        ${hashtags ? `
-          <div class="variant-block">
-            <div class="variant-block-label">#️⃣ Hashtags</div>
-            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
+          <div class="day-body">
+            ${d.hook ? `
+              <div class="day-block">
+                <div class="day-block-label">🎯 Hook</div>
+                <div class="day-hook">${escapeHtml(d.hook)}</div>
+              </div>
+            ` : ''}
+            ${d.contenu ? `
+              <div class="day-block">
+                <div class="day-block-label">📝 Contenu</div>
+                <div class="day-content">${escapeHtml(d.contenu)}</div>
+              </div>
+            ` : ''}
+            ${d.cta ? `
+              <div class="day-block">
+                <div class="day-block-label">👉 CTA</div>
+                <div class="day-cta">${escapeHtml(d.cta)}</div>
+              </div>
+            ` : ''}
           </div>
-        ` : ''}
-      `;
-    }
-
-    function renderInspirationVariant(v, index) {
-      const hashtags = (v.hashtags || []).join(' ');
-      return `
-        <div class="variant-block">
-          <div class="variant-block-label">✨ Citation</div>
-          <div class="variant-citation">${escapeHtml(v.citation || '')}</div>
-        </div>
-        <div class="variant-block">
-          <div class="variant-block-label">📝 Légende</div>
-          <div class="variant-block-text">${escapeHtml(v.caption || '')}</div>
-        </div>
-        ${hashtags ? `
-          <div class="variant-block">
-            <div class="variant-block-label">#️⃣ Hashtags</div>
-            <div class="variant-hashtags">${escapeHtml(hashtags)}</div>
-          </div>
-        ` : ''}
-      `;
-    }
-
-    function renderVariantBody(format, v, index) {
-      switch (format) {
-        case 'reel':        return renderReelVariant(v, index);
-        case 'carrousel':   return renderCarrouselVariant(v, index);
-        case 'photo':       return renderPhotoVariant(v, index);
-        case 'inspiration': return renderInspirationVariant(v, index);
-        default:            return `<pre>${escapeHtml(JSON.stringify(v, null, 2))}</pre>`;
-      }
-    }
-
-    // Stockage temporaire pour le bouton "Copier" sans escape
-    window._lastVariants = [];
-
-    function renderPostsResults(format, variants) {
-      window._lastVariants = variants;
-      const container = document.getElementById('posts-results');
-
-      const formatLabels = {
-        reel: '🎬 Reel',
-        carrousel: '🎠 Carrousel',
-        photo: '📸 Photo',
-        inspiration: '✨ Inspiration',
-      };
-
-      const cards = variants.map((v, i) => `
-        <div class="variant-card">
-          <div class="variant-header">
-            <span class="variant-num">Variante ${i + 1}</span>
-            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier tout</button>
-          </div>
-          ${renderVariantBody(format, v, i)}
-          <div class="variant-actions">
-            <button class="btn btn-secondary btn-sm" onclick="copyVariant(${i})">📋 Copier ce post</button>
+          <div class="day-actions">
+            <button class="copy-btn" onclick="copyDay(${i})">📋 Copier ce jour</button>
           </div>
         </div>
       `).join('');
-
-      container.innerHTML = `
-        <div class="variants-header">${formatLabels[format] || format} — <em>3 variantes</em></div>
-        ${cards}
-      `;
+      els.daysContainer.innerHTML = cards;
     }
 
-    window.copyVariant = function(index) {
-      const v = window._lastVariants[index];
-      if (!v) return;
-      const text = variantToPlainText(selectedPostFormat, v);
-      copyToClipboard(text);
+    window.copyDay = function(index) {
+      const d = lastPlan[index];
+      if (!d) return;
+      const text = dayToPlainText(d);
+      const btn = event && event.target;
+      copyToClipboard(text, btn);
+      showToast('✓ Jour copié dans le presse-papier', 'success', 1500);
     };
+
+    /* ───────────────────────────────────────
+       GENERATE
+       ─────────────────────────────────────── */
+    async function generatePlan() {
+      const audience = els.audience.value.trim();
+      const focus = els.focus.value.trim();
+
+      if (!audience) {
+        showToast('⚠ Renseigne d\'abord ton audience', 'error');
+        els.audience.focus();
+        return;
+      }
+
+      saveBrief(audience, focus);
+      showScreen('loading');
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'weekly_plan', audience, focus }),
+        });
+
+        const data = await res.json();
+
+        if (res.status === 429) {
+          throw new Error(data.error || 'Limite de requêtes atteinte. Réessaye dans quelques minutes.');
+        }
+        if (!res.ok) {
+          throw new Error(data.error || `Erreur HTTP ${res.status}`);
+        }
+
+        const plan = data?.result?.plan || [];
+        if (!plan.length) {
+          throw new Error('Aucun planning reçu de Claude.');
+        }
+
+        renderPlan(plan);
+        showScreen('results');
+        showToast('✓ Ton planning est prêt', 'success');
+
+      } catch (err) {
+        showScreen('form');
+        showToast(`❌ ${err.message}`, 'error', 5000);
+      }
+    }
+
+    els.btnGenerate.addEventListener('click', generatePlan);
+    els.btnRegen.addEventListener('click', generatePlan);
+    els.btnBack.addEventListener('click', () => showScreen('form'));
   </script>
 
 </body>

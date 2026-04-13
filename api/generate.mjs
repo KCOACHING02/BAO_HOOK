@@ -2,14 +2,13 @@
 // Endpoint: POST /api/generate
 //
 // Modes supportés :
-//   - "post"    → { mode, format, sujet, options, profile }
-//                 format = "reel" | "carrousel" | "photo" | "inspiration"
-//                 → renvoie 3 variantes
-//   - "refine"  → { mode, format, original, instruction, profile }
-//                 → renvoie 1 variante raffinée
-//   - "hook"    → { mode, sujet, audience, ... }                (legacy)
-//   - "caption" → { mode, sujet, ... }                          (legacy)
-//   - "stories" → { mode, sujet, ... }                          (legacy)
+//   - "weekly_plan" → { mode, audience, focus }
+//                     → renvoie un planning éditorial de 7 jours stratégique
+//   - "post"        → { mode, format, sujet, options, profile }   (legacy)
+//   - "refine"      → { mode, format, original, instruction, profile } (legacy)
+//   - "hook"        → { mode, sujet, audience, ... }              (legacy)
+//   - "caption"     → { mode, sujet, ... }                        (legacy)
+//   - "stories"     → { mode, sujet, ... }                        (legacy)
 //
 // ENV requise sur Vercel:
 //   ANTHROPIC_API_KEY        (obligatoire)
@@ -359,6 +358,75 @@ SCHÉMA JSON ATTENDU
 }`;
 }
 
+/* ─────────────────────────────────────────
+   WEEKLY_PLAN MODE — Planning éditorial 7 jours
+   Applique la séquence stratégique Cialdini + AIDA :
+   Lundi Inspirer → Mardi Éduquer → Mercredi Engager
+   → Jeudi Prouver → Vendredi Vendre → Samedi Connecter
+   → Dimanche Récapituler
+   ───────────────────────────────────────── */
+function buildWeeklyPlanMessage(audience, focus) {
+  const audienceLine = audience
+    ? `- Audience cible : ${audience}`
+    : '- Audience cible : créatrices et entrepreneures qui veulent vendre sur Instagram (générique)';
+
+  const focusLine = focus
+    ? `- Focus stratégique de cette semaine : ${focus}`
+    : '- Focus stratégique de cette semaine : aucun en particulier — construire de la confiance et de l\'engagement';
+
+  return `CONTEXTE
+${audienceLine}
+${focusLine}
+
+TÂCHE
+Génère un planning éditorial Instagram pour les 7 prochains jours (lundi à dimanche), en appliquant la psychologie de la vente (les 6 leviers de Cialdini + la séquence AIDA). Chaque jour a un OBJECTIF STRATÉGIQUE PRÉCIS dans cet ordre obligatoire :
+
+- **LUNDI — INSPIRER** (Levier : Autorité + Sympathie)
+  Ouvrir la semaine avec un message fort, une vision, une réflexion qui positionne l'expertise et donne envie de suivre. Ton : élevé, inspirant, posé.
+
+- **MARDI — ÉDUQUER** (Levier : Réciprocité)
+  Offrir une vraie valeur gratuite : méthode, framework, tutoriel, astuce concrète. Le but : que l'audience reparte avec quelque chose d'actionnable. Ton : pédagogique, généreux.
+
+- **MERCREDI — ENGAGER** (Levier : Cohérence / petit oui)
+  Créer une interaction directe : poser une question, lancer un sondage, demander un avis. Le but : obtenir un micro-engagement (Cialdini's foot-in-the-door). Format souvent Story.
+
+- **JEUDI — PROUVER** (Levier : Preuve sociale)
+  Témoignage client, transformation avant/après, résultat concret, capture d'écran. Montrer que ça marche pour de vraies personnes. Ton : factuel, humble.
+
+- **VENDREDI — VENDRE** (Levier : Rareté + urgence)
+  Appel à l'action direct vers une offre. Si possible : fenêtre limitée (places, dates, bonus). Lever la dernière objection. Ton : assumé, sans détour.
+
+- **SAMEDI — CONNECTER** (Levier : Sympathie)
+  Coulisses, vulnérabilité, anecdote personnelle, humain. Renforcer le lien émotionnel. Ton : intime, authentique.
+
+- **DIMANCHE — RÉCAPITULER** (Levier : Cohérence)
+  Résumer la semaine, renforcer le message clé, préparer la suite. Ton : posé, synthétique.
+
+CONSIGNES IMPORTANTES
+- Pour chaque jour, TU CHOISIS le format qui sert le mieux l'objectif stratégique parmi : "Reel", "Story", "Post photo", "Carrousel". Varie sur la semaine.
+- Les hooks doivent respecter les 4 règles d'or (Ogilvy, Collier, Halbert, Kennedy) et utiliser des types variés sur la semaine (Révélation, Erreur fatale, Avant/Après, Chiffre choc, Anti-mythe, Confession, Promesse claire).
+- Si un focus de semaine est précisé, TOUTE la semaine doit converger subtilement vers ce focus, en construisant progressivement (pas brutalement). Le vendredi doit être le pic de vente.
+- Adapte le ton, le vocabulaire et les exemples à l'audience précisée.
+- Chaque jour doit être autonome (publiable tel quel) MAIS aussi faire partie d'une progression cohérente.
+- Le contenu de chaque jour doit être suffisamment développé pour être publié sans retouche : si c'est un Reel, donne le script complet ; si c'est une Story, le texte exact ; si c'est un Carrousel, mets-le en plusieurs lignes structurées dans le champ "contenu".
+
+SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan", aucun texte avant ou après le JSON)
+{
+  "plan": [
+    {
+      "jour": 1,
+      "jour_nom": "Lundi",
+      "objectif_strategique": "Inspirer",
+      "type_contenu": "Post photo",
+      "levier_psy": "Autorité + Sympathie",
+      "hook": "la phrase d'accroche, 1 à 2 lignes max",
+      "contenu": "le texte complet à publier, prêt à coller dans Instagram. Aère avec des retours à la ligne \\\\n.",
+      "cta": "l'appel à l'action final (1 ligne)"
+    }
+  ]
+}`;
+}
+
 function corsOrigin(req) {
   const allowed = (process.env.ALLOWED_ORIGINS ||
     'https://kcoaching02.github.io,http://localhost:3000,http://localhost:5173,http://localhost:8000')
@@ -478,7 +546,7 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  const VALID_MODES = ['hook', 'caption', 'stories', 'post', 'refine'];
+  const VALID_MODES = ['weekly_plan', 'hook', 'caption', 'stories', 'post', 'refine'];
   if (!VALID_MODES.includes(mode)) {
     return res.status(400).json({ error: `mode requis : ${VALID_MODES.join(', ')}.` });
   }
@@ -490,7 +558,12 @@ export default async function handler(req, res) {
   let maxTokens = 1500;
 
   try {
-    if (mode === 'post') {
+    if (mode === 'weekly_plan') {
+      const audience = clamp(body.audience, 300);
+      const focus = clamp(body.focus, 600);
+      userMessage = buildWeeklyPlanMessage(audience, focus);
+      maxTokens = 6500; // Suffisant pour 7 jours détaillés
+    } else if (mode === 'post') {
       const format = String(body.format || '').toLowerCase();
       const VALID_FORMATS = ['reel', 'carrousel', 'photo', 'inspiration'];
       if (!VALID_FORMATS.includes(format)) {
