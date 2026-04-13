@@ -530,7 +530,20 @@ CONSIGNES IMPÉRATIVES
 5. **Adaptation** : adapte le sujet, le vocabulaire et les scénarios à l'audience précisée. Si un focus est donné, TOUTE la semaine y converge subtilement (le mercredi et le samedi sont les pics de conversion).
 6. **Respect strict** de la table de correspondance des 4 axes du bloc système.
 
-SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan", aucun texte avant ni après le JSON)
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+
+Tu réponds UNIQUEMENT avec un objet JSON valide.
+- ❌ AUCUN texte avant le JSON ("Voici ton planning :", "Bien sûr !", "Parfait...", etc.)
+- ❌ AUCUN texte après le JSON ("Note :", "J'espère que...", commentaires, explications)
+- ❌ AUCUN bloc markdown (\`\`\`json ... \`\`\`)
+- ❌ AUCUN préambule, AUCUNE introduction, AUCUNE conclusion
+- ✅ Ta réponse commence DIRECTEMENT par le caractère { et finit DIRECTEMENT par le caractère }
+- ✅ Le premier caractère de ta réponse doit être {
+- ✅ Le dernier caractère de ta réponse doit être }
+
+Si tu rajoutes ne serait-ce qu'un caractère hors du JSON, ma machine plantera.
+
+SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan") :
 ${schema}`;
 }
 
@@ -709,10 +722,10 @@ export default async function handler(req, res) {
         ],
         messages: [
           { role: 'user', content: userMessage },
-          // Prefill : on force Claude à commencer sa réponse par '{"plan":'
-          // → garantit une sortie JSON sans préambule, plus de "Réponse non parsable"
-          // (le contenu du prefill ne doit JAMAIS finir par un whitespace)
-          { role: 'assistant', content: '{"plan":' },
+          // Note : pas de prefill ici, Sonnet 4.6 ne le supporte pas
+          // ("This model does not support assistant message prefill").
+          // On compte sur les instructions strictes en fin de user message
+          // + le parseur robuste plus bas pour extraire le JSON.
         ],
       }),
     });
@@ -729,32 +742,35 @@ export default async function handler(req, res) {
     }
 
     const data = await apiResponse.json();
-    let text = data?.content?.[0]?.text || '';
+    const text = data?.content?.[0]?.text || '';
 
-    // Reconstituer le JSON en prependant le prefill ('{"plan":') si Claude a continué après
-    // (Claude a commencé sa réponse par '{"plan":' grâce au prefill, donc le text
-    //  renvoyé commence directement après — il faut le préfixer pour avoir un JSON valide)
-    if (!text.trimStart().startsWith('{')) {
-      text = '{"plan":' + text;
+    // Parse JSON robuste : essaye direct, puis extraction par les délimiteurs { }
+    // Strip d'éventuelles fences markdown (\`\`\`json ... \`\`\`) au passage.
+    let parsed;
+
+    // 1) Strip markdown code fences si présentes
+    let cleaned = text.replace(/^\s*```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+
+    // 2) Tentative directe
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch { /* continue */ }
+
+    // 3) Extraction entre le PREMIER '{' et le DERNIER '}' (gère les préambules + commentaires)
+    if (!parsed) {
+      const firstBrace = cleaned.indexOf('{');
+      const lastBrace = cleaned.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        const candidate = cleaned.slice(firstBrace, lastBrace + 1);
+        try { parsed = JSON.parse(candidate); } catch { /* continue */ }
+      }
     }
 
-    // Parse JSON robuste : essaye direct, puis cherche le plus grand bloc {...} balancé
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      // Cherche le DERNIER '}' et essaye de parser jusque là
-      const lastBrace = text.lastIndexOf('}');
-      if (lastBrace > 0) {
-        const candidate = text.slice(0, lastBrace + 1);
-        try { parsed = JSON.parse(candidate); } catch { parsed = null; }
-      }
-      // Dernier recours : regex greedy
-      if (!parsed) {
-        const match = text.match(/\{[\s\S]*\}/);
-        if (match) {
-          try { parsed = JSON.parse(match[0]); } catch { parsed = null; }
-        }
+    // 4) Dernier recours : regex greedy
+    if (!parsed) {
+      const match = cleaned.match(/\{[\s\S]*\}/);
+      if (match) {
+        try { parsed = JSON.parse(match[0]); } catch { /* abandon */ }
       }
     }
 
