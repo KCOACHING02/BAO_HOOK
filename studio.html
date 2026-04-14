@@ -588,7 +588,7 @@
         <div class="choice-card" data-format="story">
           <div class="choice-icon">📱</div>
           <div class="choice-name">Une semaine<br>de <em>Stories</em></div>
-          <div class="choice-desc">7 stories courtes et interactives<br>(sondages, questions, stickers)</div>
+          <div class="choice-desc">7 jours × 5 stories en arc narratif<br>(Douleur → Vérité → Solution → Preuves)</div>
         </div>
         <div class="choice-card" data-format="reel">
           <div class="choice-icon">🎬</div>
@@ -893,15 +893,23 @@
       lines.push('');
 
       if (currentFormat === 'story') {
-        if (d.texte) {
+        const sequence = Array.isArray(d.stories_sequence) ? d.stories_sequence : [];
+        if (sequence.length) {
+          sequence.forEach(s => {
+            lines.push(`📱 STORY ${s.numero || ''}/${sequence.length} — ${s.role || ''}`);
+            lines.push(s.texte || '');
+            lines.push('');
+          });
+        } else if (d.texte) {
+          // Fallback legacy
           lines.push('📱 TEXTE DE LA STORY');
           lines.push(d.texte);
           lines.push('');
-        }
-        if (d.sticker && d.sticker !== 'aucun') {
-          lines.push(`🎨 STICKER — ${d.sticker}`);
-          if (d.sticker_contenu) lines.push(d.sticker_contenu);
-          lines.push('');
+          if (d.sticker && d.sticker !== 'aucun') {
+            lines.push(`🎨 STICKER — ${d.sticker}`);
+            if (d.sticker_contenu) lines.push(d.sticker_contenu);
+            lines.push('');
+          }
         }
       } else if (currentFormat === 'carrousel') {
         if (d.slide_1) {
@@ -944,21 +952,34 @@
         // Bloc spécifique au format
         let formatBlock = '';
         if (currentFormat === 'story') {
-          if (d.texte) {
+          // Nouveau format : séquence de 5 stories par jour
+          const sequence = Array.isArray(d.stories_sequence) ? d.stories_sequence : [];
+          if (sequence.length) {
+            sequence.forEach(s => {
+              const label = `📱 Story ${s.numero || ''}/${sequence.length} — ${escapeHtml(s.role || '')}`;
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">${label}</div>
+                  <div class="day-content">${escapeHtml(s.texte || '')}</div>
+                </div>
+              `;
+            });
+          } else if (d.texte) {
+            // Fallback legacy : ancien format à 1 story
             formatBlock += `
               <div class="day-block">
                 <div class="day-block-label">📱 Texte de la story</div>
                 <div class="day-content">${escapeHtml(d.texte)}</div>
               </div>
             `;
-          }
-          if (d.sticker && d.sticker !== 'aucun') {
-            formatBlock += `
-              <div class="day-block">
-                <div class="day-block-label">🎨 Sticker — ${escapeHtml(d.sticker)}</div>
-                <div class="day-cta">${escapeHtml(d.sticker_contenu || '')}</div>
-              </div>
-            `;
+            if (d.sticker && d.sticker !== 'aucun') {
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">🎨 Sticker — ${escapeHtml(d.sticker)}</div>
+                  <div class="day-cta">${escapeHtml(d.sticker_contenu || '')}</div>
+                </div>
+              `;
+            }
           }
         } else if (currentFormat === 'carrousel') {
           const slides = [

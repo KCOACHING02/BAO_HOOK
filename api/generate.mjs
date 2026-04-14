@@ -27,7 +27,7 @@ const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600
 const GENERATION_TEMPERATURE = 0.85;
 
 // Tokens max pour 7 jours détaillés (story ou reel)
-const MAX_TOKENS_WEEKLY_PLAN = 8000;
+const MAX_TOKENS_WEEKLY_PLAN = 12000;
 
 
 // ─── 2. SYSTEM PROMPT (méthode Brille & Vibre) ─────────────────
@@ -390,6 +390,95 @@ Voici 9 hooks réels de la créatrice qui FONCTIONNENT. Tu t'inspires DIRECTEMEN
     - "Et si [alternative concrète] ?" → ouverture d'une porte, pas une promesse vague
     - "Zéro produit. Zéro audience. Première vente en 20 jours." → preuve courte et chiffrée
     - CTA précis avec trigger DÉBUT (pas de formule marketing creuse)
+
+19. **(SÉQUENCE DE 5 STORIES — RÉFÉRENCE ABSOLUE pour le format STORY)**
+
+    Une journée de stories = UNE SÉQUENCE de 4 à 5 stories consécutives qui forment un arc narratif complet. Chaque story a un rôle précis dans l'arc. Exemple réel de la créatrice :
+
+    **Story 1/5 — DOULEUR RECONNUE**
+    > "Tu penses que pour vendre des produits digitaux, il faut avoir beaucoup d'abonnés.
+    >
+    > Que plus tu as d'abonnés,
+    > plus tu es légitime,
+    > plus tu es crédible,
+    > plus tu as le droit de proposer tes produits.
+    >
+    > Donc pour l'instant,
+    > tu préfères rester discrète.
+    >
+    > Tu te retiens.
+    > Tu n'oses pas proposer tes produits.
+    >
+    > Résultat : tu ne vends pas."
+
+    **Story 2/5 — VÉRITÉ DÉRANGEANTE**
+    > "Et pourtant,
+    > ce n'est pas le nombre d'abonnés
+    > qui fait la différence.
+    >
+    > Tik tok ne met pas forcément en avant les gros comptes.
+    >
+    > Il met en avant les contenus
+    > qui génèrent de l'engagement,
+    > de l'interaction, des réponses.
+    >
+    > Un compte avec peu d'abonnés,
+    > mais des personnes qui réagissent,
+    > qui répondent,
+    > qui interagissent
+    > Il vend.
+    >
+    > Un compte avec des milliers d'abonnés,
+    > sans interaction,
+    > sans réponses,
+    > sans engagement
+    >
+    > Il a du mal à vendre."
+
+    **Story 3/5 — SOLUTION / REFRAME**
+    > "Tes premières ventes
+    > ne viennent pas du nombre d'abonnés.
+    >
+    > Elles viennent du moment
+    > où quelqu'un comprend que c'est pour elle.
+    >
+    > Qu'elle se dit que ça lui parle,
+    > que ça correspond à ce qu'elle cherche,
+    > que c'est exactement ce dont elle a besoin,
+    >
+    > et qu'elle te fait confiance."
+
+    **Story 4/5 — PREUVE 1** (avec screenshot témoignage)
+    > "(screenshot témoignage avec chiffres)
+    > 1050€ en 11 jours
+    > elle venait de commencer
+    > elle n'avait pas une grosse audience
+    > elle a proposé son produit
+    > et ça a pris"
+
+    **Story 5/5 — PREUVE 2 + CTA**
+    > "(screenshot témoignage patience)
+    > 3 mois et demi avant sa première vente
+    > Elle a testé, elle a ajusté
+    > Elle n'a pas abandonné
+    > Elle a continué et elle a réussi
+    >
+    > Tu veux comprendre comment ?
+    > Écris-moi INFO"
+
+    → **OBSERVATIONS CLÉS** :
+    - L'arc en 5 temps est **Douleur → Vérité → Solution → Preuve 1 → Preuve 2+CTA**
+    - Story 1 commence par "Tu penses que…" → normalise la croyance
+    - Story 2 commence par "Et pourtant," → retourne avec douceur
+    - Story 3 applique "Ce n'est pas X, c'est Y" (expression signature)
+    - "Résultat :" comme déclencheur signature (Story 1)
+    - Rythme 3 temps visible partout : longue / moyenne / courte
+    - Opposition explicite en Story 2 : "compte avec peu d'abonnés qui vend" vs "compte avec milliers qui galère"
+    - Preuves chiffrées concrètes (1050€ en 11j, 3 mois et demi)
+    - Répétition anaphorique "Elle a testé, elle a ajusté, elle n'a pas abandonné, elle a continué" (Story 5)
+    - CTA court avec trigger (INFO)
+
+    **C'EST TA RÉFÉRENCE ABSOLUE POUR LE FORMAT STORY.** Chaque jour story = 4 à 5 stories en séquence qui forment cet arc.
 
 ## 🏆 LA STRUCTURE EN 3 MOUVEMENTS (à appliquer à tous les formats)
 
@@ -916,21 +1005,36 @@ ${ctaInstructions[opts.cta_style] || ctaInstructions.mixte}`;
   // ── Bloc d'instructions spécifique au format ──
   let formatBlock;
   if (isStory) {
-    formatBlock = `FORMAT DEMANDÉ : STORIES INSTAGRAM
+    formatBlock = `FORMAT DEMANDÉ : SÉQUENCES DE STORIES INSTAGRAM
 
-Tu génères 7 STORIES (une par jour). Une story ça se lit en 5 secondes, c'est court, intime, conversationnel.
+Tu génères 7 JOURS. **Chaque jour = UNE SÉQUENCE de 5 stories consécutives** qui forment un arc narratif complet (pas une story isolée).
 
-**Chaque story suit la STRUCTURE EN 3 MOUVEMENTS compressée** (voir la section du bloc système) :
-- Le HOOK fait le Miroir (mouvement 1)
-- Le TEXTE fait Déclic + Preuve en 2-3 phrases (mouvements 2 et 3)
-- Le STICKER + CTA ferment la boucle
+**L'ARC NARRATIF EN 5 TEMPS** (obligatoire pour chaque jour) :
 
-Pour chaque story tu fournis :
-- **hook** : la phrase d'accroche textuelle, c'est ce qu'elle voit en ouvrant la story. 1 ligne courte, percutante, naturelle. Choisie/adaptée d'un des 125 templates du catalogue.
-- **texte** : le contenu de la story, 2 à 4 lignes max. Aère avec des retours à la ligne \\\\n. Ton oral, fragmenté, comme si tu parlais à une copine en vocal. **DOIT PROLONGER le hook, pas pivoter.**
-- **sticker** : le type d'interactivité — choisis parmi : "sondage", "question", "quiz", "curseur émoji", "compte à rebours", "lien", "aucun"
-- **sticker_contenu** : le texte exact qui va dans le sticker (ex : "Tu te reconnais ?", "Oui / Non", "Swipe Up", "0-100")
-- **cta** : l'appel à l'action (souvent c'est le sticker lui-même, ou bien "Réponds-moi en DM")`;
+1. **Story 1 — DOULEUR RECONNUE** : tu normalises ce qu'elle vit. Tu nommes sa croyance et son comportement actuel. Tu finis par "Résultat : [conséquence concrète]".
+
+2. **Story 2 — VÉRITÉ DÉRANGEANTE** : tu retournes avec douceur ("Et pourtant,"). Tu déploies un reframe. Tu utilises souvent l'opposition "X qui vend vs Y qui galère".
+
+3. **Story 3 — SOLUTION / REFRAME** : tu révèles la vraie cause. Tu utilises "Ce n'est pas X, c'est Y" ou "Elles viennent de Y". Tu fais sentir que c'est à sa portée.
+
+4. **Story 4 — PREUVE 1** : tu montres un témoignage (mentionne "(screenshot témoignage)" en placeholder) avec un chiffre concret. 3-4 lignes courtes punchy ("elle venait de commencer / elle n'avait pas une grosse audience / elle a proposé son produit / et ça a pris").
+
+5. **Story 5 — PREUVE 2 + CTA** : deuxième preuve (souvent sur la patience/persévérance pour équilibrer la Story 4 qui est sur la vitesse). Finit par un CTA court avec trigger ("Écris-moi INFO", "DM DÉBUT").
+
+**RÉFÉRENCE ABSOLUE** : l'exemple 19 du bloc système est ton étalon. Copie son flow, adapte le sujet.
+
+**Style par story** :
+- Ton oral, fragmenté, phrases courtes ponctuées par des retours à la ligne
+- Rythme 3 temps obligatoire (longue → moyenne → courte qui frappe)
+- Déclencheurs signature en début de paragraphe ("Parce que", "Et pourtant,", "Résultat :", "Mais", "Et c'est")
+- Expressions signature dans le corps ("Ce n'est pas X, c'est Y", "Tu n'as pas besoin de X, tu as juste besoin de Y")
+- Chaque story fait 4-10 lignes max
+- Chaque story doit être AUTONOMEMENT lisible mais s'inscrire dans l'arc
+
+Pour chaque jour tu fournis :
+- **hook** : la phrase d'accroche principale (c'est l'idée maîtresse du jour, souvent reprise dans la Story 1). Choisie/adaptée d'un des 125 templates.
+- **stories_sequence** : un tableau de **5 stories** avec chacune un \`numero\`, un \`role\` (Douleur reconnue / Vérité dérangeante / Solution / Preuve 1 / Preuve 2+CTA), et un \`texte\` complet avec retours à la ligne \\\\n
+- **cta** : le CTA final (celui de la Story 5)`;
   } else if (isCarrousel) {
     formatBlock = `FORMAT DEMANDÉ : CARROUSELS INSTAGRAM (3 slides)
 
@@ -992,11 +1096,15 @@ Pour chaque reel tu fournis :
       "etat_emotionnel": "Besoin de ressentir",
       "niveau_conscience": "Pas consciente du problème",
       "categorie_hook": "Interpellation directe",
-      "hook": "...",
-      "texte": "...",
-      "sticker": "sondage",
-      "sticker_contenu": "...",
-      "cta": "..."
+      "hook": "l'idée maîtresse du jour, phrase d'accroche",
+      "stories_sequence": [
+        { "numero": 1, "role": "Douleur reconnue", "texte": "..." },
+        { "numero": 2, "role": "Vérité dérangeante", "texte": "..." },
+        { "numero": 3, "role": "Solution / Reframe", "texte": "..." },
+        { "numero": 4, "role": "Preuve 1", "texte": "..." },
+        { "numero": 5, "role": "Preuve 2 + CTA", "texte": "..." }
+      ],
+      "cta": "le CTA final avec trigger word (ex : Écris-moi INFO)"
     }
   ]
 }`;
