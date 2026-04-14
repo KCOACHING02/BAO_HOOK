@@ -27,7 +27,7 @@ const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600
 const GENERATION_TEMPERATURE = 0.85;
 
 // Tokens max pour 7 jours détaillés (story ou reel)
-const MAX_TOKENS_WEEKLY_PLAN = 12000;
+const MAX_TOKENS_WEEKLY_PLAN = 6500;
 
 
 // ─── 2. SYSTEM PROMPT (méthode Brille & Vibre) ─────────────────
@@ -1007,34 +1007,29 @@ ${ctaInstructions[opts.cta_style] || ctaInstructions.mixte}`;
   if (isStory) {
     formatBlock = `FORMAT DEMANDÉ : SÉQUENCES DE STORIES INSTAGRAM
 
-Tu génères 7 JOURS. **Chaque jour = UNE SÉQUENCE de 5 stories consécutives** qui forment un arc narratif complet (pas une story isolée).
+Tu génères 7 JOURS. **Chaque jour = UNE SÉQUENCE de 3 stories consécutives** qui forment un arc narratif complet (pas une story isolée).
 
-**L'ARC NARRATIF EN 5 TEMPS** (obligatoire pour chaque jour) :
+**L'ARC NARRATIF EN 3 TEMPS** (obligatoire pour chaque jour) :
 
-1. **Story 1 — DOULEUR RECONNUE** : tu normalises ce qu'elle vit. Tu nommes sa croyance et son comportement actuel. Tu finis par "Résultat : [conséquence concrète]".
+1. **Story 1 — DOULEUR RECONNUE** : tu normalises ce qu'elle vit. Tu nommes sa croyance et son comportement actuel. Tu finis par "Résultat : [conséquence concrète]". C'est ici que tu poses le hook et le miroir. 5-8 lignes max.
 
-2. **Story 2 — VÉRITÉ DÉRANGEANTE** : tu retournes avec douceur ("Et pourtant,"). Tu déploies un reframe. Tu utilises souvent l'opposition "X qui vend vs Y qui galère".
+2. **Story 2 — VÉRITÉ + SOLUTION** : tu retournes avec "Et pourtant," ou "Mais la vérité ?". Tu appliques "Ce n'est pas X, c'est Y". Tu ouvres la porte vers la solution. 5-8 lignes max.
 
-3. **Story 3 — SOLUTION / REFRAME** : tu révèles la vraie cause. Tu utilises "Ce n'est pas X, c'est Y" ou "Elles viennent de Y". Tu fais sentir que c'est à sa portée.
+3. **Story 3 — PREUVE + CTA** : tu montres une preuve courte avec "(screenshot témoignage)" en placeholder + chiffre concret. 3-4 lignes punchy + CTA court avec trigger word. 4-6 lignes max.
 
-4. **Story 4 — PREUVE 1** : tu montres un témoignage (mentionne "(screenshot témoignage)" en placeholder) avec un chiffre concret. 3-4 lignes courtes punchy ("elle venait de commencer / elle n'avait pas une grosse audience / elle a proposé son produit / et ça a pris").
-
-5. **Story 5 — PREUVE 2 + CTA** : deuxième preuve (souvent sur la patience/persévérance pour équilibrer la Story 4 qui est sur la vitesse). Finit par un CTA court avec trigger ("Écris-moi INFO", "DM DÉBUT").
-
-**RÉFÉRENCE ABSOLUE** : l'exemple 19 du bloc système est ton étalon. Copie son flow, adapte le sujet.
+**RÉFÉRENCE ABSOLUE** : l'exemple 19 du bloc système est ton étalon (même s'il en compte 5, tu compresses en 3 en fusionnant Vérité+Solution et Preuve1+Preuve2+CTA). Copie son flow et son style.
 
 **Style par story** :
 - Ton oral, fragmenté, phrases courtes ponctuées par des retours à la ligne
-- Rythme 3 temps obligatoire (longue → moyenne → courte qui frappe)
+- Rythme 3 temps (longue → moyenne → courte qui frappe)
 - Déclencheurs signature en début de paragraphe ("Parce que", "Et pourtant,", "Résultat :", "Mais", "Et c'est")
-- Expressions signature dans le corps ("Ce n'est pas X, c'est Y", "Tu n'as pas besoin de X, tu as juste besoin de Y")
-- Chaque story fait 4-10 lignes max
+- Expressions signature ("Ce n'est pas X, c'est Y", "Tu n'as pas besoin de X, tu as juste besoin de Y")
 - Chaque story doit être AUTONOMEMENT lisible mais s'inscrire dans l'arc
 
 Pour chaque jour tu fournis :
-- **hook** : la phrase d'accroche principale (c'est l'idée maîtresse du jour, souvent reprise dans la Story 1). Choisie/adaptée d'un des 125 templates.
-- **stories_sequence** : un tableau de **5 stories** avec chacune un \`numero\`, un \`role\` (Douleur reconnue / Vérité dérangeante / Solution / Preuve 1 / Preuve 2+CTA), et un \`texte\` complet avec retours à la ligne \\\\n
-- **cta** : le CTA final (celui de la Story 5)`;
+- **hook** : la phrase d'accroche principale (idée maîtresse du jour, posée dans la Story 1). Choisie/adaptée d'un des 125 templates.
+- **stories_sequence** : un tableau de **3 stories** avec chacune un \`numero\`, un \`role\` (Douleur reconnue / Vérité + Solution / Preuve + CTA), et un \`texte\` avec retours à la ligne \\\\n
+- **cta** : le CTA final (celui de la Story 3)`;
   } else if (isCarrousel) {
     formatBlock = `FORMAT DEMANDÉ : CARROUSELS INSTAGRAM (3 slides)
 
@@ -1099,10 +1094,8 @@ Pour chaque reel tu fournis :
       "hook": "l'idée maîtresse du jour, phrase d'accroche",
       "stories_sequence": [
         { "numero": 1, "role": "Douleur reconnue", "texte": "..." },
-        { "numero": 2, "role": "Vérité dérangeante", "texte": "..." },
-        { "numero": 3, "role": "Solution / Reframe", "texte": "..." },
-        { "numero": 4, "role": "Preuve 1", "texte": "..." },
-        { "numero": 5, "role": "Preuve 2 + CTA", "texte": "..." }
+        { "numero": 2, "role": "Vérité + Solution", "texte": "..." },
+        { "numero": 3, "role": "Preuve + CTA", "texte": "..." }
       ],
       "cta": "le CTA final avec trigger word (ex : Écris-moi INFO)"
     }
