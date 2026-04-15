@@ -962,7 +962,7 @@
       // Format spécial pour le plan 30 jours
       if (currentFormat === 'monthly') {
         const monthlyLines = [
-          `📅 Jour ${d.jour || ''} — Semaine ${d.semaine || ''}`,
+          `📅 Jour ${d.jour || ''} — Semaine ${d.semaine || ''} (${d.niveau_funnel || ''})`,
           `${d.theme_semaine || ''} · ${d.type || ''} · ${d.format || ''}`,
           '',
           '🎯 HOOK',
@@ -1082,6 +1082,7 @@
                     <span class="day-name">${escapeHtml(p.type || '')}</span>
                   </div>
                   <div class="day-row2">
+                    ${p.niveau_funnel ? `<span class="day-pill">🎯 ${escapeHtml(p.niveau_funnel)}</span>` : ''}
                     ${p.format ? `<span class="day-pill">📱 ${escapeHtml(p.format)}</span>` : ''}
                   </div>
                 </div>

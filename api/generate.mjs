@@ -1232,11 +1232,37 @@ function buildMonthlyPlanMessage(brief) {
 TÂCHE
 Crée un plan de contenu éditorial Instagram COMPLET sur **30 jours**, organisé en **4 semaines thématiques**, pensé pour convertir sans jamais avoir l'air de vendre. Tu appliques STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système (bible d'écriture, 4 axes, anti-IA, catalogue des templates, règle d'or).
 
-📅 ARC NARRATIF SUR 4 SEMAINES (obligatoire)
-- **Semaine 1 — Planter le problème** : faire prendre conscience du problème, normaliser, créer le miroir
-- **Semaine 2 — Chauffer le désir** : montrer la vision, le possible, la transformation accessible
-- **Semaine 3 — Lever les objections** : démonter les croyances qui bloquent, répondre aux "oui mais"
-- **Semaine 4 — Convertir** : preuve sociale, urgence légère, invitations claires vers l'offre
+📅 ARC NARRATIF SUR 4 SEMAINES — mapping funnel obligatoire
+
+Chaque semaine cible un NIVEAU DU FUNNEL précis. Tu n'en déroges JAMAIS. C'est ce qui permet à l'audience de maturer progressivement vers la décision.
+
+- **Semaine 1 — TOFU / Planter le problème**
+  État de la lectrice : elle est froide, elle ne se sent pas encore concernée.
+  Objectif : elle réalise qu'elle A un problème.
+  Axes Brille & Vibre : Attirer · TOFU · Besoin de ressentir · Pas consciente du problème
+  Tonalité : miroir, normalisation, auto-reconnaissance ("ah merde c'est moi")
+  Catégories de hooks à privilégier : Interpellation directe, Vulnérabilité & connexion, Casser les croyances
+
+- **Semaine 2 — MOFU / Chauffer le désir**
+  État de la lectrice : elle a compris son problème, elle commence à vouloir une solution.
+  Objectif : elle commence à vouloir une solution, à projeter le possible.
+  Axes Brille & Vibre : Engager · MOFU · Besoin de comprendre · Consciente du problème
+  Tonalité : pédagogique, inspirante, ouverture d'une porte nouvelle
+  Catégories de hooks à privilégier : Éducation & méthode, Expérience personnelle, Interpellation directe
+
+- **Semaine 3 — MOFU/BOFU / Lever les objections**
+  État de la lectrice : elle désire la solution mais elle a encore des "oui mais" qui la retiennent.
+  Objectif : tu démontes un par un ses blocages, peurs, objections.
+  Axes Brille & Vibre : Engager/Convertir · MOFU→BOFU · Besoin d'être guidée · Consciente de la solution
+  Tonalité : rassurante, preuves, démonte les croyances restantes
+  Catégories de hooks à privilégier : Casser les croyances, Expérience personnelle (témoignages), Interpellation directe
+
+- **Semaine 4 — BOFU / Convertir**
+  État de la lectrice : elle est chaude, elle peut décider maintenant.
+  Objectif : elle décide — elle passe à l'action vers l'offre.
+  Axes Brille & Vibre : Convertir · BOFU · Besoin d'être rassurée · Consciente de la solution
+  Tonalité : directe, preuves sociales fortes, invitation claire, urgence légère
+  Catégories de hooks à privilégier : Éducation & méthode (preuve), Expérience personnelle (résultats), Interpellation directe (FOMO)
 
 🎯 RATIO OBLIGATOIRE (30 posts total)
 - 40% des posts = **Visibilité + Valeur** (12 posts)
@@ -1283,6 +1309,7 @@ Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. A
     {
       "jour": 1,
       "semaine": 1,
+      "niveau_funnel": "TOFU",
       "theme_semaine": "Planter le problème",
       "type": "Visibilité",
       "format": "Reel",
@@ -1291,7 +1318,13 @@ Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. A
       "cta": "le CTA final court"
     }
   ]
-}`;
+}
+
+Pour chaque post, renseigne \`niveau_funnel\` avec la valeur correcte selon la semaine :
+- Semaines 1 → "TOFU"
+- Semaines 2 → "MOFU"
+- Semaines 3 → "MOFU/BOFU"
+- Semaines 4 → "BOFU"`;
 }
 
 
