@@ -1198,6 +1198,102 @@ SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan") :
 ${schema}`;
 }
 
+/* ─────────────────────────────────────────
+   MONTHLY_PLAN MODE — Plan éditorial 30 jours (4 semaines thématiques)
+   Framework stratégique pour convertir sans vendre directement :
+   - Semaine 1 : Planter le problème
+   - Semaine 2 : Chauffer le désir
+   - Semaine 3 : Lever les objections
+   - Semaine 4 : Convertir
+   Ratio obligatoire : 40% Visibilité+Valeur / 35% Désir+Preuve / 25% Vente directe
+   ───────────────────────────────────────── */
+function buildMonthlyPlanMessage(brief) {
+  const {
+    audience,
+    offre,
+    prix,
+    transformation,
+    douleur_1, douleur_2, douleur_3,
+    ton,
+    formats,
+  } = brief;
+
+  return `CONTEXTE BUSINESS
+
+- Audience cible : ${audience || '(non précisée)'}
+- Offre principale : ${offre || '(non précisée)'}${prix ? ` — prix ${prix}` : ''}
+- Transformation produite chez la cliente : ${transformation || '(non précisée)'}
+- Douleur 1 : ${douleur_1 || '(non précisée)'}
+- Douleur 2 : ${douleur_2 || '(non précisée)'}
+- Douleur 3 : ${douleur_3 || '(non précisée)'}
+- Ton de communication : ${ton || '(utilise le style Brille & Vibre par défaut)'}
+- Formats disponibles : ${formats || 'Reel, Carrousel, Story, Post texte'}
+
+TÂCHE
+Crée un plan de contenu éditorial Instagram COMPLET sur **30 jours**, organisé en **4 semaines thématiques**, pensé pour convertir sans jamais avoir l'air de vendre. Tu appliques STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système (bible d'écriture, 4 axes, anti-IA, catalogue des templates, règle d'or).
+
+📅 ARC NARRATIF SUR 4 SEMAINES (obligatoire)
+- **Semaine 1 — Planter le problème** : faire prendre conscience du problème, normaliser, créer le miroir
+- **Semaine 2 — Chauffer le désir** : montrer la vision, le possible, la transformation accessible
+- **Semaine 3 — Lever les objections** : démonter les croyances qui bloquent, répondre aux "oui mais"
+- **Semaine 4 — Convertir** : preuve sociale, urgence légère, invitations claires vers l'offre
+
+🎯 RATIO OBLIGATOIRE (30 posts total)
+- 40% des posts = **Visibilité + Valeur** (12 posts)
+- 35% des posts = **Désir + Preuve sociale** (10-11 posts)
+- 25% des posts = **Vente directe** (7-8 posts, concentrés sur la semaine 4 + quelques vendredis)
+
+📋 5 TYPES DE CONTENUS (à répartir selon le ratio)
+1. **Visibilité** : hook fort + insight universel pour atteindre de nouvelles personnes
+2. **Valeur** : méthode, framework, astuce actionnable, éducatif
+3. **Désir** : projection, aspiration, vision du possible
+4. **Preuve sociale** : témoignage, transformation client, chiffres concrets
+5. **Vente directe** : appel à l'action clair vers l'offre, focus offre
+
+🎨 FORMATS RECOMMANDÉS PAR TYPE
+- Visibilité → Reel (hook visuel + script court)
+- Valeur → Carrousel (3-5 slides pédagogiques) ou Post texte
+- Désir → Reel aspiration ou Post photo inspirant
+- Preuve sociale → Story sequence (témoignage) ou Carrousel transformation
+- Vente directe → Story sequence (5 stories) ou Reel offre avec CTA
+
+⚠️ CONSIGNES ABSOLUES
+1. **Respect strict de la bible d'écriture** du bloc système (rythme 3 temps, déclencheurs signature, expressions signature, punchlines en 3 formes, règle d'or "on ne convainc pas, on raconte").
+2. **Le hook** de chaque post vient du catalogue des 125 templates, adapté au sujet. Varie les catégories.
+3. **Le brief** est une mini-description éditoriale en 2 à 3 lignes de ce que dit le post (l'angle, le message clé, la progression). Pas le script complet — juste l'intention.
+4. **Le CTA** court et cohérent avec le type (Visibilité/Valeur = commentaire soft, Vente directe = DM avec trigger word en MAJUSCULES).
+5. **Progression invisible** : chaque post rapproche la lectrice de l'offre sans qu'elle s'en rende compte. Jamais de pression brute.
+6. **Anti-IA** : applique toutes les interdictions du bloc système (mots bannis, structures trop balancées, phrases robotiques).
+7. **Anti-shadowban TikTok** : pas de "gagner X€", pas de promesses financières chiffrées. Termes safe uniquement.
+8. **Adapte au business** : utilise le vocabulaire de l'audience, les douleurs précises, la transformation concrète fournis plus haut.
+
+🗓️ RÉPARTITION SUR 30 JOURS
+- Jours 1-7 : Semaine 1 (Planter le problème)
+- Jours 8-14 : Semaine 2 (Chauffer le désir)
+- Jours 15-21 : Semaine 3 (Lever les objections)
+- Jours 22-30 : Semaine 4 (Convertir) — 9 jours au lieu de 7 pour respecter le mois complet
+
+SCHÉMA JSON ATTENDU (exactement 30 entrées dans "plan", aucun texte avant ou après le JSON)
+
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. AUCUN markdown. Ta réponse commence par { et finit par }.
+
+{
+  "plan": [
+    {
+      "jour": 1,
+      "semaine": 1,
+      "theme_semaine": "Planter le problème",
+      "type": "Visibilité",
+      "format": "Reel",
+      "hook": "la phrase d'accroche des 3 premières secondes",
+      "brief": "2 à 3 lignes sur ce que le post dit : l'angle, le message, la progression",
+      "cta": "le CTA final court"
+    }
+  ]
+}`;
+}
+
 
 // ─── 4. CORS ───────────────────────────────────────────────────
 function corsOrigin(req) {
@@ -1332,38 +1428,72 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  if (mode !== 'weekly_plan') {
-    return res.status(400).json({ error: 'mode requis : "weekly_plan".' });
+  if (!['weekly_plan', 'monthly_plan'].includes(mode)) {
+    return res.status(400).json({ error: 'mode requis : "weekly_plan" ou "monthly_plan".' });
   }
 
-  const format = String(body.format || 'reel').toLowerCase();
-  if (!['story', 'reel', 'carrousel'].includes(format)) {
-    return res.status(400).json({ error: 'format requis : "story", "reel" ou "carrousel".' });
+  let userMessage;
+  let modelForCall;
+  let maxTokensForCall;
+
+  if (mode === 'weekly_plan') {
+    const format = String(body.format || 'reel').toLowerCase();
+    if (!['story', 'reel', 'carrousel'].includes(format)) {
+      return res.status(400).json({ error: 'format requis : "story", "reel" ou "carrousel".' });
+    }
+
+    const audience = clamp(body.audience, 300);
+    const focus    = clamp(body.focus, 600);
+
+    if (!audience) {
+      return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
+    }
+
+    // Options avancées (ton, longueur, intensité, style CTA)
+    const VALID_TON       = ['auto', 'doux', 'direct', 'expert', 'vulnerable', 'challengeant'];
+    const VALID_LONGUEUR  = ['court', 'moyen', 'long'];
+    const VALID_INTENSITE = ['soft', 'equilibre', 'intense'];
+    const VALID_CTA       = ['mixte', 'formel', 'soft'];
+
+    const rawOpts = (body.options && typeof body.options === 'object') ? body.options : {};
+    const options = {
+      ton:       VALID_TON.includes(rawOpts.ton)             ? rawOpts.ton       : 'auto',
+      longueur:  VALID_LONGUEUR.includes(rawOpts.longueur)   ? rawOpts.longueur  : 'moyen',
+      intensite: VALID_INTENSITE.includes(rawOpts.intensite) ? rawOpts.intensite : 'equilibre',
+      cta_style: VALID_CTA.includes(rawOpts.cta_style)       ? rawOpts.cta_style : 'mixte',
+    };
+
+    userMessage      = buildWeeklyPlanMessage(audience, focus, format, options);
+    modelForCall     = DEFAULT_MODEL;              // Sonnet pour la qualité des 7 jours détaillés
+    maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;     // 6500
+  } else {
+    // mode === 'monthly_plan'
+    const audience       = clamp(body.audience, 300);
+    const offre          = clamp(body.offre, 200);
+    const prix           = clamp(body.prix, 50);
+    const transformation = clamp(body.transformation, 400);
+    const douleur_1      = clamp(body.douleur_1, 250);
+    const douleur_2      = clamp(body.douleur_2, 250);
+    const douleur_3      = clamp(body.douleur_3, 250);
+    const ton            = clamp(body.ton, 100);
+    const formats        = clamp(body.formats, 200);
+
+    if (!audience) {
+      return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
+    }
+    if (!offre) {
+      return res.status(400).json({ error: 'Le champ "offre" est obligatoire pour un plan 30 jours.' });
+    }
+
+    userMessage = buildMonthlyPlanMessage({
+      audience, offre, prix, transformation,
+      douleur_1, douleur_2, douleur_3,
+      ton, formats,
+    });
+    // Haiku pour 30 posts : plus rapide (3x) → tient dans le timeout Vercel 60s
+    modelForCall     = 'claude-haiku-4-5-20251001';
+    maxTokensForCall = 8000; // marge pour 30 posts avec brief + hook + cta
   }
-
-  const audience = clamp(body.audience, 300);
-  const focus    = clamp(body.focus, 600);
-
-  if (!audience) {
-    return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
-  }
-
-  // ── Options avancées (ton, longueur, intensité, style CTA) ──
-  const VALID_TON       = ['auto', 'doux', 'direct', 'expert', 'vulnerable', 'challengeant'];
-  const VALID_LONGUEUR  = ['court', 'moyen', 'long'];
-  const VALID_INTENSITE = ['soft', 'equilibre', 'intense'];
-  const VALID_CTA       = ['mixte', 'formel', 'soft'];
-
-  const rawOpts = (body.options && typeof body.options === 'object') ? body.options : {};
-  const options = {
-    ton:       VALID_TON.includes(rawOpts.ton)             ? rawOpts.ton       : 'auto',
-    longueur:  VALID_LONGUEUR.includes(rawOpts.longueur)   ? rawOpts.longueur  : 'moyen',
-    intensite: VALID_INTENSITE.includes(rawOpts.intensite) ? rawOpts.intensite : 'equilibre',
-    cta_style: VALID_CTA.includes(rawOpts.cta_style)       ? rawOpts.cta_style : 'mixte',
-  };
-
-  // ── Construction du message ──
-  const userMessage = buildWeeklyPlanMessage(audience, focus, format, options);
 
   // ── Appel API ──
   try {
@@ -1375,8 +1505,8 @@ export default async function handler(req, res) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model:       DEFAULT_MODEL,
-        max_tokens:  MAX_TOKENS_WEEKLY_PLAN,
+        model:       modelForCall,
+        max_tokens:  maxTokensForCall,
         temperature: GENERATION_TEMPERATURE,
         system: [
           {
@@ -1387,10 +1517,6 @@ export default async function handler(req, res) {
         ],
         messages: [
           { role: 'user', content: userMessage },
-          // Note : pas de prefill ici, Sonnet 4.6 ne le supporte pas
-          // ("This model does not support assistant message prefill").
-          // On compte sur les instructions strictes en fin de user message
-          // + le parseur robuste plus bas pour extraire le JSON.
         ],
       }),
     });

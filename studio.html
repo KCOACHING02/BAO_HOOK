@@ -600,6 +600,11 @@
           <div class="choice-name">Une semaine<br>de <em>Carrousels</em></div>
           <div class="choice-desc">7 carrousels en 3 slides<br>(Miroir → Déclic → Preuve)</div>
         </div>
+        <div class="choice-card" data-format="monthly">
+          <div class="choice-icon">📅</div>
+          <div class="choice-name">Un mois<br><em>stratégique</em></div>
+          <div class="choice-desc">30 posts en 4 semaines thématiques<br>(Problème → Désir → Objections → Vente)</div>
+        </div>
       </div>
     </div>
 
@@ -616,10 +621,57 @@
           <div class="field-hint">Sauvegardé pour la prochaine fois.</div>
         </div>
 
-        <div class="field">
+        <div class="field" id="field-focus">
           <label class="field-label" for="focus">Tu veux mettre quoi en avant cette semaine ?</label>
           <textarea id="focus" class="field-textarea" placeholder="Ex : le lancement de ma masterclass sur les hooks vendredi"></textarea>
           <div class="field-hint">Facultatif — laisse vide pour un planning généraliste.</div>
+        </div>
+
+        <!-- Champs uniquement pour le Plan 30 jours -->
+        <div id="monthly-fields" style="display: none;">
+          <div class="field">
+            <label class="field-label" for="offre">Ton offre principale à vendre</label>
+            <input id="offre" class="field-input" type="text" placeholder="Ex : Programme Brille & Vibre — 12 semaines de coaching">
+            <div class="field-hint">Le nom de l'offre que tu veux pousser.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="prix">Prix de l'offre</label>
+            <input id="prix" class="field-input" type="text" placeholder="Ex : 497€ ou 97€/mois">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="transformation">Ce que ton offre transforme</label>
+            <textarea id="transformation" class="field-textarea" placeholder="Ex : elles passent de 0 vente à leurs premières clientes en 60 jours, sans se montrer"></textarea>
+            <div class="field-hint">La transformation concrète et mesurable.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="douleur-1">Douleur 1 de ta cible</label>
+            <input id="douleur-1" class="field-input" type="text" placeholder="Ex : elle poste sans jamais vendre">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="douleur-2">Douleur 2</label>
+            <input id="douleur-2" class="field-input" type="text" placeholder="Ex : elle manque de visibilité">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="douleur-3">Douleur 3</label>
+            <input id="douleur-3" class="field-input" type="text" placeholder="Ex : elle ne sait pas comment se démarquer">
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="ton-input">Ton de communication</label>
+            <input id="ton-input" class="field-input" type="text" placeholder="Ex : direct, bienveillant, inspirant, provoc">
+            <div class="field-hint">Facultatif — par défaut, style Brille & Vibre.</div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="formats">Formats que tu utilises</label>
+            <input id="formats" class="field-input" type="text" placeholder="Ex : Reels, Carrousels, Stories, Posts texte">
+            <div class="field-hint">Facultatif — par défaut tous les formats.</div>
+          </div>
         </div>
 
         <!-- ── OPTIONS AVANCÉES (repliées par défaut) ── -->
@@ -747,6 +799,27 @@
       } catch (e) { /* ignore */ }
     })();
 
+    // Restaure les champs du plan 30 jours
+    (function restoreMonthlyFields() {
+      try {
+        const raw = localStorage.getItem('brille-vibre-studio:monthly');
+        if (!raw) return;
+        const m = JSON.parse(raw);
+        const setVal = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val) el.value = val;
+        };
+        setVal('offre',          m.offre);
+        setVal('prix',           m.prix);
+        setVal('transformation', m.transformation);
+        setVal('douleur-1',      m.douleur_1);
+        setVal('douleur-2',      m.douleur_2);
+        setVal('douleur-3',      m.douleur_3);
+        setVal('ton-input',      m.tonInput);
+        setVal('formats',        m.formatsInput);
+      } catch (e) { /* ignore */ }
+    })();
+
     function saveBrief(audience, focus) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience, focus }));
@@ -812,9 +885,21 @@
         story:     { icon: '📱', name: 'Stories' },
         reel:      { icon: '🎬', name: 'Reels' },
         carrousel: { icon: '🎠', name: 'Carrousels' },
+        monthly:   { icon: '📅', name: 'Plan 30 jours' },
       };
       const lbl = labels[format] || labels.reel;
       els.formatIndicator.textContent = `← ${lbl.icon} ${lbl.name} · Changer`;
+
+      // Afficher/cacher les champs spécifiques au plan 30 jours
+      const monthlyFields = document.getElementById('monthly-fields');
+      const focusField    = document.getElementById('field-focus');
+      if (format === 'monthly') {
+        monthlyFields.style.display = 'block';
+        focusField.style.display = 'none';
+      } else {
+        monthlyFields.style.display = 'none';
+        focusField.style.display = 'block';
+      }
     }
 
     // Clics sur les cartes de choix format
@@ -874,6 +959,24 @@
     window.copyToClipboard = copyToClipboard;
 
     function dayToPlainText(d) {
+      // Format spécial pour le plan 30 jours
+      if (currentFormat === 'monthly') {
+        const monthlyLines = [
+          `📅 Jour ${d.jour || ''} — Semaine ${d.semaine || ''}`,
+          `${d.theme_semaine || ''} · ${d.type || ''} · ${d.format || ''}`,
+          '',
+          '🎯 HOOK',
+          d.hook || '',
+          '',
+          '📝 BRIEF',
+          d.brief || '',
+          '',
+          '👉 CTA',
+          d.cta || '',
+        ];
+        return monthlyLines.join('\n');
+      }
+
       const metaLine = [
         d.etape,
         d.niveau_funnel,
@@ -946,8 +1049,91 @@
        ─────────────────────────────────────── */
     let lastPlan = [];
 
+    function renderMonthlyPlan(plan) {
+      // Groupe les posts par semaine
+      const weeks = {};
+      plan.forEach(post => {
+        const weekNum = post.semaine || 1;
+        if (!weeks[weekNum]) {
+          weeks[weekNum] = { theme: post.theme_semaine || '', posts: [] };
+        }
+        weeks[weekNum].posts.push(post);
+      });
+
+      const typeColors = {
+        'Visibilité':    '#6366f1',
+        'Valeur':        '#10b981',
+        'Désir':         '#ec4899',
+        'Preuve sociale':'#f59e0b',
+        'Vente directe': '#ef4444',
+      };
+
+      const weekSections = Object.entries(weeks)
+        .sort(([a], [b]) => Number(a) - Number(b))
+        .map(([num, data]) => {
+          const postsHtml = data.posts.map((p, i) => {
+            const color = typeColors[p.type] || 'var(--gold)';
+            const globalIndex = plan.indexOf(p);
+            return `
+              <div class="day-card" style="border-left: 4px solid ${color};">
+                <div class="day-header">
+                  <div class="day-row1">
+                    <span class="day-num">JOUR ${escapeHtml(String(p.jour || ''))}</span>
+                    <span class="day-name">${escapeHtml(p.type || '')}</span>
+                  </div>
+                  <div class="day-row2">
+                    ${p.format ? `<span class="day-pill">📱 ${escapeHtml(p.format)}</span>` : ''}
+                  </div>
+                </div>
+                <div class="day-body">
+                  ${p.hook ? `
+                    <div class="day-block">
+                      <div class="day-block-label">🎯 Hook</div>
+                      <div class="day-hook">${escapeHtml(p.hook)}</div>
+                    </div>
+                  ` : ''}
+                  ${p.brief ? `
+                    <div class="day-block">
+                      <div class="day-block-label">📝 Brief</div>
+                      <div class="day-content">${escapeHtml(p.brief)}</div>
+                    </div>
+                  ` : ''}
+                  ${p.cta ? `
+                    <div class="day-block">
+                      <div class="day-block-label">👉 CTA</div>
+                      <div class="day-cta">${escapeHtml(p.cta)}</div>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="day-actions">
+                  <button class="copy-btn" onclick="copyDay(${globalIndex})">📋 Copier ce post</button>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="week-section" style="margin-bottom: 32px;">
+              <div class="variants-header">
+                Semaine ${escapeHtml(String(num))} — <em>${escapeHtml(data.theme || '')}</em>
+              </div>
+              ${postsHtml}
+            </div>
+          `;
+        }).join('');
+
+      els.daysContainer.innerHTML = weekSections || '<div class="day-card">Aucun post généré.</div>';
+    }
+
     function renderPlan(plan) {
       lastPlan = plan;
+
+      // ── Rendu spécial pour le plan 30 jours (groupé par semaine) ──
+      if (currentFormat === 'monthly') {
+        renderMonthlyPlan(plan);
+        return;
+      }
+
       const cards = plan.map((d, i) => {
         // Bloc spécifique au format
         let formatBlock = '';
@@ -1060,7 +1246,6 @@
        ─────────────────────────────────────── */
     async function generatePlan() {
       const audience = els.audience.value.trim();
-      const focus = els.focus.value.trim();
 
       if (!audience) {
         showToast('⚠ Renseigne d\'abord ton audience', 'error');
@@ -1068,13 +1253,12 @@
         return;
       }
 
-      saveBrief(audience, focus);
-
       // Adapter le texte du loader au format
       const loadingTexts = {
         story:     'Brille & Vibre écrit tes 7 stories...',
         reel:      'Brille & Vibre écrit tes 7 reels...',
         carrousel: 'Brille & Vibre écrit tes 7 carrousels...',
+        monthly:   'Brille & Vibre construit ton plan de 30 jours...',
       };
       const loadingText = document.getElementById('loading-text');
       if (loadingText) loadingText.textContent = loadingTexts[currentFormat] || loadingTexts.reel;
@@ -1084,9 +1268,56 @@
         story:     'Ta semaine de stories',
         reel:      'Ta semaine de reels',
         carrousel: 'Ta semaine de carrousels',
+        monthly:   'Ton plan de 30 jours',
       };
       const resultsEyebrow = document.getElementById('results-eyebrow');
       if (resultsEyebrow) resultsEyebrow.textContent = resultLabels[currentFormat] || resultLabels.reel;
+
+      // Construire le payload selon le mode
+      let payload;
+      if (currentFormat === 'monthly') {
+        const offre          = document.getElementById('offre').value.trim();
+        const prix           = document.getElementById('prix').value.trim();
+        const transformation = document.getElementById('transformation').value.trim();
+        const douleur_1      = document.getElementById('douleur-1').value.trim();
+        const douleur_2      = document.getElementById('douleur-2').value.trim();
+        const douleur_3      = document.getElementById('douleur-3').value.trim();
+        const tonInput       = document.getElementById('ton-input').value.trim();
+        const formatsInput   = document.getElementById('formats').value.trim();
+
+        if (!offre) {
+          showToast('⚠ Renseigne ton offre principale pour un plan 30 jours', 'error');
+          document.getElementById('offre').focus();
+          return;
+        }
+
+        saveBrief(audience, '');
+        // Sauver aussi les champs du plan 30j
+        try {
+          localStorage.setItem('brille-vibre-studio:monthly', JSON.stringify({
+            offre, prix, transformation, douleur_1, douleur_2, douleur_3, tonInput, formatsInput,
+          }));
+        } catch (e) {}
+
+        payload = {
+          mode: 'monthly_plan',
+          audience,
+          offre, prix, transformation,
+          douleur_1, douleur_2, douleur_3,
+          ton: tonInput,
+          formats: formatsInput,
+        };
+      } else {
+        const focus = els.focus.value.trim();
+        saveBrief(audience, focus);
+        payload = {
+          mode: 'weekly_plan',
+          format: currentFormat,
+          audience,
+          focus,
+          options: currentOptions,
+        };
+      }
 
       showScreen('loading');
 
@@ -1094,13 +1325,7 @@
         const res = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            mode: 'weekly_plan',
-            format: currentFormat,
-            audience,
-            focus,
-            options: currentOptions,
-          }),
+          body: JSON.stringify(payload),
         });
 
         // Lis le body brut puis essaie de parser comme JSON.
