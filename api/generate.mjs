@@ -1528,31 +1528,45 @@ export default async function handler(req, res) {
     maxTokensForCall = 8000; // marge pour 30 posts avec brief + hook + cta
   }
 
-  // ── Appel API ──
-  try {
-    const apiResponse = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+  // ── Appel API avec retry sur surcharge (529/503/502/504/429) ──
+  const requestBody = JSON.stringify({
+    model:       modelForCall,
+    max_tokens:  maxTokensForCall,
+    temperature: GENERATION_TEMPERATURE,
+    system: [
+      {
+        type: 'text',
+        text: SYSTEM_PROMPT,
+        cache_control: { type: 'ephemeral' },
       },
-      body: JSON.stringify({
-        model:       modelForCall,
-        max_tokens:  maxTokensForCall,
-        temperature: GENERATION_TEMPERATURE,
-        system: [
-          {
-            type: 'text',
-            text: SYSTEM_PROMPT,
-            cache_control: { type: 'ephemeral' },
-          },
-        ],
-        messages: [
-          { role: 'user', content: userMessage },
-        ],
-      }),
-    });
+    ],
+    messages: [
+      { role: 'user', content: userMessage },
+    ],
+  });
+
+  const doAnthropicCall = () => fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: requestBody,
+  });
+
+  const RETRYABLE = [429, 502, 503, 504, 529];
+  const RETRY_DELAY_MS = 3000;
+
+  try {
+    let apiResponse = await doAnthropicCall();
+
+    // Retry une seule fois sur erreur de surcharge transitoire
+    if (!apiResponse.ok && RETRYABLE.includes(apiResponse.status)) {
+      console.log(`[retry] Anthropic ${apiResponse.status}, waiting ${RETRY_DELAY_MS}ms`);
+      await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+      apiResponse = await doAnthropicCall();
+    }
 
     if (!apiResponse.ok) {
       const errText = await apiResponse.text();
