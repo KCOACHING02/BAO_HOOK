@@ -1199,6 +1199,46 @@ ${schema}`;
 }
 
 /* ─────────────────────────────────────────
+   OPTIMIZE_CAPTION MODE — Optimisation d'une légende existante
+   Prend une légende brute et la réécrit pour la conversion.
+   ───────────────────────────────────────── */
+function buildOptimizeCaptionMessage(legende) {
+  return `TÂCHE
+Tu reçois une légende Instagram brute. Corrige-la et optimise-la pour la conversion en respectant STRICTEMENT la bible d'écriture Brille & Vibre et les règles anti-IA du bloc système.
+
+CRITÈRES D'OPTIMISATION (tous obligatoires) :
+1. Supprime toutes les fautes d'orthographe et de grammaire
+2. Améliore la fluidité et la clarté — chaque phrase s'enchaîne naturellement
+3. Rends le texte plus émotionnel et engageant — pas de phrases plates
+4. Optimise le storytelling pour créer de la connexion et de la confiance
+5. Garde un ton naturel (authentique, motivant, accessible) — tutoiement intime, grande sœur
+6. Respecte les règles Instagram / TikTok — pas de promesses irréalistes ni termes sensibles (voir les termes bannis du bloc système)
+7. Structure pour capter l'attention dès la première ligne — renforce le hook si besoin
+8. Intègre subtilement les leviers de conversion : identification, prise de conscience, projection, désir
+9. Ajoute un CTA naturel (commenter, sauvegarder, s'abonner, DM) si absent ou faible
+10. Suggère une transition douce vers l'offre / l'univers sans être agressive
+11. Applique le rythme 3 temps (longue → moyenne → courte qui frappe)
+12. Utilise les déclencheurs de début de paragraphe signature ("Parce que", "Mais la vérité ?", "Et crois-moi", "Et c'est exactement", "Résultat :")
+13. Intègre au moins 1 punchline sous forme Opposition, Révélation ou Permission
+14. Applique les mots du vocabulaire Brille & Vibre naturellement (confiance, connexion, évidence, déclencher, ancrer…)
+
+LÉGENDE ORIGINALE À OPTIMISER :
+---
+${legende}
+---
+
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. Ta réponse commence par { et finit par }.
+
+{
+  "optimized": "la légende complète optimisée, avec retours à la ligne \\\\n pour aérer",
+  "variante_punchy": "une variante plus courte et plus punchy de la même légende",
+  "changements": "2 à 3 phrases résumant les principaux changements effectués"
+}`;
+}
+
+
+/* ─────────────────────────────────────────
    MONTHLY_PLAN MODE — Plan éditorial 30 jours (4 semaines thématiques)
    Framework stratégique pour convertir sans vendre directement :
    - Semaine 1 : Planter le problème
@@ -1461,15 +1501,23 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  if (!['weekly_plan', 'monthly_plan'].includes(mode)) {
-    return res.status(400).json({ error: 'mode requis : "weekly_plan" ou "monthly_plan".' });
+  if (!['weekly_plan', 'monthly_plan', 'optimize_caption'].includes(mode)) {
+    return res.status(400).json({ error: 'mode requis : "weekly_plan", "monthly_plan" ou "optimize_caption".' });
   }
 
   let userMessage;
   let modelForCall;
   let maxTokensForCall;
 
-  if (mode === 'weekly_plan') {
+  if (mode === 'optimize_caption') {
+    const legende = clamp(body.legende, 3000);
+    if (!legende) {
+      return res.status(400).json({ error: 'Le champ "legende" est obligatoire.' });
+    }
+    userMessage      = buildOptimizeCaptionMessage(legende);
+    modelForCall     = DEFAULT_MODEL; // Sonnet pour la qualité de réécriture
+    maxTokensForCall = 3000;          // une légende optimisée = court
+  } else if (mode === 'weekly_plan') {
     const format = String(body.format || 'reel').toLowerCase();
     if (!['story', 'reel', 'carrousel'].includes(format)) {
       return res.status(400).json({ error: 'format requis : "story", "reel" ou "carrousel".' });

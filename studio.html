@@ -605,6 +605,11 @@
           <div class="choice-name">Un mois<br><em>stratégique</em></div>
           <div class="choice-desc">30 posts en 4 semaines thématiques<br>(Problème → Désir → Objections → Vente)</div>
         </div>
+        <div class="choice-card" data-format="optimize">
+          <div class="choice-icon">✏️</div>
+          <div class="choice-name">Optimiser<br>une <em>légende</em></div>
+          <div class="choice-desc">Colle ta légende brute et l'outil<br>la réécrit pour la conversion</div>
+        </div>
       </div>
     </div>
 
@@ -671,6 +676,15 @@
             <label class="field-label" for="formats">Formats que tu utilises</label>
             <input id="formats" class="field-input" type="text" placeholder="Ex : Reels, Carrousels, Stories, Posts texte">
             <div class="field-hint">Facultatif — par défaut tous les formats.</div>
+          </div>
+        </div>
+
+        <!-- Champ uniquement pour l'optimisation de légende -->
+        <div id="optimize-fields" style="display: none;">
+          <div class="field">
+            <label class="field-label" for="legende-brute">Colle ta légende ici</label>
+            <textarea id="legende-brute" class="field-textarea" style="min-height: 200px;" placeholder="Colle ici ta légende Instagram brute. L'outil va la corriger, l'améliorer et la rendre plus engageante."></textarea>
+            <div class="field-hint">L'outil corrige l'orthographe, améliore le storytelling, ajoute un hook fort + CTA, et te propose une variante punchy.</div>
           </div>
         </div>
 
@@ -886,19 +900,39 @@
         reel:      { icon: '🎬', name: 'Reels' },
         carrousel: { icon: '🎠', name: 'Carrousels' },
         monthly:   { icon: '📅', name: 'Plan 30 jours' },
+        optimize:  { icon: '✏️', name: 'Optimiser' },
       };
       const lbl = labels[format] || labels.reel;
       els.formatIndicator.textContent = `← ${lbl.icon} ${lbl.name} · Changer`;
 
-      // Afficher/cacher les champs spécifiques au plan 30 jours
-      const monthlyFields = document.getElementById('monthly-fields');
-      const focusField    = document.getElementById('field-focus');
+      // Afficher/cacher les champs selon le mode
+      const monthlyFields  = document.getElementById('monthly-fields');
+      const focusField     = document.getElementById('field-focus');
+      const optimizeFields = document.getElementById('optimize-fields');
+      const audienceField  = els.audience.closest('.field');
+      const advToggle      = document.getElementById('btn-toggle-advanced');
+      const advPanel       = document.getElementById('advanced-panel');
+
       if (format === 'monthly') {
         monthlyFields.style.display = 'block';
         focusField.style.display = 'none';
+        optimizeFields.style.display = 'none';
+        audienceField.style.display = 'block';
+        advToggle.style.display = 'none';
+        advPanel.classList.remove('open');
+      } else if (format === 'optimize') {
+        monthlyFields.style.display = 'none';
+        focusField.style.display = 'none';
+        optimizeFields.style.display = 'block';
+        audienceField.style.display = 'none';
+        advToggle.style.display = 'none';
+        advPanel.classList.remove('open');
       } else {
         monthlyFields.style.display = 'none';
         focusField.style.display = 'block';
+        optimizeFields.style.display = 'none';
+        audienceField.style.display = 'block';
+        advToggle.style.display = 'flex';
       }
     }
 
@@ -1048,6 +1082,65 @@
        RENDER PLAN
        ─────────────────────────────────────── */
     let lastPlan = [];
+
+    function renderOptimizedCaption(result) {
+      lastPlan = [result]; // pour le bouton copier (index 0)
+      const optimized    = escapeHtml(result.optimized || '');
+      const variant      = escapeHtml(result.variante_punchy || '');
+      const changements  = escapeHtml(result.changements || '');
+
+      els.daysContainer.innerHTML = `
+        <div class="day-card">
+          <div class="day-header">
+            <div class="day-row1">
+              <span class="day-num">OPTIMISÉE</span>
+              <span class="day-name">Ta légende conversion</span>
+            </div>
+          </div>
+          <div class="day-body">
+            <div class="day-block">
+              <div class="day-block-label">📝 Légende optimisée</div>
+              <div class="day-content" style="font-size: 15px; line-height: 1.8;">${optimized}</div>
+            </div>
+            ${changements ? `
+              <div class="day-block">
+                <div class="day-block-label">🔧 Ce qui a changé</div>
+                <div class="day-cta">${changements}</div>
+              </div>
+            ` : ''}
+          </div>
+          <div class="day-actions">
+            <button class="copy-btn" onclick="copyText('${optimized.replace(/'/g, "\\'")}')">📋 Copier la légende</button>
+          </div>
+        </div>
+
+        ${variant ? `
+          <div class="day-card">
+            <div class="day-header">
+              <div class="day-row1">
+                <span class="day-num">VARIANTE</span>
+                <span class="day-name">Version punchy</span>
+              </div>
+            </div>
+            <div class="day-body">
+              <div class="day-block">
+                <div class="day-block-label">⚡ Version plus courte et punchy</div>
+                <div class="day-content" style="font-size: 15px; line-height: 1.8;">${variant}</div>
+              </div>
+            </div>
+            <div class="day-actions">
+              <button class="copy-btn" onclick="copyText('${variant.replace(/'/g, "\\'")}')">📋 Copier la variante</button>
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    // Helper pour copier un texte directement (utilisé par l'optimiseur)
+    window.copyText = function(text) {
+      copyToClipboard(text.replace(/\\n/g, '\\n'));
+      showToast('✓ Copié dans le presse-papier', 'success', 1500);
+    };
 
     function renderMonthlyPlan(plan) {
       // Groupe les posts par semaine
@@ -1246,12 +1339,14 @@
        GENERATE
        ─────────────────────────────────────── */
     async function generatePlan() {
-      const audience = els.audience.value.trim();
-
-      if (!audience) {
-        showToast('⚠ Renseigne d\'abord ton audience', 'error');
-        els.audience.focus();
-        return;
+      // Mode optimize = pas besoin d'audience
+      if (currentFormat !== 'optimize') {
+        const audience = els.audience.value.trim();
+        if (!audience) {
+          showToast('⚠ Renseigne d\'abord ton audience', 'error');
+          els.audience.focus();
+          return;
+        }
       }
 
       // Adapter le texte du loader au format
@@ -1308,8 +1403,20 @@
           ton: tonInput,
           formats: formatsInput,
         };
+      } else if (currentFormat === 'optimize') {
+        const legende = document.getElementById('legende-brute').value.trim();
+        if (!legende) {
+          showToast('⚠ Colle d\'abord ta légende à optimiser', 'error');
+          document.getElementById('legende-brute').focus();
+          return;
+        }
+        payload = {
+          mode: 'optimize_caption',
+          legende,
+        };
       } else {
         const focus = els.focus.value.trim();
+        const audience = els.audience.value.trim();
         saveBrief(audience, focus);
         payload = {
           mode: 'weekly_plan',
@@ -1350,14 +1457,24 @@
           throw new Error((data.error || `Erreur HTTP ${res.status}`) + detail);
         }
 
-        const plan = data?.result?.plan || [];
-        if (!plan.length) {
-          throw new Error('Aucun planning reçu.');
+        if (currentFormat === 'optimize') {
+          // Mode optimisation de légende — résultat = objet (pas un tableau plan)
+          const result = data?.result || {};
+          if (!result.optimized) {
+            throw new Error('Aucune optimisation reçue.');
+          }
+          renderOptimizedCaption(result);
+          showScreen('results');
+          showToast('✓ Ta légende est optimisée', 'success');
+        } else {
+          const plan = data?.result?.plan || [];
+          if (!plan.length) {
+            throw new Error('Aucun planning reçu.');
+          }
+          renderPlan(plan);
+          showScreen('results');
+          showToast('✓ Ton planning est prêt', 'success');
         }
-
-        renderPlan(plan);
-        showScreen('results');
-        showToast('✓ Ton planning est prêt', 'success');
 
       } catch (err) {
         showScreen('form');
