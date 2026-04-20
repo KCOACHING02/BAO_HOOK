@@ -2233,14 +2233,15 @@
        GENERATE
        ─────────────────────────────────────── */
     async function generatePlan() {
-      // Mode optimize = pas besoin d'audience
-      if (currentFormat !== 'optimize') {
-        const audience = els.audience.value.trim();
-        if (!audience) {
-          showToast('⚠ Renseigne d\'abord ton audience', 'error');
-          els.audience.focus();
-          return;
-        }
+      // Lire l'audience au niveau function (pas dans un if block)
+      const audience = els.audience ? els.audience.value.trim() : '';
+
+      // Valider l'audience sauf pour les modes texte (optimize/recycle/analyze/detect)
+      const textModes = ['optimize', 'recycle', 'analyze', 'detect'];
+      if (!textModes.includes(currentFormat) && !audience) {
+        showToast('⚠ Renseigne d\'abord ton audience', 'error');
+        els.audience.focus();
+        return;
       }
 
       // Adapter le texte du loader au format
