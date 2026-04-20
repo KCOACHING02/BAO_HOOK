@@ -1237,6 +1237,128 @@ Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. T
 }`;
 }
 
+/* ─────────────────────────────────────────
+   RECYCLE MODE — Reformuler un ancien post sous 3 angles différents
+   ───────────────────────────────────────── */
+function buildRecycleMessage(original_post) {
+  return `TÂCHE
+Tu reçois un post Instagram qui a déjà été publié. Reformule-le sous **3 angles COMPLÈTEMENT DIFFÉRENTS** pour le republier sans que ça se voie.
+
+Chaque variante doit :
+- Garder le même MESSAGE DE FOND (la même vérité, le même insight)
+- Changer TOTALEMENT : le hook, la structure, l'entrée, le CTA, l'exemple
+- Appliquer strictement la bible d'écriture Brille & Vibre du bloc système
+- Utiliser 3 mécaniques de hook différentes (parmi les 21 du catalogue)
+- Respecter les règles anti-IA et anti-shadowban
+
+POST ORIGINAL À RECYCLER :
+---
+${original_post}
+---
+
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+Tu réponds UNIQUEMENT avec un objet JSON valide. Ta réponse commence par { et finit par }.
+
+{
+  "original_insight": "en 1 phrase, le message de fond du post original",
+  "variantes": [
+    {
+      "angle": "nom de l'angle (ex : Confession personnelle, Interpellation directe, Éducation...)",
+      "mecanique_hook": "le numéro et nom de la mécanique utilisée parmi les 21",
+      "hook": "le nouveau hook",
+      "texte": "le nouveau texte complet avec retours à la ligne \\\\n",
+      "cta": "le nouveau CTA"
+    }
+  ]
+}`;
+}
+
+/* ─────────────────────────────────────────
+   ANALYZE MODE — Analyser pourquoi un post a marché
+   ───────────────────────────────────────── */
+function buildAnalyzeMessage(post_content) {
+  return `TÂCHE
+Tu reçois un post Instagram qui a bien fonctionné (engagement, ventes, sauvegardes). Analyse POURQUOI il a marché en utilisant les frameworks de la méthode Brille & Vibre, puis génère 3 variantes inspirées.
+
+POST À ANALYSER :
+---
+${post_content}
+---
+
+Analyse les éléments suivants :
+1. **Hook** : quel type/mécanique ? pourquoi ça arrête le scroll ?
+2. **Structure** : quel flow ? (miroir, déclic, preuve ?)
+3. **Émotion** : quelle émotion principale déclenchée ?
+4. **CTA** : efficace ou pas ? pourquoi ?
+5. **Niveau funnel** : TOFU, MOFU ou BOFU ?
+6. **Catégorie** : parmi les 5 catégories du catalogue (Casser les croyances, Expérience perso, etc.)
+
+Puis génère 3 variantes qui exploitent les MÊMES leviers mais avec des angles différents.
+
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+JSON uniquement. Commence par { et finit par }.
+
+{
+  "analyse": {
+    "hook_type": "...",
+    "hook_pourquoi": "...",
+    "structure": "...",
+    "emotion": "...",
+    "cta_verdict": "...",
+    "niveau_funnel": "TOFU | MOFU | BOFU",
+    "categorie": "...",
+    "force_principale": "en 1 phrase, ce qui fait que ce post marche"
+  },
+  "variantes": [
+    {
+      "angle": "...",
+      "hook": "...",
+      "texte": "...",
+      "cta": "..."
+    }
+  ]
+}`;
+}
+
+/* ─────────────────────────────────────────
+   DETECT FUNNEL LEVEL — Analyser un commentaire/DM pour identifier le niveau
+   ───────────────────────────────────────── */
+function buildDetectFunnelMessage(message_content) {
+  return `TÂCHE
+Tu reçois un message (commentaire Instagram ou DM) d'une personne de mon audience. Identifie son niveau dans le funnel (TOFU/MOFU/BOFU) et propose la réponse idéale pour la faire avancer vers l'étape suivante.
+
+MESSAGE À ANALYSER :
+---
+${message_content}
+---
+
+Analyse :
+1. **Niveau actuel** : TOFU (pas consciente du problème), MOFU (consciente, cherche), ou BOFU (prête à agir)
+2. **Indices** : quels mots/expressions trahissent son niveau ?
+3. **État émotionnel** : besoin de ressentir, comprendre, être guidée, être rassurée ?
+4. **Objectif** : vers quel niveau on veut la faire avancer ?
+
+Puis propose 3 réponses possibles (de la plus douce à la plus directe).
+
+⚠️⚠️⚠️ FORMAT DE RÉPONSE OBLIGATOIRE ⚠️⚠️⚠️
+JSON uniquement. Commence par { et finit par }.
+
+{
+  "diagnostic": {
+    "niveau_actuel": "TOFU | MOFU | BOFU",
+    "indices": "les mots/expressions qui trahissent son niveau",
+    "etat_emotionnel": "...",
+    "niveau_cible": "le niveau vers lequel on veut la pousser",
+    "strategie": "en 1 phrase, ce qu'on doit faire"
+  },
+  "reponses": [
+    { "ton": "doux", "texte": "..." },
+    { "ton": "equilibre", "texte": "..." },
+    { "ton": "direct", "texte": "..." }
+  ]
+}`;
+}
+
 
 /* ─────────────────────────────────────────
    MONTHLY_PLAN MODE — Plan éditorial 30 jours (4 semaines thématiques)
@@ -1501,8 +1623,9 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  if (!['weekly_plan', 'monthly_plan', 'optimize_caption'].includes(mode)) {
-    return res.status(400).json({ error: 'mode requis : "weekly_plan", "monthly_plan" ou "optimize_caption".' });
+  const ALL_MODES = ['weekly_plan', 'monthly_plan', 'optimize_caption', 'recycle', 'analyze', 'detect_funnel'];
+  if (!ALL_MODES.includes(mode)) {
+    return res.status(400).json({ error: `mode requis : ${ALL_MODES.join(', ')}` });
   }
 
   let userMessage;
@@ -1516,7 +1639,25 @@ export default async function handler(req, res) {
     }
     userMessage      = buildOptimizeCaptionMessage(legende);
     modelForCall     = DEFAULT_MODEL;
-    maxTokensForCall = 3000;          // une légende optimisée = court
+    maxTokensForCall = 3000;
+  } else if (mode === 'recycle') {
+    const original = clamp(body.original_post, 3000);
+    if (!original) return res.status(400).json({ error: 'Le champ "original_post" est obligatoire.' });
+    userMessage      = buildRecycleMessage(original);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 4000;
+  } else if (mode === 'analyze') {
+    const post = clamp(body.post_content, 3000);
+    if (!post) return res.status(400).json({ error: 'Le champ "post_content" est obligatoire.' });
+    userMessage      = buildAnalyzeMessage(post);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 4000;
+  } else if (mode === 'detect_funnel') {
+    const msg = clamp(body.message_content, 2000);
+    if (!msg) return res.status(400).json({ error: 'Le champ "message_content" est obligatoire.' });
+    userMessage      = buildDetectFunnelMessage(msg);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 2000;
   } else if (mode === 'weekly_plan') {
     const format = String(body.format || 'reel').toLowerCase();
     if (!['story', 'reel', 'carrousel'].includes(format)) {
