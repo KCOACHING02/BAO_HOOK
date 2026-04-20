@@ -682,8 +682,8 @@ export default async function handler(req, res) {
     maxTokensForCall = 2000;
   } else if (mode === 'weekly_plan') {
     const format = String(body.format || 'reel').toLowerCase();
-    if (!['story', 'reel', 'carrousel'].includes(format)) {
-      return res.status(400).json({ error: 'format requis : "story", "reel" ou "carrousel".' });
+    if (!['story', 'contenu'].includes(format)) {
+      return res.status(400).json({ error: 'format requis : "story" ou "contenu".' });
     }
 
     const audience = clamp(body.audience, 300);

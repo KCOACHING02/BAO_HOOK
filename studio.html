@@ -1520,46 +1520,37 @@
     function setFormat(format) {
       currentFormat = format;
       const labels = {
-        story:     { icon: '📱', name: 'Stories' },
-        contenu:   { icon: '📸', name: 'Contenu' },
+        story:   { icon: '📱', name: 'Stories' },
+        contenu: { icon: '📸', name: 'Contenu' },
       };
-      };
-      const lbl = labels[format] || labels.reel;
+      const lbl = labels[format] || labels.contenu;
       els.formatIndicator.textContent = `← ${lbl.icon} ${lbl.name} · Changer`;
 
-      // Afficher/cacher les champs selon le mode
-      const monthlyFields  = document.getElementById('monthly-fields');
-      const focusField     = document.getElementById('field-focus');
-      const textFields     = document.getElementById('text-input-fields');
-      const audienceField  = els.audience.closest('.field');
-      const advToggle      = document.getElementById('btn-toggle-advanced');
-      const advPanel       = document.getElementById('advanced-panel');
+      // Afficher les champs communs (audience + focus + options avancées)
+      const focusField = document.getElementById('field-focus');
+      const advToggle  = document.getElementById('btn-toggle-advanced');
+      if (focusField) focusField.style.display = 'block';
+      if (advToggle) advToggle.style.display = 'flex';
 
-      // Masquer tout par défaut
-      monthlyFields.style.display = 'none';
-      focusField.style.display = 'none';
-      textFields.style.display = 'none';
-      audienceField.style.display = 'block';
-      advToggle.style.display = 'none';
-      advPanel.classList.remove('open');
+      // Masquer les champs qui n'existent que dans les anciens modes
+      const monthlyFields = document.getElementById('monthly-fields');
+      const textFields    = document.getElementById('text-input-fields');
+      if (monthlyFields) monthlyFields.style.display = 'none';
+      if (textFields) textFields.style.display = 'none';
 
-      // Seuls 2 formats : reel et story — toujours les mêmes champs
-      focusField.style.display = 'block';
-      advToggle.style.display = 'flex';
-
-      // Adapter le texte du bouton et du titre au format
+      // Adapter le texte du bouton et du titre
       const daysLabel = selectedDays === 1 ? '1 jour' : `${selectedDays} jours`;
       const btnLabels = {
-        story:     `✨ Génère mes ${daysLabel} de stories`,
-        reel:      `✨ Génère mes ${daysLabel} de reels`,
+        story:   `✨ Génère mes ${daysLabel} de stories`,
+        contenu: `✨ Génère mes ${daysLabel} de contenu`,
       };
       const titleLabels = {
-        story:     `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
-        reel:      `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
+        story:   `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
+        contenu: `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
       };
-      els.btnGenerate.textContent = btnLabels[format] || btnLabels.reel;
+      els.btnGenerate.textContent = btnLabels[format] || btnLabels.contenu;
       const formTitle = document.getElementById('form-title');
-      if (formTitle) formTitle.innerHTML = titleLabels[format] || titleLabels.reel;
+      if (formTitle) formTitle.innerHTML = titleLabels[format] || titleLabels.contenu;
     }
 
     // Clics sur les cartes de choix format
