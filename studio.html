@@ -309,6 +309,12 @@
     .loading-sub {
       font-size: 12px;
       color: var(--text-light);
+      line-height: 1.5;
+      transition: opacity 0.3s ease;
+    }
+    .loading-sub {
+      font-size: 12px;
+      color: var(--text-light);
     }
 
     /* ── RESULTS HEADER ── */
@@ -861,7 +867,7 @@
       <div class="loading-card">
         <div class="loading-dots"><span></span><span></span><span></span></div>
         <div class="loading-text" id="loading-text">Brille &amp; Vibre orchestre ta semaine...</div>
-        <div class="loading-sub">Cela prend généralement 10 à 30 secondes.</div>
+        <div class="loading-sub" id="loading-tip" style="margin-top: 12px; max-width: 300px; margin-left: auto; margin-right: auto;"></div>
       </div>
     </div>
 
@@ -1032,6 +1038,10 @@
       els.screenLoading.classList.toggle('active', name === 'loading');
       els.screenResults.classList.toggle('active', name === 'results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (name !== 'loading' && window._clearTipInterval) {
+        window._clearTipInterval();
+        window._clearTipInterval = null;
+      }
     }
 
     function setFormat(format) {
@@ -1589,6 +1599,33 @@
       }
 
       showScreen('loading');
+
+      // Tips rotatifs pendant le chargement
+      const tips = [
+        '💡 80% des gens ne lisent que le hook. Les 3 premiers mots décident de tout.',
+        '💡 Un bon CTA ne vend pas. Il ouvre une conversation.',
+        '💡 Poster 3x par semaine avec intention > poster tous les jours sans stratégie.',
+        '💡 Le contenu qui convertit le mieux raconte une histoire, pas un argument.',
+        '💡 Tes clientes achètent une transformation, pas un produit.',
+        '💡 La preuve sociale est le levier le plus sous-estimé sur Instagram.',
+        '💡 Un hook qui fait "ah merde c\'est moi" bat toujours un hook qui impressionne.',
+        '💡 Le tutoiement crée 2x plus de connexion que le vouvoiement sur les réseaux.',
+      ];
+      const tipEl = document.getElementById('loading-tip');
+      if (tipEl) {
+        let tipIdx = Math.floor(Math.random() * tips.length);
+        tipEl.textContent = tips[tipIdx];
+        const tipInterval = setInterval(() => {
+          tipIdx = (tipIdx + 1) % tips.length;
+          tipEl.style.opacity = '0';
+          setTimeout(() => { tipEl.textContent = tips[tipIdx]; tipEl.style.opacity = '1'; }, 300);
+        }, 4000);
+        // Clean up quand on quitte le loading
+        const origShowScreen = showScreen;
+        const clearTipInterval = () => clearInterval(tipInterval);
+        setTimeout(clearTipInterval, 120000); // safety
+        window._clearTipInterval = clearTipInterval;
+      }
 
       try {
         const res = await fetch('/api/generate', {
