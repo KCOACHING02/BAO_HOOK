@@ -225,9 +225,47 @@ Pour les Carrousels : remplis hook + slide_1 + slide_2 + slide_3 + legende + cta
 - Jours ${Math.ceil(days*0.75)+1}-${days} : Convertir (BOFU — elle décide)`;
   }
 
+  // ── Ton / style override basé sur les options avancées ──
+  const opts = options || {};
+  let tonBlock = '';
+  if (opts.ton === 'drole') {
+    tonBlock = `⚠️⚠️⚠️ TON 100% HUMOUR — CETTE CONSIGNE ÉCRASE TOUTES LES AUTRES ⚠️⚠️⚠️
+
+IGNORE la progression émotionnelle sérieuse. IGNORE les déclencheurs "Parce que", "Mais la vérité ?". IGNORE le rythme 3 temps grave.
+
+TOUS les hooks de la semaine = format "Quand tu [situation absurde mais 100% vraie du quotidien]..."
+C'est le format viral TikTok. Chaque hook doit faire RIRE ou sourire. Exagération, auto-dérision, ironie.
+
+Exemples de hooks drôles :
+- "Quand tu changes ton alarme en applaudissements pour enfin avoir la reconnaissance que tu mérites"
+- "Quand tu dis 'je vais me lancer' pour la 47ème fois ce mois-ci"
+- "Quand t'as passé 3h à regarder des tutos au lieu de bosser et que t'appelles ça de la formation"
+- "Quand ton plan business c'est de scroller jusqu'à trouver l'idée parfaite"
+- "Quand tu te motives à 23h pour tout changer dans ta vie et que le lendemain t'as déjà oublié"
+- "Quand tu calcules combien tu gagnerais si tu postais autant que tu scroll"
+
+Les LÉGENDES aussi doivent être DRÔLES et légères. Pas de leçon de morale. Pas de ton grave. Humour du début à la fin. Tu peux glisser UN message utile à la toute fin mais toujours avec le sourire.
+
+CTA décalés : "Dis-moi que c'est pas que moi 😭", "Tag quelqu'un qui fait pareil", "Commente si t'es dans ce mood 💀", "Partage à ta pote qui fait ça aussi"`;
+  } else if (opts.ton === 'doux') {
+    tonBlock = 'TON IMPOSÉ : DOUX ET BIENVEILLANT. Jamais de reproche. Ton de "Rappel du jour :" et d\'amie qui rassure.';
+  } else if (opts.ton === 'direct') {
+    tonBlock = 'TON IMPOSÉ : DIRECT ET CASH. Aucun détour. Tac au tac. Va droit au but.';
+  } else if (opts.ton === 'expert') {
+    tonBlock = 'TON IMPOSÉ : EXPERT / PÉDAGOGIQUE. Valeur concrète avec autorité mais sans condescendance.';
+  } else if (opts.ton === 'vulnerable') {
+    tonBlock = 'TON IMPOSÉ : VULNÉRABLE ET INTIME. Partage tes failles, tes doutes. "Je" obligatoire.';
+  } else if (opts.ton === 'challengeant') {
+    tonBlock = 'TON IMPOSÉ : CHALLENGEANT. Provoque gentiment, accuse avec tendresse, réveille.';
+  } else {
+    tonBlock = 'Varie les tons. Inclus AU MOINS 2 hooks format "Quand tu [situation absurde]..." dans la semaine pour aérer.';
+  }
+
   return `CONTEXTE
 ${audienceLine}
 ${focusLine}
+
+${tonBlock}
 
 ${formatBlock}
 
