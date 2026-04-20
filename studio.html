@@ -1058,6 +1058,12 @@
           <div class="field-hint">Facultatif — laisse vide pour un planning généraliste.</div>
         </div>
 
+        <div class="field">
+          <label class="field-label" for="inspirations">Hooks qui t'inspirent (optionnel)</label>
+          <textarea id="inspirations" class="field-textarea" style="min-height: 80px;" placeholder="Colle ici des hooks viraux que tu as vus sur TikTok/Insta et qui t'ont marquée. Un par ligne."></textarea>
+          <div class="field-hint">L'outil s'en inspirera pour générer des hooks dans le même style. Sauvegardé automatiquement.</div>
+        </div>
+
         <!-- Champs uniquement pour le Plan 30 jours -->
         <div id="monthly-fields" style="display: none;">
           <div class="field">
@@ -1471,6 +1477,8 @@
         const brief = JSON.parse(raw);
         if (brief.audience && typeof brief.audience === 'string') els.audience.value = brief.audience;
         if (brief.focus && typeof brief.focus === 'string') els.focus.value = brief.focus;
+        const inspEl = document.getElementById('inspirations');
+        if (brief.inspirations && typeof brief.inspirations === 'string' && inspEl) inspEl.value = brief.inspirations;
       } catch (e) { /* ignore */ }
     })();
 
@@ -1497,7 +1505,8 @@
 
     function saveBrief(audience, focus) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience: String(audience || ''), focus: String(focus || '') }));
+        const inspValue = document.getElementById('inspirations') ? document.getElementById('inspirations').value.trim() : '';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience: String(audience || ''), focus: String(focus || ''), inspirations: String(inspValue || '') }));
       } catch (e) { /* ignore */ }
     }
 
@@ -2343,7 +2352,7 @@
           format: currentFormat,
           days: selectedDays,
           audience,
-          focus: (focus || '') + getAntiDuplicateInstruction(),
+          focus: (focus || '') + (document.getElementById('inspirations') && document.getElementById('inspirations').value.trim() ? '\n\nHOOKS D\'INSPIRATION (la créatrice a repéré ces hooks viraux, inspire-toi de leur style et énergie sans les copier) :\n' + document.getElementById('inspirations').value.trim() : '') + getAntiDuplicateInstruction(),
           options: currentOptions,
         };
       }
