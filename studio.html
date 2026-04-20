@@ -38,22 +38,21 @@
     /* ── COVER ── */
     .cover {
       background: var(--black);
-      padding: 44px 24px 38px;
+      padding: 20px 24px 18px;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
-    .cover::before { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; background:radial-gradient(circle,rgba(201,168,76,0.18) 0%,transparent 70%); }
-    .cover::after  { content:''; position:absolute; bottom:-60px; left:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%); }
-    .logo-ring { position:relative; width:72px; height:72px; margin:0 auto 14px; }
-    .logo-ring::before { content:''; position:absolute; inset:-5px; border-radius:50%; background:conic-gradient(var(--gold),var(--gold-light),var(--gold-pale),var(--gold)); animation:spin 8s linear infinite; }
-    .logo-ring::after  { content:''; position:absolute; inset:-3px; border-radius:50%; background:var(--black); }
+    .cover::before { content:''; position:absolute; top:-80px; right:-80px; width:200px; height:200px; background:radial-gradient(circle,rgba(201,168,76,0.15) 0%,transparent 70%); }
+    .logo-ring { position:relative; width:48px; height:48px; margin:0 auto 8px; }
+    .logo-ring::before { content:''; position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(var(--gold),var(--gold-light),var(--gold-pale),var(--gold)); animation:spin 8s linear infinite; }
+    .logo-ring::after  { content:''; position:absolute; inset:-2px; border-radius:50%; background:var(--black); }
     .logo-img { position:relative; z-index:1; width:100%; height:100%; border-radius:50%; object-fit:cover; }
-    .cover-brand { font-family:'Playfair Display',serif; font-size:11px; font-style:italic; letter-spacing:2px; color:var(--gold); margin-bottom:6px; position:relative; z-index:1; }
-    .cover-tag { display:inline-block; background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--black); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:5px 14px; border-radius:20px; margin-bottom:14px; position:relative; z-index:1; }
-    .cover-title { font-family:'Playfair Display',serif; font-size:clamp(28px,7vw,44px); font-weight:900; line-height:1; color:var(--cream); position:relative; z-index:1; }
+    .cover-brand { font-family:'Playfair Display',serif; font-size:11px; font-style:italic; letter-spacing:2px; color:var(--gold); margin-bottom:4px; position:relative; z-index:1; }
+    .cover-tag { display:none; }
+    .cover-title { font-family:'Playfair Display',serif; font-size:clamp(22px,6vw,32px); font-weight:900; line-height:1; color:var(--cream); position:relative; z-index:1; }
     .cover-title em { color:var(--gold); font-style:italic; }
-    .cover-sub { font-size:13px; color:rgba(250,246,239,0.6); max-width:380px; margin:14px auto 0; line-height:1.6; position:relative; z-index:1; }
+    .cover-sub { display: none; }
 
     /* ── PAGE ── */
     .page { max-width: 760px; margin: 0 auto; padding: 36px 20px 80px; }
@@ -617,8 +616,8 @@
     <div id="screen-form" class="screen">
       <div class="form-card">
         <span id="format-indicator" class="format-indicator">← 📱 Stories · Changer</span>
-        <h2 class="form-title">Dis-moi 2 choses et je te <em>génère ta semaine</em></h2>
-        <p class="form-intro">Brille &amp; Vibre applique sa méthode (4 axes croisés + catalogue des 125 templates) pour que tes contenus sonnent naturels et respectent ton style.</p>
+        <h2 class="form-title" id="form-title">Dis-moi 2 choses et je te <em>génère ta semaine</em></h2>
+        <p class="form-intro">Tes contenus prêts à poster en quelques secondes.</p>
 
         <div class="field">
           <label class="field-label" for="audience">À qui tu parles ?</label>
@@ -759,9 +758,10 @@
       <div id="days-container"></div>
 
       <div class="results-actions">
-        <button id="btn-regenerate" class="btn btn-primary">🔄 Regénérer</button>
+        <button id="btn-copy-all" class="btn btn-primary" style="width: 100%;">📋 Copier tout le planning</button>
+        <button id="btn-regenerate" class="btn btn-ghost">🔄 Regénérer</button>
         <button id="btn-back" class="btn btn-ghost">← Modifier le brief</button>
-        <button id="btn-change-format" class="btn btn-ghost">🔀 Changer le format</button>
+        <button id="btn-change-format" class="btn btn-ghost">🔀 Changer</button>
       </div>
     </div>
 
@@ -934,6 +934,25 @@
         audienceField.style.display = 'block';
         advToggle.style.display = 'flex';
       }
+
+      // Adapter le texte du bouton et du titre au format
+      const btnLabels = {
+        story:     '✨ Génère ma semaine de stories',
+        reel:      '✨ Génère ma semaine de reels',
+        carrousel: '✨ Génère ma semaine de carrousels',
+        monthly:   '✨ Génère mon plan 30 jours',
+        optimize:  '✨ Optimise ma légende',
+      };
+      const titleLabels = {
+        story:     'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
+        reel:      'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
+        carrousel: 'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
+        monthly:   'Remplis ton brief et je te <em>crée ton mois</em>',
+        optimize:  'Colle ta légende et je <em>l\'optimise</em>',
+      };
+      els.btnGenerate.textContent = btnLabels[format] || btnLabels.reel;
+      const formTitle = document.getElementById('form-title');
+      if (formTitle) formTitle.innerHTML = titleLabels[format] || titleLabels.reel;
     }
 
     // Clics sur les cartes de choix format
@@ -1488,6 +1507,29 @@
     els.btnRegen.addEventListener('click', generatePlan);
     els.btnBack.addEventListener('click', () => showScreen('form'));
     document.getElementById('btn-change-format').addEventListener('click', () => showScreen('choice'));
+
+    // Copier tout le planning d'un coup
+    document.getElementById('btn-copy-all').addEventListener('click', () => {
+      if (!lastPlan || !lastPlan.length) return;
+
+      let fullText;
+      if (currentFormat === 'optimize') {
+        const r = lastPlan[0];
+        fullText = [
+          '📝 LÉGENDE OPTIMISÉE',
+          r.optimized || '',
+          '',
+          '⚡ VARIANTE PUNCHY',
+          r.variante_punchy || '',
+        ].join('\n');
+      } else {
+        fullText = lastPlan.map((d, i) => dayToPlainText(d)).join('\n\n─────────────────\n\n');
+      }
+
+      const btn = document.getElementById('btn-copy-all');
+      copyToClipboard(fullText, btn);
+      showToast('✓ Planning complet copié', 'success', 2000);
+    });
   </script>
 
 </body>
