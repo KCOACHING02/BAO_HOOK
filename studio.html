@@ -450,7 +450,89 @@
       margin-top: 24px;
       flex-wrap: wrap;
     }
-    .results-actions .btn { flex: 1; min-width: 200px; }
+    .results-actions .btn { flex: 1; min-width: 140px; }
+
+    /* ── DAY TABS ── */
+    .day-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 8px 0 16px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .day-tabs::-webkit-scrollbar { display: none; }
+    .day-tab {
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--beige);
+      background: var(--card);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .day-tab:hover { border-color: var(--gold); color: var(--gold-dark); }
+    .day-tab.active {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      border-color: var(--gold);
+      color: var(--black);
+      font-weight: 700;
+    }
+
+    /* ── HISTORY ── */
+    .history-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      background: transparent;
+      border: 1px dashed var(--beige);
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+      margin-bottom: 12px;
+    }
+    .history-toggle:hover { border-color: var(--gold); color: var(--gold-dark); }
+    .history-list {
+      display: none;
+      margin-bottom: 16px;
+    }
+    .history-list.open { display: block; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--card);
+      border: 1px solid var(--beige);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .history-item:hover { border-color: var(--gold); background: var(--gold-pale); }
+    .history-item-info { flex: 1; }
+    .history-item-date { font-size: 11px; color: var(--text-light); }
+    .history-item-delete {
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+    }
 
     /* ── OPTIONS AVANCÉES ── */
     .advanced-toggle {
@@ -736,6 +818,12 @@
         </div>
 
         <button id="btn-generate" class="btn btn-primary btn-block">✨ Génère ma semaine</button>
+
+        <!-- Historique -->
+        <button type="button" id="btn-history-toggle" class="history-toggle" style="margin-top: 14px; width: 100%;">
+          📜 Historique <span id="history-count"></span>
+        </button>
+        <div id="history-list" class="history-list"></div>
       </div>
     </div>
 
@@ -755,6 +843,7 @@
         <h2 class="results-title">7 jours, <em>méthode Brille &amp; Vibre</em></h2>
       </div>
 
+      <div id="day-tabs-container"></div>
       <div id="days-container"></div>
 
       <div class="results-actions">
@@ -1483,6 +1572,8 @@
             throw new Error('Aucune optimisation reçue.');
           }
           renderOptimizedCaption(result);
+          renderDayTabs(null);
+          saveToHistory([result], 'optimize');
           showScreen('results');
           showToast('✓ Ta légende est optimisée', 'success');
         } else {
@@ -1491,6 +1582,8 @@
             throw new Error('Aucun planning reçu.');
           }
           renderPlan(plan);
+          renderDayTabs(plan);
+          saveToHistory(plan, currentFormat);
           showScreen('results');
           showToast('✓ Ton planning est prêt', 'success');
         }
@@ -1503,6 +1596,176 @@
       }
     }
 
+    /* ───────────────────────────────────────
+       DAY TABS (navigation par jour/semaine)
+       ─────────────────────────────────────── */
+    function renderDayTabs(plan) {
+      const container = document.getElementById('day-tabs-container');
+      if (!container) return;
+
+      if (currentFormat === 'optimize' || !plan || plan.length <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let tabs = [];
+
+      if (currentFormat === 'monthly') {
+        // Onglets par semaine
+        const weeks = [...new Set(plan.map(p => p.semaine || 1))].sort((a, b) => a - b);
+        tabs.push({ label: 'Tous', value: 'all' });
+        weeks.forEach(w => tabs.push({ label: `S${w}`, value: `week-${w}` }));
+      } else {
+        // Onglets par jour
+        tabs.push({ label: 'Tous', value: 'all' });
+        const dayAbbrevs = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+        plan.forEach((d, i) => {
+          const abbrev = dayAbbrevs[i] || `J${i + 1}`;
+          tabs.push({ label: abbrev, value: `day-${i}` });
+        });
+      }
+
+      const tabsHtml = tabs.map(t =>
+        `<button class="day-tab${t.value === 'all' ? ' active' : ''}" data-filter="${t.value}">${t.label}</button>`
+      ).join('');
+      container.innerHTML = `<div class="day-tabs">${tabsHtml}</div>`;
+
+      // Click handlers
+      container.querySelectorAll('.day-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          container.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          filterDays(tab.dataset.filter);
+        });
+      });
+    }
+
+    function filterDays(filter) {
+      const cards = els.daysContainer.querySelectorAll('.day-card, .week-section');
+      if (filter === 'all') {
+        cards.forEach(c => c.style.display = '');
+        return;
+      }
+
+      if (filter.startsWith('week-')) {
+        const weekNum = filter.replace('week-', '');
+        els.daysContainer.querySelectorAll('.week-section').forEach(section => {
+          const hasWeek = section.querySelector('.variants-header')?.textContent?.includes(`Semaine ${weekNum}`);
+          section.style.display = hasWeek ? '' : 'none';
+        });
+      } else if (filter.startsWith('day-')) {
+        const dayIndex = parseInt(filter.replace('day-', ''));
+        cards.forEach((c, i) => {
+          c.style.display = i === dayIndex ? '' : 'none';
+        });
+      }
+    }
+
+    /* ───────────────────────────────────────
+       HISTORY (5 derniers plannings sauvegardés)
+       ─────────────────────────────────────── */
+    const HISTORY_KEY = 'brille-vibre-studio:history';
+    const MAX_HISTORY = 5;
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      } catch { return []; }
+    }
+
+    function saveToHistory(plan, format) {
+      const history = getHistory();
+      const entry = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }),
+        format,
+        count: Array.isArray(plan) ? plan.length : 1,
+        plan,
+      };
+      history.unshift(entry);
+      if (history.length > MAX_HISTORY) history.pop();
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch { /* storage full */ }
+      renderHistoryList();
+    }
+
+    function renderHistoryList() {
+      const history = getHistory();
+      const countEl = document.getElementById('history-count');
+      const listEl = document.getElementById('history-list');
+      if (countEl) countEl.textContent = history.length > 0 ? `(${history.length})` : '';
+      if (!listEl) return;
+
+      if (!history.length) {
+        listEl.innerHTML = '<div style="font-size: 12px; color: var(--text-light); padding: 8px;">Aucun historique pour le moment.</div>';
+        return;
+      }
+
+      const formatLabels = { story: '📱 Stories', reel: '🎬 Reels', carrousel: '🎠 Carrousels', monthly: '📅 30 jours', optimize: '✏️ Légende' };
+      listEl.innerHTML = history.map((entry, i) => `
+        <div class="history-item" data-index="${i}">
+          <div class="history-item-info">
+            <strong>${formatLabels[entry.format] || entry.format}</strong> · ${entry.count} ${entry.count > 1 ? 'posts' : 'post'}
+            <div class="history-item-date">${entry.date}</div>
+          </div>
+          <button class="history-item-delete" onclick="event.stopPropagation(); deleteHistory(${i});" title="Supprimer">✕</button>
+        </div>
+      `).join('');
+
+      listEl.querySelectorAll('.history-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = parseInt(item.dataset.index);
+          loadFromHistory(idx);
+        });
+      });
+    }
+
+    function loadFromHistory(index) {
+      const history = getHistory();
+      const entry = history[index];
+      if (!entry) return;
+
+      currentFormat = entry.format;
+      lastPlan = entry.plan;
+
+      if (currentFormat === 'optimize') {
+        renderOptimizedCaption(entry.plan[0] || entry.plan);
+      } else if (currentFormat === 'monthly') {
+        renderMonthlyPlan(entry.plan);
+      } else {
+        renderPlan(entry.plan);
+      }
+
+      renderDayTabs(entry.plan);
+
+      const resultLabels = { story: 'Ta semaine de stories', reel: 'Ta semaine de reels', carrousel: 'Ta semaine de carrousels', monthly: 'Ton plan de 30 jours', optimize: 'Ta légende optimisée' };
+      const resultsEyebrow = document.getElementById('results-eyebrow');
+      if (resultsEyebrow) resultsEyebrow.textContent = (resultLabels[currentFormat] || '') + ' (historique)';
+
+      showScreen('results');
+      showToast('✓ Planning restauré depuis l\'historique', 'success');
+    }
+
+    window.deleteHistory = function(index) {
+      const history = getHistory();
+      history.splice(index, 1);
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch {}
+      renderHistoryList();
+      showToast('Historique supprimé', 'info', 1500);
+    };
+
+    // Toggle historique
+    document.getElementById('btn-history-toggle').addEventListener('click', () => {
+      document.getElementById('history-list').classList.toggle('open');
+    });
+
+    // Render initial
+    renderHistoryList();
+
+    /* ───────────────────────────────────────
+       EVENT LISTENERS
+       ─────────────────────────────────────── */
     els.btnGenerate.addEventListener('click', generatePlan);
     els.btnRegen.addEventListener('click', generatePlan);
     els.btnBack.addEventListener('click', () => showScreen('form'));
