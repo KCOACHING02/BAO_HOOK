@@ -137,15 +137,20 @@ Chaque story fait 4-8 lignes. Ton oral, fragmenté. Retours à la ligne fréquen
     formatBlock = `FORMAT : CONTENU MIXTE (80% Reels + 20% Carrousels)
 
 Sur ${days} jours, tu mélanges :
-- **${Math.round(days * 0.8)} Reels** (hook visuel + script 4-6 lignes en 3 mouvements : miroir → déclic → preuve)
-- **${Math.round(days * 0.2)} Carrousels** (3 slides : Slide 1 Hook+Miroir, Slide 2 Déclic+Possibilité, Slide 3 Preuve+CTA)
+- **${Math.round(days * 0.8)} Reels** — PAS de face cam, PAS de script parlé. Le reel utilise un texte en overlay sur une vidéo/image. Tu fournis : le hook (texte affiché en overlay, 8-15 mots) + la légende Instagram complète.
+- **${Math.round(days * 0.2)} Carrousels** — 3 slides avec texte. Tu fournis : le hook (titre slide 1) + slide_1, slide_2, slide_3.
 
-Tu CHOISIS le format de chaque jour (Reel ou Carrousel) et tu l'indiques dans le champ "format_post".
+Pour chaque jour tu fournis TOUJOURS une **légende Instagram complète** (50-80 mots) qui suit la bible d'écriture : rythme 3 temps, déclencheurs signature, au moins 1 punchline, progression émotionnelle.
 
-Pour chaque REEL tu fournis : hook (8-15 mots), script (4-6 lignes), legende (50-80 mots prête à coller sur Instagram), cta.
-Pour chaque CARROUSEL tu fournis : hook (8-15 mots), slide_1, slide_2, slide_3, cta.
-
-Chaque légende suit la progression : mon histoire → ta douleur → vérité → solution → preuve → action. Rythme 3 temps. Déclencheurs signature en début de paragraphe. Au moins 1 punchline.`;
+⚠️ LE HOOK N'EST PAS UN TITRE DE BLOG. C'est la phrase qu'on VOIT en premier sur le reel/la slide 1. Il doit :
+- Faire 8 à 15 mots MAXIMUM
+- Créer un curiosity gap immédiat (la personne DOIT lire la légende)
+- S'inspirer des exemples de la créatrice dans le bloc système :
+  "J'ai appris à vendre des produits digitaux sans me montrer, sans pub, sans prospecter"
+  "Le plus difficile n'est pas de faire une vente. C'est de savoir comment commencer."
+  "Tu ne te sentiras jamais prête car être prête n'est pas un sentiment, mais une décision."
+  "En 2026 tu peux prendre un 2e job ou créer un revenu avec ton téléphone"
+- JAMAIS générique, JAMAIS passe-partout, TOUJOURS spécifique et percutant`;
   }
 
   // ── Schema JSON ──
@@ -179,7 +184,6 @@ Chaque légende suit la progression : mon histoire → ta douleur → vérité �
 
 IMPORTANT pour 30 jours : CHAQUE entrée tient sur UNE SEULE LIGNE JSON. Pas de retour à la ligne dans les valeurs. Hook = 8-15 mots. CTA = 3-5 mots. C'est tout. Pas de légende, pas de script.`;
     } else {
-      // 1-10 jours : contenu détaillé (script ou slides + légende)
       schema = `{
   "plan": [
     {
@@ -187,18 +191,18 @@ IMPORTANT pour 30 jours : CHAQUE entrée tient sur UNE SEULE LIGNE JSON. Pas de 
       "etape": "Attirer",
       "niveau_funnel": "TOFU",
       "format_post": "Reel",
-      "hook": "8-15 mots max",
-      "script": "script du reel si Reel (4-6 lignes)",
-      "slide_1": "slide 1 si Carrousel",
-      "slide_2": "slide 2 si Carrousel",
-      "slide_3": "slide 3 si Carrousel",
-      "legende": "légende Instagram 50-80 mots",
+      "hook": "le texte overlay du reel OU le titre de la slide 1 (8-15 mots, curiosity gap)",
+      "slide_1": "texte slide 1 SI format_post=Carrousel (sinon vide)",
+      "slide_2": "texte slide 2 SI format_post=Carrousel (sinon vide)",
+      "slide_3": "texte slide 3 SI format_post=Carrousel (sinon vide)",
+      "legende": "légende Instagram complète 50-80 mots. Suit la bible : rythme 3 temps, déclencheurs, punchline.",
       "cta": "CTA court"
     }
   ]
 }
 
-Pour les Reels : remplis script, laisse slide_1/2/3 vides. Pour les Carrousels : remplis slides, laisse script vide.`;
+Pour les Reels : remplis hook + legende + cta. Laisse slide_1/2/3 vides.
+Pour les Carrousels : remplis hook + slide_1 + slide_2 + slide_3 + legende + cta.`;
     }
   }
 

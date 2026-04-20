@@ -2087,14 +2087,6 @@
           // Mode contenu mixte : Reel ou Carrousel selon format_post
           const isReel = (d.format_post || '').toLowerCase().includes('reel');
           if (isReel) {
-            if (d.script) {
-              formatBlock += `
-                <div class="day-block">
-                  <div class="day-block-label">🎬 Script</div>
-                  <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.script)}</div>
-                </div>
-              `;
-            }
             if (d.legende) {
               formatBlock += `
                 <div class="day-block">
