@@ -640,6 +640,100 @@
     .day-card.feedback-good { border-left: 4px solid #10b981; }
     .day-card.feedback-bad { border-left: 4px solid #ef4444; }
 
+    /* ── CALENDAR GRID ── */
+    .calendar-wrap {
+      background: var(--card);
+      border: 1.5px solid var(--beige);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 18px var(--shadow);
+    }
+    .calendar-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .calendar-headers {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .calendar-header {
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 0;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .calendar-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid transparent;
+      min-height: 44px;
+    }
+    .calendar-cell:hover { transform: scale(1.08); border-color: rgba(255,255,255,0.3); }
+    .calendar-cell.active { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.3); }
+    .calendar-cell-day { font-size: 13px; font-weight: 700; color: white; }
+    .calendar-cell-type { font-size: 7px; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,0.8); text-transform: uppercase; }
+    .calendar-legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .calendar-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      color: var(--text-light);
+    }
+    .calendar-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    /* ── PRINT / EXPORT ── */
+    @media print {
+      .cover, .day-tabs, .results-actions, .day-actions,
+      .feedback-btns, #day-tabs-container, #toast-container,
+      .calendar-wrap, .onboarding-overlay { display: none; }
+      body { background: white; color: #333; }
+      .page { padding: 10px; max-width: 100%; }
+      .day-card { break-inside: avoid; page-break-inside: avoid; margin-bottom: 12px; border: 1px solid #ddd; }
+      .day-header { background: #f5f5f5; color: #333; }
+      .day-header::after { display: none; }
+      .day-name, .day-objectif { color: #333; }
+      .day-pill { background: #eee; color: #555; border: none; }
+      .day-hook { background: #f9f6f0; border-left-color: #c9a84c; color: #333; }
+      .day-content, .day-cta { background: #f5f5f5; color: #333; }
+      .results-header { margin-bottom: 10px; }
+      .week-section { break-before: page; }
+    }
+
     /* ── SMOOTH TRANSITIONS ── */
     .screen { animation: fadeUp 0.3s ease; }
 
@@ -958,8 +1052,9 @@
 
       <div class="results-actions">
         <button id="btn-copy-all" class="btn btn-primary" style="width: 100%;">📋 Copier tout le planning</button>
+        <button id="btn-export-pdf" class="btn btn-ghost" onclick="window.print()">📄 Export PDF</button>
         <button id="btn-regenerate" class="btn btn-ghost">🔄 Regénérer</button>
-        <button id="btn-back" class="btn btn-ghost">← Modifier le brief</button>
+        <button id="btn-back" class="btn btn-ghost">← Modifier</button>
         <button id="btn-change-format" class="btn btn-ghost">🔀 Changer</button>
       </div>
     </div>
@@ -1481,6 +1576,61 @@
       showToast('✓ Copié dans le presse-papier', 'success', 1500);
     };
 
+    function renderCalendarGrid(plan) {
+      if (currentFormat !== 'monthly' || !plan || !plan.length) return '';
+
+      const typeColors = {
+        'Visibilité':    '#6366f1',
+        'Valeur':        '#10b981',
+        'Désir':         '#ec4899',
+        'Preuve sociale':'#f59e0b',
+        'Vente directe': '#ef4444',
+      };
+      const typeAbbrevs = {
+        'Visibilité':    'VIS',
+        'Valeur':        'VAL',
+        'Désir':         'DÉS',
+        'Preuve sociale':'PRE',
+        'Vente directe': 'VENTE',
+      };
+
+      const dayHeaders = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+      const headersHtml = dayHeaders.map(d => `<div class="calendar-header">${d}</div>`).join('');
+
+      const cells = plan.map((p, i) => {
+        const color = typeColors[p.type] || '#888';
+        const abbrev = typeAbbrevs[p.type] || '';
+        return `<div class="calendar-cell" style="background: ${color};" onclick="scrollToDay(${i})" title="J${p.jour || i+1} — ${p.type || ''}">
+          <span class="calendar-cell-day">${p.jour || i + 1}</span>
+          <span class="calendar-cell-type">${abbrev}</span>
+        </div>`;
+      }).join('');
+
+      const legendItems = Object.entries(typeColors).map(([type, color]) =>
+        `<div class="calendar-legend-item"><div class="calendar-legend-dot" style="background: ${color};"></div>${type}</div>`
+      ).join('');
+
+      return `
+        <div class="calendar-wrap">
+          <div class="calendar-title">Vue calendrier — 30 jours</div>
+          <div class="calendar-headers">${headersHtml}</div>
+          <div class="calendar-grid">${cells}</div>
+          <div class="calendar-legend">${legendItems}</div>
+        </div>
+      `;
+    }
+
+    window.scrollToDay = function(index) {
+      const cards = els.daysContainer.querySelectorAll('.day-card');
+      // For monthly, cards are inside week-sections, we need to find the right one
+      const allCards = document.querySelectorAll('#days-container .day-card');
+      if (allCards[index]) {
+        allCards[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        allCards[index].style.boxShadow = '0 0 0 3px rgba(201,168,76,0.5)';
+        setTimeout(() => { allCards[index].style.boxShadow = ''; }, 2000);
+      }
+    };
+
     function renderMonthlyPlan(plan) {
       // Groupe les posts par semaine
       const weeks = {};
@@ -1555,7 +1705,8 @@
           `;
         }).join('');
 
-      els.daysContainer.innerHTML = weekSections || '<div class="day-card">Aucun post généré.</div>';
+      const calendarHtml = renderCalendarGrid(plan);
+      els.daysContainer.innerHTML = calendarHtml + (weekSections || '<div class="day-card">Aucun post généré.</div>');
     }
 
     function renderPlan(plan) {
