@@ -2378,7 +2378,7 @@
         if (!res.ok) {
           // Affiche les détails Anthropic si disponibles (pour debugger les 400)
           const detail = data.details ? ` — ${String(data.details).slice(0, 250)}` : '';
-          throw new Error((data.error || `Erreur HTTP ${res.status}`) + detail);
+          throw new Error((data.error || `Erreur HTTP ${res.status}`) + detail + (data.raw ? ` [RAW: ${String(data.raw).slice(0,150)}]` : ''));
         }
 
         if (['optimize', 'recycle', 'analyze', 'detect'].includes(currentFormat)) {
