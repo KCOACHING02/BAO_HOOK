@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brille & Vibre Studio — Planning éditorial</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Brille & Vibre">
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="desert1.jpg">
+  <title>Brille & Vibre Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -21,6 +27,28 @@
       --success:    #10b981;
       --error:      #ef4444;
     }
+    /* ── DARK MODE OVERRIDES ── */
+    [data-theme="dark"] {
+      --cream:      #111111;
+      --beige:      #2a2a2a;
+      --card:       #1a1a1a;
+      --text:       #F0E6D3;
+      --text-light: #9A8B75;
+      --shadow:     rgba(0,0,0,0.3);
+      --border:     rgba(201,168,76,0.15);
+    }
+    [data-theme="dark"] .cover { background: #0a0a0a; }
+    [data-theme="dark"] .day-content,
+    [data-theme="dark"] .day-cta { background: #222; }
+    [data-theme="dark"] .day-hook { background: rgba(201,168,76,0.08); }
+    [data-theme="dark"] .choice-card { background: #1a1a1a; }
+    [data-theme="dark"] .option-pill { background: #222; }
+    [data-theme="dark"] .advanced-panel { background: #1a1a1a; }
+    [data-theme="dark"] .field-input,
+    [data-theme="dark"] .field-textarea { background: #1a1a1a; color: #F0E6D3; border-color: #333; }
+    [data-theme="dark"] .field-input:focus,
+    [data-theme="dark"] .field-textarea:focus { background: #222; }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Space Grotesk', sans-serif;
@@ -649,7 +677,8 @@
 </head>
 <body>
 
-  <section class="cover">
+  <section class="cover" style="position: relative;">
+    <button id="btn-theme" onclick="toggleTheme()" style="position:absolute;top:14px;right:18px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s;" title="Dark / Light mode">🌙</button>
     <div class="logo-ring">
       <img src="desert1.jpg" alt="Brille & Vibre" class="logo-img">
     </div>
@@ -859,6 +888,29 @@
   <div id="toast-container"></div>
 
   <script>
+    /* ───────────────────────────────────────
+       DARK MODE
+       ─────────────────────────────────────── */
+    function getThemePref() {
+      const saved = localStorage.getItem('brille-vibre-studio:theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const btn = document.getElementById('btn-theme');
+      if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+      localStorage.setItem('brille-vibre-studio:theme', theme);
+    }
+
+    window.toggleTheme = function() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    };
+
+    applyTheme(getThemePref());
+
     /* ───────────────────────────────────────
        STATE & STORAGE
        ─────────────────────────────────────── */
@@ -1426,7 +1478,8 @@
               ` : ''}
             </div>
             <div class="day-actions">
-              <button class="copy-btn" onclick="copyDay(${i})">📋 Copier ce jour</button>
+              <button class="copy-btn" onclick="copyDay(${i})">📋 Copier</button>
+              <button class="copy-btn" onclick="regenDay(${i})" style="margin-left: 6px;">🔄 Refaire ce jour</button>
             </div>
           </div>
         `;
@@ -1595,6 +1648,58 @@
         console.error('[Studio] Generate error:', err);
       }
     }
+
+    /* ───────────────────────────────────────
+       REGEN SINGLE DAY
+       ─────────────────────────────────────── */
+    window.regenDay = async function(index) {
+      if (!lastPlan || !lastPlan[index]) return;
+      const day = lastPlan[index];
+      const audience = els.audience.value.trim();
+      const focus = els.focus ? els.focus.value.trim() : '';
+
+      showToast(`🔄 Regénération du jour ${day.jour || index + 1}...`, 'info', 4000);
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mode: 'weekly_plan',
+            format: currentFormat,
+            audience: audience || 'audience généraliste',
+            focus: focus || `Regénère UNIQUEMENT le jour ${day.jour || index + 1} (${day.jour_nom || ''}) avec un angle COMPLÈTEMENT DIFFÉRENT du précédent. Hook précédent à ne pas répéter : "${day.hook || ''}"`,
+            options: currentOptions,
+          }),
+        });
+
+        const rawText = await res.text();
+        let data;
+        try { data = JSON.parse(rawText); } catch {
+          throw new Error('Réponse invalide');
+        }
+        if (!res.ok) throw new Error(data.error || `Erreur ${res.status}`);
+
+        const newPlan = data?.result?.plan || [];
+        if (!newPlan.length) throw new Error('Aucun résultat');
+
+        // Remplace uniquement le jour demandé (on prend le jour correspondant du nouveau plan)
+        const replacement = newPlan[index] || newPlan[0];
+        lastPlan[index] = replacement;
+
+        // Re-render
+        if (currentFormat === 'monthly') {
+          renderMonthlyPlan(lastPlan);
+        } else {
+          renderPlan(lastPlan);
+        }
+        renderDayTabs(lastPlan);
+
+        showToast(`✓ Jour ${day.jour || index + 1} regénéré`, 'success');
+      } catch (err) {
+        showToast(`❌ ${err.message}`, 'error', 5000);
+      }
+    };
 
     /* ───────────────────────────────────────
        DAY TABS (navigation par jour/semaine)
