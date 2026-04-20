@@ -65,6 +65,11 @@ Le hook doit créer un CURIOSITY GAP — une démangeaison que le lecteur ne peu
 3. **Confession + cliffhanger** : tu admets une erreur/vérité personnelle et tu teases la leçon. Méthode : "J'ai [erreur/vécu]… et [conséquence surprenante]"
 4. **Projection datée** : tu ancres dans le temps et tu projettes un futur concret. Méthode : "On est le [date]. Si tu [action] aujourd'hui… [projection dans X mois]"
 5. **Preuve sociale collective** : tu utilises "elles" pour créer l'effet tribal. Méthode : "Elles ont [action]. Voici [résultat]."
+6. **Humour relatable** : tu décris une situation absurde mais 100% vraie du quotidien de ta cible. Exagération + auto-dérision. Méthode : "Quand tu [situation absurde mais relatable]..." — le rire crée la connexion, le partage, et le save. Exemples :
+   - "Quand tu changes ton alarme en applaudissements pour enfin avoir la reconnaissance que tu mérites pour te lever tous les matins à 6h30 pour aller taffer"
+   - "Quand tu dis 'je vais me lancer' pour la 47ème fois ce mois-ci"
+   - "Quand t'as passé 3h à regarder des tutos au lieu de bosser et que t'appelles ça de la formation"
+   - "Quand tu calcules combien tu gagnerais si tu postais autant que tu scroll"
 
 **Exemples réels de la créatrice (ton étalon absolu)** :
 - "J'ai appris à vendre des produits digitaux sans me montrer, sans pub, sans prospecter"
