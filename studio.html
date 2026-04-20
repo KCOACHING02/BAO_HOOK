@@ -975,47 +975,27 @@
     <!-- ─────── SCREEN 0 — CHOIX FORMAT ─────── -->
     <div id="screen-choice" class="screen active">
       <h2 class="choice-title">Qu'est-ce que tu veux <em>créer</em> ?</h2>
-      <p class="choice-sub">Chaque format a sa propre approche. Choisis pour que Brille &amp; Vibre adapte ses hooks, rythme et structure.</p>
-      <div class="choice-grid">
-        <div class="choice-card" data-format="story">
-          <div class="choice-icon">📱</div>
-          <div class="choice-name">Une semaine<br>de <em>Stories</em></div>
-          <div class="choice-desc">7 jours × 3 stories en arc narratif<br>(Douleur → Vérité → Preuve+CTA)</div>
-        </div>
+      <p class="choice-sub">Choisis ton format, puis le nombre de jours.</p>
+
+      <div class="choice-grid" style="grid-template-columns: 1fr 1fr; max-width: 400px;">
         <div class="choice-card" data-format="reel">
           <div class="choice-icon">🎬</div>
-          <div class="choice-name">Une semaine<br>de <em>Reels</em></div>
-          <div class="choice-desc">7 reels avec hook visuel et script<br>prêts à tourner</div>
+          <div class="choice-name">Des <em>Reels</em></div>
+          <div class="choice-desc">Hook + script + légende<br>prêts à tourner</div>
         </div>
-        <div class="choice-card" data-format="carrousel">
-          <div class="choice-icon">🎠</div>
-          <div class="choice-name">Une semaine<br>de <em>Carrousels</em></div>
-          <div class="choice-desc">7 carrousels en 3 slides<br>(Miroir → Déclic → Preuve)</div>
+        <div class="choice-card" data-format="story">
+          <div class="choice-icon">📱</div>
+          <div class="choice-name">Des <em>Stories</em></div>
+          <div class="choice-desc">Séquence narrative<br>en 3 stories par jour</div>
         </div>
-        <div class="choice-card" data-format="monthly">
-          <div class="choice-icon">📅</div>
-          <div class="choice-name">Un mois<br><em>stratégique</em></div>
-          <div class="choice-desc">30 posts en 4 semaines thématiques<br>(Problème → Désir → Objections → Vente)</div>
-        </div>
-        <div class="choice-card" data-format="optimize">
-          <div class="choice-icon">✏️</div>
-          <div class="choice-name">Optimiser<br>une <em>légende</em></div>
-          <div class="choice-desc">Colle ta légende brute<br>et l'outil la réécrit</div>
-        </div>
-        <div class="choice-card" data-format="recycle">
-          <div class="choice-icon">♻️</div>
-          <div class="choice-name"><em>Recycler</em><br>un post</div>
-          <div class="choice-desc">3 variantes d'un ancien post<br>qui a bien marché</div>
-        </div>
-        <div class="choice-card" data-format="analyze">
-          <div class="choice-icon">🔍</div>
-          <div class="choice-name"><em>Analyser</em><br>un post</div>
-          <div class="choice-desc">Comprendre pourquoi un post<br>a fonctionné + 3 variantes</div>
-        </div>
-        <div class="choice-card" data-format="detect">
-          <div class="choice-icon">🧠</div>
-          <div class="choice-name"><em>Détecter</em><br>le niveau</div>
-          <div class="choice-desc">Colle un commentaire/DM<br>et détecte TOFU/MOFU/BOFU</div>
+      </div>
+
+      <div style="margin-top: 24px; text-align: center;">
+        <div class="field-label" style="text-align: center; margin-bottom: 10px;">COMBIEN DE JOURS ?</div>
+        <div class="option-pills" style="justify-content: center;" id="duration-pills">
+          <button type="button" class="option-pill" data-days="1">1 jour</button>
+          <button type="button" class="option-pill" data-days="7">7 jours</button>
+          <button type="button" class="option-pill selected" data-days="30">30 jours</button>
         </div>
       </div>
     </div>
@@ -1414,7 +1394,8 @@
        ─────────────────────────────────────── */
     const STORAGE_KEY = 'brille-vibre-studio:brief';
     const OPTIONS_STORAGE_KEY = 'brille-vibre-studio:options';
-    let currentFormat = 'reel'; // 'story' ou 'reel'
+    let currentFormat = 'reel';
+    let selectedDays = 30;
 
     // Options avancées — valeurs par défaut
     const DEFAULT_OPTIONS = {
@@ -1567,67 +1548,19 @@
       advToggle.style.display = 'none';
       advPanel.classList.remove('open');
 
-      const textModes = {
-        optimize: {
-          label: 'Colle ta légende ici',
-          placeholder: 'Colle ici ta légende Instagram brute...',
-          hint: 'L\'outil corrige, améliore le storytelling, ajoute un hook fort + CTA.',
-          hideAudience: true,
-        },
-        recycle: {
-          label: 'Colle ton ancien post ici',
-          placeholder: 'Colle ici un post qui a bien marché et que tu veux reformuler sous 3 angles différents...',
-          hint: 'L\'outil génère 3 variantes totalement différentes du même message de fond.',
-          hideAudience: true,
-        },
-        analyze: {
-          label: 'Colle le post à analyser',
-          placeholder: 'Colle ici un post qui a bien fonctionné (engagement, ventes, sauvegardes)...',
-          hint: 'L\'outil analyse pourquoi ça a marché et génère 3 variantes inspirées.',
-          hideAudience: true,
-        },
-        detect: {
-          label: 'Colle le commentaire ou DM à analyser',
-          placeholder: 'Colle ici un commentaire ou un message DM de ta communauté...',
-          hint: 'L\'outil détecte si elle est TOFU/MOFU/BOFU et propose 3 réponses.',
-          hideAudience: true,
-        },
-      };
-
-      if (textModes[format]) {
-        const cfg = textModes[format];
-        textFields.style.display = 'block';
-        document.getElementById('text-input-label').textContent = cfg.label;
-        document.getElementById('text-input').placeholder = cfg.placeholder;
-        document.getElementById('text-input-hint').textContent = cfg.hint;
-        if (cfg.hideAudience) audienceField.style.display = 'none';
-      } else if (format === 'monthly') {
-        monthlyFields.style.display = 'block';
-      } else {
-        focusField.style.display = 'block';
-        advToggle.style.display = 'flex';
-      }
+      // Seuls 2 formats : reel et story — toujours les mêmes champs
+      focusField.style.display = 'block';
+      advToggle.style.display = 'flex';
 
       // Adapter le texte du bouton et du titre au format
+      const daysLabel = selectedDays === 1 ? '1 jour' : `${selectedDays} jours`;
       const btnLabels = {
-        story:     '✨ Génère ma semaine de stories',
-        reel:      '✨ Génère ma semaine de reels',
-        carrousel: '✨ Génère ma semaine de carrousels',
-        monthly:   '✨ Génère mon plan 30 jours',
-        optimize:  '✨ Optimise ma légende',
-        recycle:   '♻️ Recycle mon post',
-        analyze:   '🔍 Analyse ce post',
-        detect:    '🧠 Détecte le niveau',
+        story:     `✨ Génère mes ${daysLabel} de stories`,
+        reel:      `✨ Génère mes ${daysLabel} de reels`,
       };
       const titleLabels = {
-        story:     'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
-        reel:      'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
-        carrousel: 'Dis-moi 2 choses et je te <em>génère ta semaine</em>',
-        monthly:   'Remplis ton brief et je te <em>crée ton mois</em>',
-        optimize:  'Colle ta légende et je <em>l\'optimise</em>',
-        recycle:   'Colle ton ancien post et je le <em>recycle</em>',
-        analyze:   'Colle un post et je <em>l\'analyse</em>',
-        detect:    'Colle un commentaire/DM et je <em>détecte</em>',
+        story:     `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
+        reel:      `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
       };
       els.btnGenerate.textContent = btnLabels[format] || btnLabels.reel;
       const formTitle = document.getElementById('form-title');
@@ -1639,6 +1572,15 @@
       card.addEventListener('click', () => {
         setFormat(card.dataset.format);
         showScreen('form');
+      });
+    });
+
+    // Sélecteur de durée
+    document.querySelectorAll('#duration-pills .option-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#duration-pills .option-pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        selectedDays = parseInt(pill.dataset.days) || 30;
       });
     });
 
@@ -1766,6 +1708,11 @@
         if (d.script) {
           lines.push('🎬 SCRIPT');
           lines.push(d.script);
+          lines.push('');
+        }
+        if (d.legende) {
+          lines.push('📝 LÉGENDE');
+          lines.push(d.legende);
           lines.push('');
         }
       }
@@ -2169,7 +2116,15 @@
             formatBlock += `
               <div class="day-block">
                 <div class="day-block-label">🎬 Script</div>
-                <div class="day-content">${escapeHtml(d.script)}</div>
+                <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.script)}</div>
+              </div>
+            `;
+          }
+          if (d.legende) {
+            formatBlock += `
+              <div class="day-block">
+                <div class="day-block-label">📝 Légende</div>
+                <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.legende)}</div>
               </div>
             `;
           }
@@ -2329,6 +2284,7 @@
         payload = {
           mode: 'weekly_plan',
           format: currentFormat,
+          days: selectedDays,
           audience,
           focus: (focus || '') + getAntiDuplicateInstruction(),
           options: currentOptions,

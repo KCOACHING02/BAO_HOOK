@@ -254,7 +254,7 @@ Avant de valider un jour, pose-toi ces 3 questions :
 
 ## A. Format de base
 
-1. **Format** : 1 à 2 phrases max. Peut utiliser "…" (trois points Unicode) pour la tension, ou une formule directe selon le template choisi.
+1. **Format** : **1 seule phrase de 8 à 15 mots MAXIMUM.** C'est un titre de reel/story, pas un paragraphe. Si ton hook fait plus de 15 mots, COUPE. Peut utiliser "…" (trois points Unicode) pour la tension.
 2. **Adresse** : tutoiement direct ("tu"), féminin assumé (l'audience est féminine).
 3. **Naturel avant tout** : le hook doit sonner comme une vraie pensée qui sort sans filtre. Comme si une copine te disait ça en vocal. Jamais de phrase qui pue la "formule marketing".
 4. **Concret > abstrait** : exemples du quotidien. Jamais de concepts vagues.
@@ -950,7 +950,8 @@ Tu réponds TOUJOURS et UNIQUEMENT par un objet JSON valide, sans texte avant ni
 // Construit le message utilisateur pour une demande de planning de 7 jours.
 // Le format ("story" ou "reel") détermine le schéma JSON attendu.
 // Les options (ton, longueur, intensité, cta_style) affinent le style de génération.
-function buildWeeklyPlanMessage(audience, focus, format, options) {
+function buildWeeklyPlanMessage(audience, focus, format, options, days) {
+  days = days || 7;
   const audienceLine = audience
     ? `- Audience cible : ${audience}`
     : '- Audience cible : femmes qui veulent se lancer en business en ligne mais qui bloquent';
@@ -1131,9 +1132,10 @@ Pour chaque reel tu fournis :
       "etat_emotionnel": "Besoin de ressentir",
       "niveau_conscience": "Pas consciente du problème",
       "categorie_hook": "Interpellation directe",
-      "hook": "...",
-      "script": "...",
-      "cta": "..."
+      "hook": "1 phrase de 8-15 mots MAX, impactante, qui arrête le scroll",
+      "script": "le script parlé du reel (4-6 lignes, retours à la ligne \\\\n). Suit les 3 mouvements : miroir → déclic → preuve.",
+      "legende": "la légende Instagram complète (50-80 mots). Suit la bible : rythme 3 temps, déclencheurs signature, punchline, progression émotionnelle. Prête à copier-coller.",
+      "cta": "CTA court avec mot-déclencheur"
     }
   ]
 }`;
@@ -1148,18 +1150,10 @@ ${formatBlock}
 ${optionsBlock}
 
 TÂCHE
-Génère un planning éditorial Instagram de 7 jours (lundi à dimanche), en suivant STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
+Génère un planning éditorial Instagram de **${days} jour${days > 1 ? 's' : ''}**, en suivant STRICTEMENT la méthode Brille & Vibre décrite dans le bloc système.
 
-⚠️ RYTHME OBLIGATOIRE DE LA SEMAINE
-Cette séquence reproduit la semaine 1 du tableau de référence. Tu ne déroges PAS de cet ordre :
-
-1. **LUNDI — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
-2. **MARDI — Engager** (MOFU · Besoin de comprendre · Consciente du problème)
-3. **MERCREDI — Convertir** (BOFU · Besoin d'être guidée · Consciente de la solution)
-4. **JEUDI — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
-5. **VENDREDI — Engager** (MOFU · Besoin de comprendre · Consciente du problème)
-6. **SAMEDI — Convertir** (BOFU · Besoin d'être rassurée · Consciente de la solution)
-7. **DIMANCHE — Attirer** (TOFU · Besoin de ressentir · Pas consciente du problème)
+⚠️ RYTHME OBLIGATOIRE (${days} jours)
+${days === 1 ? `Pour 1 seul jour : choisis l'étape la plus pertinente selon le focus (Attirer si pas de focus, Convertir si focus vente).` : days <= 7 ? `Alterne les étapes sur les ${days} jours en suivant le cycle : Attirer → Engager → Convertir → Attirer → Engager → Convertir → Attirer.` : `Sur ${days} jours, applique la progression funnel :\n- Jours 1-${Math.ceil(days*0.25)} : Attirer (TOFU)\n- Jours ${Math.ceil(days*0.25)+1}-${Math.ceil(days*0.5)} : Engager (MOFU)\n- Jours ${Math.ceil(days*0.5)+1}-${Math.ceil(days*0.75)} : Engager/Convertir (MOFU→BOFU)\n- Jours ${Math.ceil(days*0.75)+1}-${days} : Convertir (BOFU)`}
 
 CONSIGNES IMPÉRATIVES
 0. **📖 BIBLE D'ÉCRITURE BRILLE & VIBRE (LA PLUS IMPORTANTE DE TOUTES)** : applique scrupuleusement le mémo de style en tête du bloc système. En particulier :
@@ -1194,7 +1188,7 @@ Tu réponds UNIQUEMENT avec un objet JSON valide.
 
 Si tu rajoutes ne serait-ce qu'un caractère hors du JSON, ma machine plantera.
 
-SCHÉMA JSON ATTENDU (exactement 7 entrées dans "plan") :
+SCHÉMA JSON ATTENDU (exactement ${days} entrées dans "plan") :
 ${schema}`;
 }
 
@@ -1666,6 +1660,7 @@ export default async function handler(req, res) {
 
     const audience = clamp(body.audience, 300);
     const focus    = clamp(body.focus, 600);
+    const days     = Math.min(Math.max(parseInt(body.days) || 7, 1), 30);
 
     if (!audience) {
       return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
@@ -1685,8 +1680,10 @@ export default async function handler(req, res) {
       cta_style: VALID_CTA.includes(rawOpts.cta_style)       ? rawOpts.cta_style : 'mixte',
     };
 
-    userMessage      = buildWeeklyPlanMessage(audience, focus, format, options);
+    userMessage      = buildWeeklyPlanMessage(audience, focus, format, options, days);
     modelForCall     = DEFAULT_MODEL;
+    // Adapter le token budget au nombre de jours
+    maxTokensForCall = days <= 1 ? 2000 : days <= 7 ? MAX_TOKENS_WEEKLY_PLAN : 10000;
     maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;     // 6500
   } else {
     // mode === 'monthly_plan'
