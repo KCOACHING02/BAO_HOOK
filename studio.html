@@ -978,15 +978,15 @@
       <p class="choice-sub">Choisis ton format, puis le nombre de jours.</p>
 
       <div class="choice-grid" style="grid-template-columns: 1fr 1fr; max-width: 400px;">
-        <div class="choice-card" data-format="reel">
-          <div class="choice-icon">🎬</div>
-          <div class="choice-name">Des <em>Reels</em></div>
-          <div class="choice-desc">Hook + script + légende<br>prêts à tourner</div>
+        <div class="choice-card" data-format="contenu">
+          <div class="choice-icon">📸</div>
+          <div class="choice-name">Du <em>Contenu</em></div>
+          <div class="choice-desc">80% Reels + 20% Carrousels<br>avec hook + script + légende</div>
         </div>
         <div class="choice-card" data-format="story">
           <div class="choice-icon">📱</div>
           <div class="choice-name">Des <em>Stories</em></div>
-          <div class="choice-desc">Séquence narrative<br>en 3 stories par jour</div>
+          <div class="choice-desc">Séquences narratives en 3 temps<br>(Douleur → Vérité → Preuve)</div>
         </div>
       </div>
 
@@ -1521,13 +1521,8 @@
       currentFormat = format;
       const labels = {
         story:     { icon: '📱', name: 'Stories' },
-        reel:      { icon: '🎬', name: 'Reels' },
-        carrousel: { icon: '🎠', name: 'Carrousels' },
-        monthly:   { icon: '📅', name: 'Plan 30 jours' },
-        optimize:  { icon: '✏️', name: 'Optimiser' },
-        recycle:   { icon: '♻️', name: 'Recycleur' },
-        analyze:   { icon: '🔍', name: 'Analyser' },
-        detect:    { icon: '🧠', name: 'Détecter' },
+        contenu:   { icon: '📸', name: 'Contenu' },
+      };
       };
       const lbl = labels[format] || labels.reel;
       els.formatIndicator.textContent = `← ${lbl.icon} ${lbl.name} · Changer`;
@@ -2065,7 +2060,53 @@
       const cards = plan.map((d, i) => {
         // Bloc spécifique au format
         let formatBlock = '';
-        if (currentFormat === 'story') {
+        if (currentFormat === 'contenu') {
+          // Mode contenu mixte : Reel ou Carrousel selon format_post
+          const isReel = (d.format_post || '').toLowerCase().includes('reel');
+          if (isReel) {
+            if (d.script) {
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">🎬 Script</div>
+                  <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.script)}</div>
+                </div>
+              `;
+            }
+            if (d.legende) {
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">📝 Légende</div>
+                  <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.legende)}</div>
+                </div>
+              `;
+            }
+          } else {
+            // Carrousel
+            const slides = [
+              { label: '1️⃣ Slide 1 — Miroir', key: 'slide_1' },
+              { label: '2️⃣ Slide 2 — Déclic', key: 'slide_2' },
+              { label: '3️⃣ Slide 3 — Preuve', key: 'slide_3' },
+            ];
+            slides.forEach(s => {
+              if (d[s.key]) {
+                formatBlock += `
+                  <div class="day-block">
+                    <div class="day-block-label">${s.label}</div>
+                    <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d[s.key])}</div>
+                  </div>
+                `;
+              }
+            });
+            if (d.legende) {
+              formatBlock += `
+                <div class="day-block">
+                  <div class="day-block-label">📝 Légende</div>
+                  <div class="day-content editable-text" onclick="makeEditable(this)">${escapeHtml(d.legende)}</div>
+                </div>
+              `;
+            }
+          }
+        } else if (currentFormat === 'story') {
           // Nouveau format : séquence de 5 stories par jour
           const sequence = Array.isArray(d.stories_sequence) ? d.stories_sequence : [];
           if (sequence.length) {
@@ -2140,6 +2181,7 @@
               <div class="day-objectif">${escapeHtml(d.etape || '')}</div>
               <div class="day-row2">
                 ${d.niveau_funnel ? `<span class="day-pill">🎯 ${escapeHtml(d.niveau_funnel)}</span>` : ''}
+                ${d.format_post ? `<span class="day-pill">📱 ${escapeHtml(d.format_post)}</span>` : ''}
                 ${d.etat_emotionnel ? `<span class="day-pill">❤️ ${escapeHtml(d.etat_emotionnel)}</span>` : ''}
                 ${d.categorie_hook ? `<span class="day-pill">📚 ${escapeHtml(d.categorie_hook)}</span>` : ''}
               </div>
