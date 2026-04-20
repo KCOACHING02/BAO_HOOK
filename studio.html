@@ -990,14 +990,7 @@
         </div>
       </div>
 
-      <div style="margin-top: 24px; text-align: center;">
-        <div class="field-label" style="text-align: center; margin-bottom: 10px;">COMBIEN DE JOURS ?</div>
-        <div class="option-pills" style="justify-content: center;" id="duration-pills">
-          <button type="button" class="option-pill" data-days="1">1 jour</button>
-          <button type="button" class="option-pill" data-days="7">7 jours</button>
-          <button type="button" class="option-pill selected" data-days="30">30 jours</button>
-        </div>
-      </div>
+
     </div>
 
     <!-- ─────── SCREEN 1 — FORM ─────── -->
@@ -1395,7 +1388,7 @@
     const STORAGE_KEY = 'brille-vibre-studio:brief';
     const OPTIONS_STORAGE_KEY = 'brille-vibre-studio:options';
     let currentFormat = 'reel';
-    let selectedDays = 30;
+    let selectedDays = 7;
 
     // Options avancées — valeurs par défaut
     const DEFAULT_OPTIONS = {
@@ -1539,7 +1532,7 @@
       if (textFields) textFields.style.display = 'none';
 
       // Adapter le texte du bouton et du titre
-      const daysLabel = selectedDays === 1 ? '1 jour' : `${selectedDays} jours`;
+      const daysLabel = '7 jours';
       const btnLabels = {
         story:   `✨ Génère mes ${daysLabel} de stories`,
         contenu: `✨ Génère mes ${daysLabel} de contenu`,
@@ -1558,15 +1551,6 @@
       card.addEventListener('click', () => {
         setFormat(card.dataset.format);
         showScreen('form');
-      });
-    });
-
-    // Sélecteur de durée
-    document.querySelectorAll('#duration-pills .option-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#duration-pills .option-pill').forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
-        selectedDays = parseInt(pill.dataset.days) || 30;
       });
     });
 

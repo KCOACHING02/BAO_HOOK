@@ -701,7 +701,7 @@ export default async function handler(req, res) {
 
     const audience = clamp(body.audience, 300);
     const focus    = clamp(body.focus, 600);
-    const days     = Math.min(Math.max(parseInt(body.days) || 7, 1), 30);
+    const days = 7;
 
     if (!audience) {
       return res.status(400).json({ error: 'Le champ "audience" est obligatoire.' });
@@ -724,7 +724,7 @@ export default async function handler(req, res) {
     userMessage      = buildWeeklyPlanMessage(audience, focus, format, options, days);
     modelForCall     = DEFAULT_MODEL;
     // Adapter le token budget au nombre de jours
-    maxTokensForCall = days <= 1 ? 2000 : days <= 7 ? MAX_TOKENS_WEEKLY_PLAN : 12000;
+    maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;
     maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;     // 6500
   } else {
     // mode === 'monthly_plan'
