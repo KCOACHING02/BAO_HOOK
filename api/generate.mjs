@@ -806,11 +806,11 @@ export default async function handler(req, res) {
   const requestBody = JSON.stringify({
     model:       modelForCall,
     max_tokens:  maxTokensForCall,
-    temperature: opts && opts.ton === 'drole' ? 1.0 : GENERATION_TEMPERATURE,
+    temperature: (body && body.options && body.options.ton === 'drole') ? 1.0 : GENERATION_TEMPERATURE,
     system: [
       {
         type: 'text',
-        text: opts && opts.ton === 'drole'
+        text: (body && body.options && body.options.ton === 'drole')
           ? `Tu es un HUMORISTE spécialisé dans le contenu Instagram drôle et viral. Tu fais RIRE. Tu ne fais PAS de leçon de morale. Tu ne fais PAS de coaching sérieux.
 
 TON UNIQUE JOB : créer du contenu qui fait marrer, sourire, et partager. Format viral TikTok/Instagram.
