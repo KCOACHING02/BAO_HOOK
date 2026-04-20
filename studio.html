@@ -276,42 +276,88 @@
     .btn-block { width: 100%; }
     .btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
 
-    /* ── LOADING ── */
+    /* ── LOADING (modern) ── */
     .loading-card {
       background: var(--card);
       border: 1.5px solid var(--beige);
-      border-radius: 18px;
-      padding: 48px 24px;
+      border-radius: 24px;
+      padding: 48px 28px;
       text-align: center;
-      box-shadow: 0 6px 22px var(--shadow);
+      box-shadow: 0 8px 32px var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
-    .loading-dots {
-      display: inline-flex;
-      gap: 8px;
-      margin-bottom: 18px;
+    .loading-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 200%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent);
+      animation: shimmerBg 2s ease infinite;
     }
-    .loading-dots span {
-      width: 12px;
-      height: 12px;
+    @keyframes shimmerBg { 0% { transform: translateX(-50%); } 100% { transform: translateX(50%); } }
+
+    .loading-ring {
+      width: 64px; height: 64px;
+      margin: 0 auto 24px;
       border-radius: 50%;
-      background: var(--gold);
-      animation: pulse 1.2s ease infinite;
+      border: 3px solid var(--beige);
+      border-top-color: var(--gold);
+      border-right-color: var(--gold-light);
+      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      position: relative;
     }
-    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    .loading-ring::after {
+      content: '';
+      position: absolute; inset: 6px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: var(--gold-pale);
+      animation: spin 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+    }
+    [data-theme="dark"] .loading-ring { border-color: #333; border-top-color: var(--gold); border-right-color: var(--gold-light); }
+
     .loading-text {
       font-family: 'Playfair Display', serif;
       font-style: italic;
-      font-size: 16px;
+      font-size: 17px;
       color: var(--text);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      position: relative; z-index: 1;
+    }
+    .loading-timer {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
     }
     .loading-sub {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-light);
-      line-height: 1.5;
-      transition: opacity 0.3s ease;
+      line-height: 1.55;
+      transition: opacity 0.4s ease;
+      position: relative; z-index: 1;
+      max-width: 280px;
+      margin: 0 auto;
     }
+    .loading-bar {
+      width: 120px; height: 3px;
+      background: var(--beige);
+      border-radius: 2px;
+      margin: 20px auto 0;
+      overflow: hidden;
+      position: relative; z-index: 1;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      border-radius: 2px;
+      width: 0%;
+      animation: barFill 25s ease-out forwards;
+    }
+    @keyframes barFill { 0% { width: 0%; } 80% { width: 85%; } 100% { width: 95%; } }
     .loading-sub {
       font-size: 12px;
       color: var(--text-light);
@@ -1129,9 +1175,11 @@
     <!-- ─────── SCREEN 2 — LOADING ─────── -->
     <div id="screen-loading" class="screen">
       <div class="loading-card">
-        <div class="loading-dots"><span></span><span></span><span></span></div>
+        <div class="loading-ring"></div>
         <div class="loading-text" id="loading-text">Brille &amp; Vibre orchestre ta semaine...</div>
-        <div class="loading-sub" id="loading-tip" style="margin-top: 12px; max-width: 300px; margin-left: auto; margin-right: auto;"></div>
+        <div class="loading-timer" id="loading-timer">0s</div>
+        <div class="loading-sub" id="loading-tip"></div>
+        <div class="loading-bar"><div class="loading-bar-fill"></div></div>
       </div>
     </div>
 
@@ -1504,9 +1552,9 @@
       els.screenLoading.classList.toggle('active', name === 'loading');
       els.screenResults.classList.toggle('active', name === 'results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      if (name !== 'loading' && window._clearTipInterval) {
-        window._clearTipInterval();
-        window._clearTipInterval = null;
+      if (name !== 'loading') {
+        if (window._clearTipInterval) { window._clearTipInterval(); window._clearTipInterval = null; }
+        if (window._clearTimerInterval) { window._clearTimerInterval(); window._clearTimerInterval = null; }
       }
     }
 
@@ -2309,6 +2357,15 @@
       }
 
       showScreen('loading');
+
+      // Timer compteur de secondes
+      let loadSeconds = 0;
+      const timerEl = document.getElementById('loading-timer');
+      const timerInterval = setInterval(() => {
+        loadSeconds++;
+        if (timerEl) timerEl.textContent = loadSeconds + 's';
+      }, 1000);
+      window._clearTimerInterval = () => { clearInterval(timerInterval); };
 
       // Tips rotatifs pendant le chargement
       const tips = [
