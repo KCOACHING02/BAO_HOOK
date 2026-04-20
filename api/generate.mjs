@@ -127,7 +127,35 @@ function buildWeeklyPlanMessage(audience, focus, format, options, days) {
 
   // ── Instructions format ──
   let formatBlock;
-  if (isStory) {
+
+  // Override TOTAL en mode drôle — le format aussi doit être humoristique
+  if (opts && opts.ton === 'drole') {
+    if (isStory) {
+      formatBlock = `FORMAT : STORIES DRÔLES
+
+Chaque jour = 3 stories qui font RIRE. Pas d'arc narratif sérieux.
+
+- Story 1 : une situation absurde du quotidien décrite avec exagération
+- Story 2 : la suite encore plus absurde, on en rajoute une couche
+- Story 3 : la chute + CTA décalé
+
+Ton 100% humour. Auto-dérision. Pas de leçon. Pas de "Mais la vérité ?". Juste du rire.`;
+    } else {
+      formatBlock = `FORMAT : CONTENU DRÔLE (80% Reels + 20% Carrousels)
+
+Sur ${days} jours : ${Math.round(days * 0.8)} Reels drôles + ${Math.round(days * 0.2)} Carrousels drôles.
+
+REELS DRÔLES : hook "Quand tu..." + légende qui CONTINUE dans l'humour (pas de switch sérieux). La légende raconte la suite de la blague, développe l'absurdité, ajoute des détails marrants du quotidien.
+
+CARROUSELS DRÔLES : PAS de "miroir → déclic → preuve". À la place :
+- Slide 1 : un titre accrocheur drôle (ex: "3 trucs qu'on fait tous mais qu'on avoue jamais")
+- Slide 2 : la suite (encore plus drôle)
+- Slide 3 : la chute qui fait mourir de rire
+Les slides doivent faire SOURIRE, pas éduquer.
+
+CTA décalés partout : "Dis-moi que c'est pas que moi 😭", "Tag quelqu'un qui fait pareil 💀", "Commente si t'es dans ce mood"`;
+    }
+  } else if (isStory) {
     formatBlock = `FORMAT : STORIES INSTAGRAM
 
 Chaque jour = UNE SÉQUENCE de 3 stories consécutives formant un arc narratif.
