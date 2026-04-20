@@ -16,8 +16,8 @@
 //   RATE_LIMIT_WINDOW_SEC    (optionnel — défaut: 600)
 
 // Sonnet 4.6 — meilleure qualité d'écriture, ton plus naturel.
-// Si timeout sur Vercel, fallback possible vers Haiku via env var.
-const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-sonnet-4-6';
+// Haiku pour TOUS les modes : prompt trop volumineux pour Sonnet dans les 60s Vercel.
+const DEFAULT_MODEL = process.env.CLAUDE_MODEL || 'claude-haiku-4-5-20251001';
 
 const RATE_LIMIT_MAX        = parseInt(process.env.RATE_LIMIT_MAX || '20', 10);
 const RATE_LIMIT_WINDOW_SEC = parseInt(process.env.RATE_LIMIT_WINDOW_SEC || '600', 10);
@@ -1515,7 +1515,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Le champ "legende" est obligatoire.' });
     }
     userMessage      = buildOptimizeCaptionMessage(legende);
-    modelForCall     = DEFAULT_MODEL; // Sonnet pour la qualité de réécriture
+    modelForCall     = DEFAULT_MODEL;
     maxTokensForCall = 3000;          // une légende optimisée = court
   } else if (mode === 'weekly_plan') {
     const format = String(body.format || 'reel').toLowerCase();
@@ -1545,7 +1545,7 @@ export default async function handler(req, res) {
     };
 
     userMessage      = buildWeeklyPlanMessage(audience, focus, format, options);
-    modelForCall     = DEFAULT_MODEL;              // Sonnet pour la qualité des 7 jours détaillés
+    modelForCall     = DEFAULT_MODEL;
     maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;     // 6500
   } else {
     // mode === 'monthly_plan'
