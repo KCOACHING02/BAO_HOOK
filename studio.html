@@ -568,6 +568,81 @@
       padding: 4px;
     }
 
+    /* ── ONBOARDING ── */
+    .onboarding-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeUp 0.4s ease;
+    }
+    .onboarding-card {
+      background: var(--card);
+      border-radius: 24px;
+      max-width: 360px;
+      width: 90%;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    [data-theme="dark"] .onboarding-card { background: #1a1a1a; }
+    .onboarding-icon { font-size: 48px; margin-bottom: 16px; }
+    .onboarding-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .onboarding-title em { color: var(--gold); font-style: italic; }
+    .onboarding-text {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .onboarding-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .onboarding-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--beige);
+      transition: all 0.2s;
+    }
+    .onboarding-dot.active { background: var(--gold); width: 20px; border-radius: 4px; }
+
+    /* ── FEEDBACK BUTTONS ── */
+    .feedback-btns {
+      display: inline-flex;
+      gap: 6px;
+      margin-left: auto;
+    }
+    .feedback-btn {
+      background: transparent;
+      border: 1px solid var(--beige);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .feedback-btn:hover { border-color: var(--gold); }
+    .feedback-btn.liked { background: rgba(16,185,129,0.15); border-color: #10b981; }
+    .feedback-btn.disliked { background: rgba(239,68,68,0.1); border-color: #ef4444; }
+    .day-card.feedback-good { border-left: 4px solid #10b981; }
+    .day-card.feedback-bad { border-left: 4px solid #ef4444; }
+
+    /* ── SMOOTH TRANSITIONS ── */
+    .screen { animation: fadeUp 0.3s ease; }
+
     /* ── OPTIONS AVANCÉES ── */
     .advanced-toggle {
       display: flex;
@@ -891,6 +966,9 @@
 
   </main>
 
+  <!-- ── ONBOARDING (première visite) ── -->
+  <div id="onboarding" class="onboarding-overlay" style="display: none;"></div>
+
   <div id="toast-container"></div>
 
   <script>
@@ -916,6 +994,97 @@
     };
 
     applyTheme(getThemePref());
+
+    /* ───────────────────────────────────────
+       ONBOARDING (première visite)
+       ─────────────────────────────────────── */
+    (function initOnboarding() {
+      if (localStorage.getItem('brille-vibre-studio:onboarded')) return;
+
+      const slides = [
+        {
+          icon: '✨',
+          title: 'Bienvenue dans <em>Brille & Vibre</em>',
+          text: 'Ton studio éditorial personnel. Génère tes hooks, stories, reels, carrousels et plans mensuels — le tout adapté à ton audience et ta voix.',
+        },
+        {
+          icon: '🎯',
+          title: '5 outils en <em>un seul endroit</em>',
+          text: '📱 Stories · 🎬 Reels · 🎠 Carrousels · 📅 Plan 30 jours · ✏️ Optimiseur de légende. Choisis, remplis, génère.',
+        },
+        {
+          icon: '🚀',
+          title: 'Prête à <em>commencer</em> ?',
+          text: 'Tout est sauvegardé automatiquement. Tu retrouves tes derniers plannings dans l\'historique. Dark mode dispo en haut à droite.',
+        },
+      ];
+
+      let current = 0;
+      const overlay = document.getElementById('onboarding');
+      overlay.style.display = 'flex';
+
+      function renderSlide() {
+        const s = slides[current];
+        const dots = slides.map((_, i) =>
+          `<div class="onboarding-dot${i === current ? ' active' : ''}"></div>`
+        ).join('');
+        const isLast = current === slides.length - 1;
+        overlay.innerHTML = `
+          <div class="onboarding-card">
+            <div class="onboarding-icon">${s.icon}</div>
+            <div class="onboarding-title">${s.title}</div>
+            <div class="onboarding-text">${s.text}</div>
+            <div class="onboarding-dots">${dots}</div>
+            <button class="btn btn-primary btn-block" id="onboarding-next">
+              ${isLast ? 'Commencer ✨' : 'Suivant →'}
+            </button>
+          </div>
+        `;
+        document.getElementById('onboarding-next').addEventListener('click', () => {
+          if (isLast) {
+            overlay.style.display = 'none';
+            localStorage.setItem('brille-vibre-studio:onboarded', '1');
+          } else {
+            current++;
+            renderSlide();
+          }
+        });
+      }
+      renderSlide();
+    })();
+
+    /* ───────────────────────────────────────
+       FEEDBACK 👍/👎 PAR JOUR
+       ─────────────────────────────────────── */
+    const FEEDBACK_KEY = 'brille-vibre-studio:feedback';
+
+    function getFeedback() {
+      try { return JSON.parse(localStorage.getItem(FEEDBACK_KEY) || '{}'); } catch { return {}; }
+    }
+
+    window.setDayFeedback = function(dayIndex, type) {
+      const fb = getFeedback();
+      const key = `${currentFormat}-${dayIndex}`;
+      // Toggle : si déjà le même feedback, on l'enlève
+      if (fb[key] === type) {
+        delete fb[key];
+      } else {
+        fb[key] = type;
+      }
+      try { localStorage.setItem(FEEDBACK_KEY, JSON.stringify(fb)); } catch {}
+
+      // Update UI
+      const card = els.daysContainer.querySelectorAll('.day-card')[dayIndex];
+      if (card) {
+        card.classList.remove('feedback-good', 'feedback-bad');
+        if (fb[key] === 'good') card.classList.add('feedback-good');
+        if (fb[key] === 'bad') card.classList.add('feedback-bad');
+      }
+      const likeBtn = document.getElementById(`fb-like-${dayIndex}`);
+      const dislikeBtn = document.getElementById(`fb-dislike-${dayIndex}`);
+      if (likeBtn) likeBtn.classList.toggle('liked', fb[key] === 'good');
+      if (dislikeBtn) dislikeBtn.classList.toggle('disliked', fb[key] === 'bad');
+    };
 
     /* ───────────────────────────────────────
        STATE & STORAGE
@@ -1489,7 +1658,11 @@
             </div>
             <div class="day-actions">
               <button class="copy-btn" onclick="copyDay(${i})">📋 Copier</button>
-              <button class="copy-btn" onclick="regenDay(${i})" style="margin-left: 6px;">🔄 Refaire ce jour</button>
+              <button class="copy-btn" onclick="regenDay(${i})" style="margin-left: 6px;">🔄 Refaire</button>
+              <div class="feedback-btns">
+                <button class="feedback-btn" id="fb-like-${i}" onclick="setDayFeedback(${i},'good')" title="Ce jour est bon">👍</button>
+                <button class="feedback-btn" id="fb-dislike-${i}" onclick="setDayFeedback(${i},'bad')" title="Ce jour est à revoir">👎</button>
+              </div>
             </div>
           </div>
         `;
