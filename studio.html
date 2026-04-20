@@ -1700,8 +1700,8 @@
           '🎯 HOOK',
           d.hook || '',
           '',
-          '📝 BRIEF',
-          d.brief || '',
+          '📝 LÉGENDE',
+          d.legende || '',
           '',
           '👉 CTA',
           d.cta || '',
@@ -2072,10 +2072,10 @@
                       <div class="day-hook">${escapeHtml(p.hook)}</div>
                     </div>
                   ` : ''}
-                  ${p.brief ? `
+                  ${p.legende ? `
                     <div class="day-block">
-                      <div class="day-block-label">📝 Brief</div>
-                      <div class="day-content">${escapeHtml(p.brief)}</div>
+                      <div class="day-block-label">📝 Légende</div>
+                      <div class="day-content">${escapeHtml(p.legende)}</div>
                     </div>
                   ` : ''}
                   ${p.cta ? `

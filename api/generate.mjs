@@ -1448,7 +1448,7 @@ Chaque semaine cible un NIVEAU DU FUNNEL précis. Tu n'en déroges JAMAIS. C'est
 ⚠️ CONSIGNES ABSOLUES
 1. **Respect strict de la bible d'écriture** du bloc système (rythme 3 temps, déclencheurs signature, expressions signature, punchlines en 3 formes, règle d'or "on ne convainc pas, on raconte").
 2. **Le hook** de chaque post vient du catalogue des 125 templates, adapté au sujet. Varie les catégories.
-3. **Le brief** est une mini-description éditoriale en 2 à 3 lignes de ce que dit le post (l'angle, le message clé, la progression). Pas le script complet — juste l'intention.
+3. **La légende** est le texte Instagram COMPLET prêt à publier (80-120 mots). Structurée avec retours à la ligne \\n. Elle suit la bible d'écriture : rythme 3 temps (longue → moyenne → courte qui frappe), déclencheurs signature en début de paragraphe ("Parce que", "Mais la vérité ?", "Et crois-moi"…), au moins 1 punchline (Opposition, Révélation ou Permission), progression émotionnelle (mon histoire → ta douleur → vérité → solution → preuve → action). La lectrice doit pouvoir copier-coller directement sur Instagram sans rien modifier.
 4. **Le CTA** court et cohérent avec le type (Visibilité/Valeur = commentaire soft, Vente directe = DM avec trigger word en MAJUSCULES).
 5. **Progression invisible** : chaque post rapproche la lectrice de l'offre sans qu'elle s'en rende compte. Jamais de pression brute.
 6. **Anti-IA** : applique toutes les interdictions du bloc système (mots bannis, structures trop balancées, phrases robotiques).
@@ -1476,7 +1476,7 @@ Tu réponds UNIQUEMENT avec un objet JSON valide. AUCUN texte avant ou après. A
       "type": "Visibilité",
       "format": "Reel",
       "hook": "la phrase d'accroche des 3 premières secondes",
-      "brief": "2 à 3 lignes sur ce que le post dit : l'angle, le message, la progression",
+      "legende": "la légende Instagram COMPLÈTE prête à publier (80-120 mots). Structurée avec retours à la ligne \\\\n. Suit la bible d'écriture : rythme 3 temps, déclencheurs signature, punchline, progression émotionnelle. Prête à copier-coller sur Instagram.",
       "cta": "le CTA final court"
     }
   ]
