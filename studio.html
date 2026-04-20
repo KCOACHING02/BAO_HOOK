@@ -1447,8 +1447,8 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const brief = JSON.parse(raw);
-        if (brief.audience) els.audience.value = brief.audience;
-        if (brief.focus) els.focus.value = brief.focus;
+        if (brief.audience && typeof brief.audience === 'string') els.audience.value = brief.audience;
+        if (brief.focus && typeof brief.focus === 'string') els.focus.value = brief.focus;
       } catch (e) { /* ignore */ }
     })();
 
@@ -1475,7 +1475,7 @@
 
     function saveBrief(audience, focus) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience, focus }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience: String(audience || ''), focus: String(focus || '') }));
       } catch (e) { /* ignore */ }
     }
 
