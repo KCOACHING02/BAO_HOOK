@@ -123,13 +123,13 @@ function buildWeeklyPlanMessage(audience, focus, format, options, days) {
     : '- Focus : libre';
 
   const isStory = format === 'story';
-  // "contenu" = 80% Reels + 20% Carrousels (choisis automatiquement par Claude)
+  const isDrole = options && options.ton === 'drole';
 
   // ── Instructions format ──
   let formatBlock;
 
-  // Override TOTAL en mode drôle — le format aussi doit être humoristique
-  if (opts && opts.ton === 'drole') {
+  // Override TOTAL en mode drôle
+  if (isDrole) {
     if (isStory) {
       formatBlock = `FORMAT : STORIES DRÔLES
 
