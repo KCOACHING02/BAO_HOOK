@@ -743,6 +743,43 @@ RÈGLES :
 JSON uniquement. { "humanized": "le texte réécrit" }`;
 }
 
+/* ─────────────────────────────────────────
+   GENERATE_HOOKS — Générateur de hooks pur (15-20 hooks classés A/C/V)
+   ───────────────────────────────────────── */
+function buildGenerateHooksMessage(audience, sujet, bestPosts) {
+  const postsRef = bestPosts && bestPosts.length
+    ? '\n\nEXEMPLES DE POSTS QUI MARCHENT CHEZ CETTE CRÉATRICE :\n' + bestPosts.slice(0, 5).map(p => '- "' + p + '"').join('\n')
+    : '';
+
+  return `TÂCHE : génère 18 hooks Instagram classés en 3 catégories (6 par catégorie).
+
+AUDIENCE : ${audience || 'généraliste'}
+SUJET / THÈME : ${sujet || 'libre'}
+${postsRef}
+
+Les hooks doivent être DIRECTS, SPÉCIFIQUES, PROVOCANTS — comme les exemples du bloc système. Avec des chiffres concrets, des mini-histoires, des affirmations qui arrêtent le scroll.
+
+3 CATÉGORIES (6 hooks chacune) :
+
+**A — ATTIRER** (TOFU) : hooks qui captent l'attention de gens qui ne te connaissent pas. Résultats chiffrés, confessions, techniques révélées.
+Style : "Cette technique m'a généré 47 leads en 2h", "Mon boss pense que je fais des heures sup alors que j'automatise tout"
+
+**C — CHAUFFER** (MOFU) : hooks qui provoquent, qui challengent, qui font réfléchir. Affirmations fortes, mythes cassés, vérités dérangeantes.
+Style : "La productivité c'est de la manipulation pour vous faire bosser plus", "Votre patron vous ment sur l'entrepreneuriat"
+
+**V — VENDRE** (BOFU) : hooks qui montrent des transformations, des preuves, des résultats clients. Mini-histoires avant/après.
+Style : "Elle gagnait 2800€, maintenant elle facture 8K depuis son canapé", "Comment Marc a quitté son CDI toxique grâce à une story Instagram"
+
+RÈGLES :
+- Chaque hook = 1 phrase, MAXIMUM 20 mots
+- Des CHIFFRES spécifiques obligatoires (pas "beaucoup" mais "47", pas "vite" mais "en 2h")
+- Des PRÉNOMS dans les hooks Vendre (donne de la crédibilité)
+- JAMAIS générique, JAMAIS vague
+- Adapte au sujet et à l'audience fournis
+
+JSON uniquement. { "attirer": ["hook1", ...], "chauffer": ["hook1", ...], "vendre": ["hook1", ...] }`;
+}
+
 function corsOrigin(req) {
   const allowed = (process.env.ALLOWED_ORIGINS ||
     'https://kcoaching02.github.io,http://localhost:3000,http://localhost:5173,http://localhost:8000')
@@ -875,7 +912,7 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  const ALL_MODES = ['weekly_plan', 'monthly_plan', 'optimize_caption', 'recycle', 'analyze', 'detect_funnel', 'refine_hook', 'humanize'];
+  const ALL_MODES = ['weekly_plan', 'monthly_plan', 'optimize_caption', 'recycle', 'analyze', 'detect_funnel', 'refine_hook', 'humanize', 'generate_hooks'];
   if (!ALL_MODES.includes(mode)) {
     return res.status(400).json({ error: `mode requis : ${ALL_MODES.join(', ')}` });
   }
@@ -908,6 +945,12 @@ export default async function handler(req, res) {
     const msg = clamp(body.message_content, 2000);
     if (!msg) return res.status(400).json({ error: 'Le champ "message_content" est obligatoire.' });
     userMessage      = buildDetectFunnelMessage(msg);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 2000;
+  } else if (mode === 'generate_hooks') {
+    const sujet = clamp(body.sujet, 300);
+    const bestPosts = Array.isArray(body.best_posts) ? body.best_posts.map(p => clamp(p, 300)) : [];
+    userMessage      = buildGenerateHooksMessage(clamp(body.audience, 200), sujet, bestPosts);
     modelForCall     = DEFAULT_MODEL;
     maxTokensForCall = 2000;
   } else if (mode === 'refine_hook') {

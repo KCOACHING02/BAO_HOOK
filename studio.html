@@ -1120,6 +1120,11 @@
           <div class="choice-name">Des <em>Stories</em></div>
           <div class="choice-desc">Séquences narratives en 3 temps<br>(Douleur → Vérité → Preuve)</div>
         </div>
+        <div class="choice-card" data-format="hooks" style="grid-column: 1 / -1;">
+          <div class="choice-icon">🎯</div>
+          <div class="choice-name">Générateur de <em>Hooks</em></div>
+          <div class="choice-desc">18 hooks classés Attirer / Chauffer / Vendre<br>Prêts à copier</div>
+        </div>
       </div>
 
 
@@ -1705,10 +1710,12 @@
       const btnLabels = {
         story:   `✨ Génère mes ${daysLabel} de stories`,
         contenu: `✨ Génère mes ${daysLabel} de contenu`,
+        hooks:   '🎯 Génère mes hooks',
       };
       const titleLabels = {
         story:   `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
         contenu: `Dis-moi 2 choses et je te <em>génère ${daysLabel}</em>`,
+        hooks:   'Dis-moi ton sujet et je te <em>génère 18 hooks</em>',
       };
       els.btnGenerate.textContent = btnLabels[format] || btnLabels.contenu;
       const formTitle = document.getElementById('form-title');
@@ -2059,7 +2066,41 @@
       showToast('✓ Copié dans le presse-papier', 'success', 1500);
     };
 
-    function renderCalendarGrid(plan) {
+    function renderHooksGrid(result) {
+      lastPlan = [result];
+      const categories = [
+        { key: 'attirer',  label: 'A — ATTIRER',  color: '#6366f1', desc: 'Capter l\'attention' },
+        { key: 'chauffer', label: 'C — CHAUFFER', color: '#f59e0b', desc: 'Provoquer, challenger' },
+        { key: 'vendre',   label: 'V — VENDRE',   color: '#10b981', desc: 'Montrer les résultats' },
+      ];
+
+      const html = categories.map(cat => {
+        const hooks = result[cat.key] || [];
+        if (!hooks.length) return '';
+        const hooksHtml = hooks.map(h => `
+          <div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--beige);border-left:4px solid ${cat.color};border-radius:12px;padding:14px 16px;margin-bottom:8px;">
+            <div style="flex:1;font-size:14px;line-height:1.5;color:var(--text);">${escapeHtml(h)}</div>
+            <button class="copy-btn" onclick="copyToClipboard('${escapeHtml(h).replace(/'/g, "\\'")}');showToast('✓ Copié','success',1500);" style="flex-shrink:0;">Copier</button>
+          </div>
+        `).join('');
+
+        return `
+          <div style="margin-bottom:24px;">
+            <div style="display:inline-flex;align-items:center;gap:8px;background:${cat.color}15;border:1px solid ${cat.color}40;border-radius:20px;padding:6px 14px;margin-bottom:12px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:${cat.color};"></div>
+              <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1.5px;color:${cat.color};">${cat.label}</span>
+              <span style="font-size:10px;color:var(--text-light);">${cat.desc}</span>
+            </div>
+            ${hooksHtml}
+          </div>
+        `;
+      }).join('');
+
+      els.daysContainer.innerHTML = html || '<div>Aucun hook généré.</div>';
+      document.getElementById('day-tabs-container').innerHTML = '';
+    }
+
+        function renderCalendarGrid(plan) {
       if (currentFormat !== 'monthly' || !plan || !plan.length) return '';
 
       const typeColors = {
@@ -2457,6 +2498,16 @@
         const cfg = modeMap[currentFormat];
         payload = { mode: cfg.mode };
         payload[cfg.field] = textInput;
+      } else if (currentFormat === 'hooks') {
+        const audience = els.audience.value.trim();
+        const focus = els.focus.value.trim();
+        saveBrief(audience, focus);
+        payload = {
+          mode: 'generate_hooks',
+          audience,
+          sujet: focus,
+          best_posts: getBestPosts(),
+        };
       } else {
         const focus = els.focus.value.trim();
         const audience = els.audience.value.trim();
@@ -2553,16 +2604,25 @@
           showToast(successMessages[currentFormat] || '✓ Terminé', 'success');
         } else {
           const plan = data?.result?.plan || [];
-          if (!plan.length) {
+          if (!plan.length && currentFormat !== 'hooks') {
             throw new Error('Aucun planning reçu.');
           }
-          renderPlan(plan);
-          renderDayTabs(plan);
-          saveToHistory(plan, currentFormat);
-          saveHooksToMemory(plan);
-          haptic([50, 30, 50]);
-          showScreen('results');
-          showToast('✓ Ton planning est prêt', 'success');
+          if (currentFormat === 'hooks') {
+            // Mode hooks pur : pas un plan, c'est un objet {attirer, chauffer, vendre}
+            renderHooksGrid(data.result || parsed);
+            saveToHistory([data.result || parsed], 'hooks');
+            haptic([50, 30, 50]);
+            showScreen('results');
+            showToast('✓ 18 hooks générés', 'success');
+          } else {
+            renderPlan(plan);
+            renderDayTabs(plan);
+            saveToHistory(plan, currentFormat);
+            saveHooksToMemory(plan);
+            haptic([50, 30, 50]);
+            showScreen('results');
+            showToast('✓ Ton planning est prêt', 'success');
+          }
         }
 
       } catch (err) {
