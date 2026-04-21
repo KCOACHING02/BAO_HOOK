@@ -276,86 +276,146 @@
     .btn-block { width: 100%; }
     .btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
 
-    /* ── LOADING (modern) ── */
+    /* ── LOADING (futuristic AI network) ── */
     .loading-card {
-      background: var(--card);
-      border: 1.5px solid var(--beige);
+      background: linear-gradient(145deg, #0a0a1a, #0d1025, #0a0a1a);
+      border: 1px solid rgba(201,168,76,0.2);
       border-radius: 24px;
       padding: 48px 28px;
       text-align: center;
-      box-shadow: 0 8px 32px var(--shadow);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 60px rgba(201,168,76,0.08);
       position: relative;
       overflow: hidden;
     }
     .loading-card::before {
       content: '';
       position: absolute;
-      top: 0; left: -100%;
-      width: 200%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent);
-      animation: shimmerBg 2s ease infinite;
+      top: 50%; left: 50%;
+      width: 300px; height: 300px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      animation: pulseGlow 3s ease infinite;
     }
-    @keyframes shimmerBg { 0% { transform: translateX(-50%); } 100% { transform: translateX(50%); } }
+    @keyframes pulseGlow { 0%,100% { opacity: 0.3; transform: translate(-50%,-50%) scale(0.8); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.2); } }
 
-    .loading-ring {
-      width: 64px; height: 64px;
-      margin: 0 auto 24px;
-      border-radius: 50%;
-      border: 3px solid var(--beige);
-      border-top-color: var(--gold);
-      border-right-color: var(--gold-light);
-      animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      position: relative;
+    /* Floating particles */
+    .loading-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
     }
-    .loading-ring::after {
+    .loading-particle {
+      position: absolute;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      animation: particleFloat 4s ease-in-out infinite;
+    }
+    .loading-particle:nth-child(1) { left: 15%; top: 20%; animation-delay: 0s; }
+    .loading-particle:nth-child(2) { left: 75%; top: 30%; animation-delay: 0.7s; width: 3px; height: 3px; background: #6366f1; }
+    .loading-particle:nth-child(3) { left: 30%; top: 70%; animation-delay: 1.4s; width: 5px; height: 5px; }
+    .loading-particle:nth-child(4) { left: 85%; top: 65%; animation-delay: 2.1s; width: 3px; height: 3px; background: #10b981; }
+    .loading-particle:nth-child(5) { left: 50%; top: 15%; animation-delay: 2.8s; background: #ec4899; }
+    .loading-particle:nth-child(6) { left: 20%; top: 50%; animation-delay: 0.5s; width: 6px; height: 6px; }
+    .loading-particle:nth-child(7) { left: 65%; top: 80%; animation-delay: 1.8s; background: #6366f1; }
+    .loading-particle:nth-child(8) { left: 45%; top: 40%; animation-delay: 3.2s; width: 3px; height: 3px; }
+    @keyframes particleFloat {
+      0% { opacity: 0; transform: translateY(20px) scale(0); }
+      20% { opacity: 0.8; transform: translateY(0) scale(1); }
+      80% { opacity: 0.6; transform: translateY(-15px) scale(0.8); }
+      100% { opacity: 0; transform: translateY(-30px) scale(0); }
+    }
+
+    /* Connection lines */
+    .loading-connections {
+      position: absolute;
+      inset: 0;
+    }
+    .loading-connection {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+      animation: connectionPulse 3s ease infinite;
+    }
+    .loading-connection:nth-child(1) { top: 35%; left: 10%; width: 80%; animation-delay: 0s; }
+    .loading-connection:nth-child(2) { top: 55%; left: 15%; width: 70%; animation-delay: 1s; transform: rotate(-8deg); }
+    .loading-connection:nth-child(3) { top: 45%; left: 5%; width: 90%; animation-delay: 2s; transform: rotate(5deg); background: linear-gradient(90deg, transparent, rgba(99,102,241,0.2), transparent); }
+    @keyframes connectionPulse { 0%,100% { opacity: 0.2; } 50% { opacity: 0.8; } }
+
+    /* Central orb */
+    .loading-orb {
+      width: 72px; height: 72px;
+      margin: 0 auto 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(201,168,76,0.4), rgba(201,168,76,0.1));
+      border: 2px solid rgba(201,168,76,0.3);
+      position: relative; z-index: 2;
+      animation: orbPulse 2s ease infinite;
+      box-shadow: 0 0 30px rgba(201,168,76,0.2), 0 0 60px rgba(201,168,76,0.1);
+    }
+    .loading-orb::before {
+      content: '✨';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      animation: spin 4s linear infinite;
+    }
+    .loading-orb::after {
       content: '';
-      position: absolute; inset: 6px;
+      position: absolute;
+      inset: -8px;
       border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: var(--gold-pale);
-      animation: spin 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite reverse;
+      border: 1px solid rgba(201,168,76,0.15);
+      animation: spin 8s linear infinite reverse;
     }
-    [data-theme="dark"] .loading-ring { border-color: #333; border-top-color: var(--gold); border-right-color: var(--gold-light); }
+    @keyframes orbPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(201,168,76,0.2); } 50% { transform: scale(1.08); box-shadow: 0 0 50px rgba(201,168,76,0.35); } }
 
     .loading-text {
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 17px;
-      color: var(--text);
+      color: #f0e6d3;
       margin-bottom: 8px;
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
+      text-shadow: 0 0 20px rgba(201,168,76,0.3);
     }
     .loading-timer {
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--gold);
-      letter-spacing: 2px;
-      margin-bottom: 16px;
-      position: relative; z-index: 1;
+      letter-spacing: 3px;
+      margin-bottom: 18px;
+      position: relative; z-index: 2;
+      text-shadow: 0 0 10px rgba(201,168,76,0.4);
     }
     .loading-sub {
-      font-size: 13px;
-      color: var(--text-light);
+      font-size: 12px;
+      color: rgba(240,230,211,0.5);
       line-height: 1.55;
       transition: opacity 0.4s ease;
-      position: relative; z-index: 1;
-      max-width: 280px;
+      position: relative; z-index: 2;
+      max-width: 260px;
       margin: 0 auto;
     }
     .loading-bar {
-      width: 120px; height: 3px;
-      background: var(--beige);
+      width: 140px; height: 2px;
+      background: rgba(201,168,76,0.15);
       border-radius: 2px;
-      margin: 20px auto 0;
+      margin: 22px auto 0;
       overflow: hidden;
-      position: relative; z-index: 1;
+      position: relative; z-index: 2;
     }
     .loading-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
       border-radius: 2px;
       width: 0%;
       animation: barFill 25s ease-out forwards;
+      box-shadow: 0 0 8px rgba(201,168,76,0.5);
     }
     @keyframes barFill { 0% { width: 0%; } 80% { width: 85%; } 100% { width: 95%; } }
     .loading-sub {
@@ -1188,7 +1248,18 @@
     <!-- ─────── SCREEN 2 — LOADING ─────── -->
     <div id="screen-loading" class="screen">
       <div class="loading-card">
-        <div class="loading-ring"></div>
+        <div class="loading-particles">
+          <div class="loading-particle"></div><div class="loading-particle"></div>
+          <div class="loading-particle"></div><div class="loading-particle"></div>
+          <div class="loading-particle"></div><div class="loading-particle"></div>
+          <div class="loading-particle"></div><div class="loading-particle"></div>
+        </div>
+        <div class="loading-connections">
+          <div class="loading-connection"></div>
+          <div class="loading-connection"></div>
+          <div class="loading-connection"></div>
+        </div>
+        <div class="loading-orb"></div>
         <div class="loading-text" id="loading-text">Brille &amp; Vibre orchestre ta semaine...</div>
         <div class="loading-timer" id="loading-timer">0s</div>
         <div class="loading-sub" id="loading-tip"></div>
