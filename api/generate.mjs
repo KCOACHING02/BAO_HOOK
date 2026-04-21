@@ -687,6 +687,57 @@ Pour chaque post, renseigne \`niveau_funnel\` avec la valeur correcte selon la s
 
 
 // ─── 4. CORS ───────────────────────────────────────────────────
+/* ─────────────────────────────────────────
+   REFINE_HOOK — Génère 3 variantes d'un hook
+   ───────────────────────────────────────── */
+function buildRefineHookMessage(hook, audience, bestPosts) {
+  const postsRef = bestPosts && bestPosts.length
+    ? `\n\nEXEMPLES DE POSTS QUI MARCHENT CHEZ CETTE CRÉATRICE (imite leur ÉNERGIE) :\n${bestPosts.slice(0, 5).map(p => `- "${p}"`).join('\n')}`
+    : '';
+
+  return `TÂCHE : génère 3 variantes COMPLÈTEMENT DIFFÉRENTES de ce hook. Même message de fond, mais angles, structures et formulations totalement différents.
+
+HOOK ORIGINAL : "${hook}"
+AUDIENCE : ${audience || 'généraliste'}
+${postsRef}
+
+Chaque variante doit :
+- Garder le MÊME message de fond
+- Utiliser une STRUCTURE différente (contradiction, confession, projection datée, miroir accusateur, humour, question rhétorique...)
+- Faire 8-15 mots MAX
+- Créer un curiosity gap
+- Sonner naturel (test du vocal WhatsApp)
+
+JSON uniquement. { "variantes": ["hook 1", "hook 2", "hook 3"] }`;
+}
+
+/* ─────────────────────────────────────────
+   HUMANIZE — Rendre un contenu plus naturel / moins IA
+   ───────────────────────────────────────── */
+function buildHumanizeMessage(content, bestPosts) {
+  const postsRef = bestPosts && bestPosts.length
+    ? `\n\nVOICI LE STYLE RÉEL DE CETTE CRÉATRICE (copie cette énergie) :\n${bestPosts.slice(0, 3).map(p => `"${p}"`).join('\n\n')}`
+    : '';
+
+  return `TÂCHE : réécris ce contenu pour qu'il sonne 100% HUMAIN et NATUREL. Comme si une vraie personne l'avait écrit sur son téléphone en 30 secondes.
+
+CONTENU À HUMANISER :
+---
+${content}
+---
+${postsRef}
+
+RÈGLES :
+- Enlève tout ce qui sonne "rédigé", "copywrité", "GPT"
+- Phrases fragmentées, orales, imparfaites
+- Comme un vocal WhatsApp à une copine
+- Garde le même message mais change les tournures trop propres
+- Pas de "Mais la vérité ?", "Résultat :", sauf si ça sonne vraiment naturel dans le contexte
+- Ajoute des imperfections volontaires : phrases coupées, "genre", "bref", "enfin tu vois"
+
+JSON uniquement. { "humanized": "le texte réécrit" }`;
+}
+
 function corsOrigin(req) {
   const allowed = (process.env.ALLOWED_ORIGINS ||
     'https://kcoaching02.github.io,http://localhost:3000,http://localhost:5173,http://localhost:8000')
@@ -819,7 +870,7 @@ export default async function handler(req, res) {
   body = body || {};
 
   const mode = String(body.mode || '').toLowerCase();
-  const ALL_MODES = ['weekly_plan', 'monthly_plan', 'optimize_caption', 'recycle', 'analyze', 'detect_funnel'];
+  const ALL_MODES = ['weekly_plan', 'monthly_plan', 'optimize_caption', 'recycle', 'analyze', 'detect_funnel', 'refine_hook', 'humanize'];
   if (!ALL_MODES.includes(mode)) {
     return res.status(400).json({ error: `mode requis : ${ALL_MODES.join(', ')}` });
   }
@@ -854,6 +905,20 @@ export default async function handler(req, res) {
     userMessage      = buildDetectFunnelMessage(msg);
     modelForCall     = DEFAULT_MODEL;
     maxTokensForCall = 2000;
+  } else if (mode === 'refine_hook') {
+    const hook = clamp(body.hook, 500);
+    if (!hook) return res.status(400).json({ error: 'Le champ "hook" est obligatoire.' });
+    const bestPosts = Array.isArray(body.best_posts) ? body.best_posts.map(p => clamp(p, 300)) : [];
+    userMessage      = buildRefineHookMessage(hook, clamp(body.audience, 200), bestPosts);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 500;
+  } else if (mode === 'humanize') {
+    const cont = clamp(body.content, 2000);
+    if (!cont) return res.status(400).json({ error: 'Le champ "content" est obligatoire.' });
+    const bestPosts = Array.isArray(body.best_posts) ? body.best_posts.map(p => clamp(p, 300)) : [];
+    userMessage      = buildHumanizeMessage(cont, bestPosts);
+    modelForCall     = DEFAULT_MODEL;
+    maxTokensForCall = 1500;
   } else if (mode === 'weekly_plan') {
     const format = String(body.format || 'reel').toLowerCase();
     if (!['story', 'contenu'].includes(format)) {

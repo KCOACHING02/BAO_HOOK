@@ -1059,6 +1059,12 @@
         </div>
 
         <div class="field">
+          <label class="field-label" for="best-posts">Mes meilleurs posts (pour que l'IA apprenne ton style)</label>
+          <textarea id="best-posts" class="field-textarea" style="min-height: 100px;" placeholder="Colle ici 3 à 5 de tes posts/légendes qui ont le mieux marché. L'IA analysera ton style réel et s'en inspirera pour toutes les générations."></textarea>
+          <div class="field-hint">Plus tu en mets, plus l'outil écrit comme toi. Sauvegardé automatiquement.</div>
+        </div>
+
+        <div class="field">
           <label class="field-label" for="inspirations">Hooks qui t'inspirent (optionnel)</label>
           <textarea id="inspirations" class="field-textarea" style="min-height: 80px;" placeholder="Colle ici des hooks viraux que tu as vus sur TikTok/Insta et qui t'ont marquée. Un par ligne."></textarea>
           <div class="field-hint">L'outil s'en inspirera pour générer des hooks dans le même style. Sauvegardé automatiquement.</div>
@@ -1480,6 +1486,8 @@
         if (brief.focus && typeof brief.focus === 'string') els.focus.value = brief.focus;
         const inspEl = document.getElementById('inspirations');
         if (brief.inspirations && typeof brief.inspirations === 'string' && inspEl) inspEl.value = brief.inspirations;
+        const bestEl = document.getElementById('best-posts');
+        if (brief.bestPosts && typeof brief.bestPosts === 'string' && bestEl) bestEl.value = brief.bestPosts;
       } catch (e) { /* ignore */ }
     })();
 
@@ -1507,7 +1515,8 @@
     function saveBrief(audience, focus) {
       try {
         const inspValue = document.getElementById('inspirations') ? document.getElementById('inspirations').value.trim() : '';
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience: String(audience || ''), focus: String(focus || ''), inspirations: String(inspValue || '') }));
+        const bestPostsValue = document.getElementById('best-posts') ? document.getElementById('best-posts').value.trim() : '';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ audience: String(audience || ''), focus: String(focus || ''), inspirations: String(inspValue || ''), bestPosts: String(bestPostsValue || '') }));
       } catch (e) { /* ignore */ }
     }
 
@@ -2230,6 +2239,8 @@
             <div class="day-actions">
               <button class="copy-btn" onclick="copyDay(${i})">📋</button>
               <button class="copy-btn" onclick="regenDay(${i})">🔄</button>
+              <button class="copy-btn" onclick="refineHook(${i})" title="3 variantes de ce hook">🎯</button>
+              <button class="copy-btn" onclick="humanizeDay(${i})" title="Rendre plus naturel">✨</button>
               <button class="copy-btn" onclick="showPhonePreview(${i})" title="Aperçu mobile">📱</button>
               <div class="feedback-btns">
                 <button class="feedback-btn" id="fb-like-${i}" onclick="setDayFeedback(${i},'good')">👍</button>
@@ -2353,7 +2364,7 @@
           format: currentFormat,
           days: selectedDays,
           audience,
-          focus: (focus || '') + (document.getElementById('inspirations') && document.getElementById('inspirations').value.trim() ? '\n\nHOOKS D\'INSPIRATION (la créatrice a repéré ces hooks viraux, inspire-toi de leur style et énergie sans les copier) :\n' + document.getElementById('inspirations').value.trim() : '') + getAntiDuplicateInstruction(),
+          focus: (focus || '') + (document.getElementById('best-posts') && document.getElementById('best-posts').value.trim() ? '\n\nMES MEILLEURS POSTS (imite ce style) :\n' + document.getElementById('best-posts').value.trim() : '') + (document.getElementById('inspirations') && document.getElementById('inspirations').value.trim() ? '\n\nHOOKS D\'INSPIRATION (la créatrice a repéré ces hooks viraux, inspire-toi de leur style et énergie sans les copier) :\n' + document.getElementById('inspirations').value.trim() : '') + getAntiDuplicateInstruction(),
           options: currentOptions,
         };
       }
@@ -2463,7 +2474,64 @@
     /* ───────────────────────────────────────
        REGEN SINGLE DAY
        ─────────────────────────────────────── */
-    window.regenDay = async function(index) {
+    function getBestPosts() {
+      const el = document.getElementById('best-posts');
+      if (!el || !el.value.trim()) return [];
+      return el.value.trim().split('\n').filter(l => l.trim().length > 10);
+    }
+
+    window.refineHook = async function(index) {
+      const d = lastPlan && lastPlan[index];
+      if (!d || !d.hook) return;
+      showToast('🎯 Génération de 3 variantes...', 'info', 3000);
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'refine_hook', hook: d.hook, audience: els.audience ? els.audience.value.trim() : '', best_posts: getBestPosts() }),
+        });
+        const raw = await res.text();
+        let data; try { data = JSON.parse(raw); } catch { const m = raw.match(/\{[\s\S]*\}/); data = m ? JSON.parse(m[0]) : null; }
+        if (!res.ok || !data) throw new Error(data?.error || 'Erreur');
+        const variants = data.result?.variantes || data.result?.variants || [];
+        if (!variants.length) throw new Error('Aucune variante');
+        const overlay = document.createElement('div');
+        overlay.className = 'phone-preview-overlay';
+        overlay.style.zIndex = '2000';
+        overlay.innerHTML = '<div style="background:var(--card);border-radius:20px;max-width:380px;width:90%;padding:28px;max-height:80vh;overflow-y:auto;"><h3 style="font-family:Playfair Display,serif;font-size:18px;margin-bottom:16px;color:var(--text);">🎯 Choisis ta variante</h3><div style="font-size:11px;color:var(--text-light);margin-bottom:14px;">Original : ' + escapeHtml(d.hook) + '</div>' + variants.map(function(v,i) { return '<div style="background:var(--cream);border:1.5px solid var(--beige);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;" onclick="window._selectVar(' + index + ',' + i + ')"><div style="font-family:Playfair Display,serif;font-style:italic;font-size:15px;color:var(--gold-dark);">' + escapeHtml(v) + '</div><div style="font-size:10px;color:var(--text-light);margin-top:6px;">Clique pour utiliser</div></div>'; }).join('') + '<button class="btn btn-ghost btn-block" onclick="this.closest(\'.phone-preview-overlay\').remove()" style="margin-top:8px;">Fermer</button></div>';
+        window._hookVariants = variants;
+        window._selectVar = function(di, vi) { if (lastPlan[di]) { lastPlan[di].hook = window._hookVariants[vi]; renderPlan(lastPlan); renderDayTabs(lastPlan); } document.querySelector('.phone-preview-overlay[style*="2000"]').remove(); showToast('✓ Hook remplacé', 'success'); };
+        document.body.appendChild(overlay);
+        haptic([30, 20, 30]);
+      } catch (err) { showToast('❌ ' + err.message, 'error', 4000); }
+    };
+
+    window.humanizeDay = async function(index) {
+      const d = lastPlan && lastPlan[index];
+      if (!d) return;
+      const cont = [d.hook, d.legende, d.script].filter(Boolean).join('\n\n');
+      if (!cont) return;
+      showToast('✨ Réécriture plus naturelle...', 'info', 3000);
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'humanize', content: cont, best_posts: getBestPosts() }),
+        });
+        const raw = await res.text();
+        let data; try { data = JSON.parse(raw); } catch { const m = raw.match(/\{[\s\S]*\}/); data = m ? JSON.parse(m[0]) : null; }
+        if (!res.ok || !data) throw new Error(data?.error || 'Erreur');
+        const humanized = data.result?.humanized;
+        if (!humanized) throw new Error('Pas de résultat');
+        if (d.legende) lastPlan[index].legende = humanized;
+        else if (d.script) lastPlan[index].script = humanized;
+        renderPlan(lastPlan); renderDayTabs(lastPlan);
+        haptic([50]);
+        showToast('✓ Contenu humanisé', 'success');
+      } catch (err) { showToast('❌ ' + err.message, 'error', 4000); }
+    };
+
+        window.regenDay = async function(index) {
       if (!lastPlan || !lastPlan[index]) return;
       const day = lastPlan[index];
       const audience = els.audience.value.trim();
