@@ -276,125 +276,151 @@
     .btn-block { width: 100%; }
     .btn-sm { padding: 10px 16px; font-size: 13px; border-radius: 10px; }
 
-    /* ── LOADING (futuristic AI network) ── */
+    /* ── LOADING (document pipeline) ── */
     .loading-card {
-      background: linear-gradient(145deg, #0a0a1a, #0d1025, #0a0a1a);
-      border: 1px solid rgba(201,168,76,0.2);
+      background: linear-gradient(160deg, #0d1030, #141850, #0d1030);
+      border: 1px solid rgba(100,140,255,0.15);
       border-radius: 24px;
-      padding: 48px 28px;
+      padding: 40px 24px 36px;
       text-align: center;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 60px rgba(201,168,76,0.08);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(100,140,255,0.1);
       position: relative;
       overflow: hidden;
+      min-height: 320px;
     }
+
+    /* Circuit grid background */
     .loading-card::before {
       content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 300px; height: 300px;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
-      animation: pulseGlow 3s ease infinite;
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(100,140,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,140,255,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
-    @keyframes pulseGlow { 0%,100% { opacity: 0.3; transform: translate(-50%,-50%) scale(0.8); } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.2); } }
 
-    /* Floating particles */
-    .loading-particles {
+    /* Pipeline container */
+    .loading-pipeline {
+      position: relative;
+      width: 100%; height: 140px;
+      margin-bottom: 24px;
+    }
+
+    /* Flowing paths */
+    .pipeline-path {
       position: absolute;
-      inset: 0;
+      height: 2px;
+      border-radius: 1px;
       overflow: hidden;
     }
-    .loading-particle {
-      position: absolute;
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--gold);
-      opacity: 0;
-      animation: particleFloat 4s ease-in-out infinite;
-    }
-    .loading-particle:nth-child(1) { left: 15%; top: 20%; animation-delay: 0s; }
-    .loading-particle:nth-child(2) { left: 75%; top: 30%; animation-delay: 0.7s; width: 3px; height: 3px; background: #6366f1; }
-    .loading-particle:nth-child(3) { left: 30%; top: 70%; animation-delay: 1.4s; width: 5px; height: 5px; }
-    .loading-particle:nth-child(4) { left: 85%; top: 65%; animation-delay: 2.1s; width: 3px; height: 3px; background: #10b981; }
-    .loading-particle:nth-child(5) { left: 50%; top: 15%; animation-delay: 2.8s; background: #ec4899; }
-    .loading-particle:nth-child(6) { left: 20%; top: 50%; animation-delay: 0.5s; width: 6px; height: 6px; }
-    .loading-particle:nth-child(7) { left: 65%; top: 80%; animation-delay: 1.8s; background: #6366f1; }
-    .loading-particle:nth-child(8) { left: 45%; top: 40%; animation-delay: 3.2s; width: 3px; height: 3px; }
-    @keyframes particleFloat {
-      0% { opacity: 0; transform: translateY(20px) scale(0); }
-      20% { opacity: 0.8; transform: translateY(0) scale(1); }
-      80% { opacity: 0.6; transform: translateY(-15px) scale(0.8); }
-      100% { opacity: 0; transform: translateY(-30px) scale(0); }
-    }
-
-    /* Connection lines */
-    .loading-connections {
-      position: absolute;
-      inset: 0;
-    }
-    .loading-connection {
-      position: absolute;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
-      animation: connectionPulse 3s ease infinite;
-    }
-    .loading-connection:nth-child(1) { top: 35%; left: 10%; width: 80%; animation-delay: 0s; }
-    .loading-connection:nth-child(2) { top: 55%; left: 15%; width: 70%; animation-delay: 1s; transform: rotate(-8deg); }
-    .loading-connection:nth-child(3) { top: 45%; left: 5%; width: 90%; animation-delay: 2s; transform: rotate(5deg); background: linear-gradient(90deg, transparent, rgba(99,102,241,0.2), transparent); }
-    @keyframes connectionPulse { 0%,100% { opacity: 0.2; } 50% { opacity: 0.8; } }
-
-    /* Central orb */
-    .loading-orb {
-      width: 72px; height: 72px;
-      margin: 0 auto 28px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, rgba(201,168,76,0.4), rgba(201,168,76,0.1));
-      border: 2px solid rgba(201,168,76,0.3);
-      position: relative; z-index: 2;
-      animation: orbPulse 2s ease infinite;
-      box-shadow: 0 0 30px rgba(201,168,76,0.2), 0 0 60px rgba(201,168,76,0.1);
-    }
-    .loading-orb::before {
-      content: '✨';
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      animation: spin 4s linear infinite;
-    }
-    .loading-orb::after {
+    .pipeline-path::after {
       content: '';
       position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 1px solid rgba(201,168,76,0.15);
-      animation: spin 8s linear infinite reverse;
+      top: 0; left: -40%;
+      width: 40%; height: 100%;
+      border-radius: 1px;
+      animation: pathFlow 2.5s ease-in-out infinite;
     }
-    @keyframes orbPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 30px rgba(201,168,76,0.2); } 50% { transform: scale(1.08); box-shadow: 0 0 50px rgba(201,168,76,0.35); } }
+    @keyframes pathFlow {
+      0% { left: -40%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
+    }
 
+    .pipeline-path.p1 { top: 35%; left: 5%; width: 40%; background: rgba(99,102,241,0.2); }
+    .pipeline-path.p1::after { background: linear-gradient(90deg, transparent, #6366f1, transparent); animation-delay: 0s; }
+    .pipeline-path.p2 { top: 55%; left: 20%; width: 60%; background: rgba(201,168,76,0.15); }
+    .pipeline-path.p2::after { background: linear-gradient(90deg, transparent, var(--gold), transparent); animation-delay: 0.8s; }
+    .pipeline-path.p3 { top: 45%; left: 35%; width: 55%; background: rgba(236,72,153,0.15); transform: rotate(-5deg); }
+    .pipeline-path.p3::after { background: linear-gradient(90deg, transparent, #ec4899, transparent); animation-delay: 1.6s; }
+    .pipeline-path.p4 { top: 65%; left: 10%; width: 35%; background: rgba(16,185,129,0.15); transform: rotate(3deg); }
+    .pipeline-path.p4::after { background: linear-gradient(90deg, transparent, #10b981, transparent); animation-delay: 0.4s; }
+
+    /* Glowing nodes */
+    .pipeline-node {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      animation: nodePulse 2s ease infinite;
+    }
+    .pipeline-node::after {
+      content: '';
+      position: absolute; inset: -4px;
+      border-radius: 50%;
+      border: 1px solid;
+      opacity: 0.3;
+      animation: nodeRing 2s ease infinite;
+    }
+    @keyframes nodePulse {
+      0%,100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
+    @keyframes nodeRing {
+      0%,100% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.8); opacity: 0.5; }
+    }
+    .pipeline-node.n1 { top: 32%; left: 10%; background: #6366f1; box-shadow: 0 0 12px #6366f1; }
+    .pipeline-node.n1::after { border-color: #6366f1; }
+    .pipeline-node.n2 { top: 52%; left: 45%; background: var(--gold); box-shadow: 0 0 12px var(--gold); animation-delay: 0.5s; }
+    .pipeline-node.n2::after { border-color: var(--gold); animation-delay: 0.5s; }
+    .pipeline-node.n3 { top: 42%; left: 78%; background: #ec4899; box-shadow: 0 0 12px #ec4899; animation-delay: 1s; }
+    .pipeline-node.n3::after { border-color: #ec4899; animation-delay: 1s; }
+    .pipeline-node.n4 { top: 62%; left: 30%; background: #10b981; box-shadow: 0 0 12px #10b981; animation-delay: 1.5s; }
+    .pipeline-node.n4::after { border-color: #10b981; animation-delay: 1.5s; }
+    .pipeline-node.n5 { top: 25%; left: 55%; background: #f59e0b; box-shadow: 0 0 12px #f59e0b; animation-delay: 0.3s; width: 8px; height: 8px; }
+    .pipeline-node.n5::after { border-color: #f59e0b; animation-delay: 0.3s; }
+    .pipeline-node.n6 { top: 70%; left: 65%; background: #6366f1; box-shadow: 0 0 12px #6366f1; animation-delay: 0.8s; width: 6px; height: 6px; }
+    .pipeline-node.n6::after { border-color: #6366f1; animation-delay: 0.8s; }
+
+    /* Mini document cards floating */
+    .pipeline-doc {
+      position: absolute;
+      width: 28px; height: 34px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      animation: docFloat 5s ease-in-out infinite;
+    }
+    .pipeline-doc::before {
+      content: '';
+      position: absolute; top: 5px; left: 4px; right: 4px;
+      height: 2px; background: rgba(255,255,255,0.2);
+      box-shadow: 0 5px 0 rgba(255,255,255,0.15), 0 10px 0 rgba(255,255,255,0.1);
+    }
+    @keyframes docFloat {
+      0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+      25% { transform: translateY(-8px) rotate(2deg); opacity: 0.7; }
+      75% { transform: translateY(5px) rotate(-1deg); opacity: 0.5; }
+    }
+    .pipeline-doc.d1 { top: 15%; left: 18%; animation-delay: 0s; }
+    .pipeline-doc.d2 { top: 50%; left: 60%; animation-delay: 1.2s; width: 24px; height: 30px; }
+    .pipeline-doc.d3 { top: 30%; left: 82%; animation-delay: 2.4s; }
+    .pipeline-doc.d4 { top: 68%; left: 8%; animation-delay: 0.6s; width: 22px; height: 28px; }
+    .pipeline-doc.d5 { top: 20%; left: 40%; animation-delay: 1.8s; }
+
+    /* Text styles */
     .loading-text {
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: 17px;
-      color: #f0e6d3;
+      color: #e8e0f0;
       margin-bottom: 8px;
       position: relative; z-index: 2;
-      text-shadow: 0 0 20px rgba(201,168,76,0.3);
+      text-shadow: 0 0 20px rgba(99,102,241,0.3);
     }
     .loading-timer {
       font-family: 'DM Mono', monospace;
-      font-size: 12px;
-      color: var(--gold);
+      font-size: 13px;
+      color: var(--gold-light);
       letter-spacing: 3px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       position: relative; z-index: 2;
       text-shadow: 0 0 10px rgba(201,168,76,0.4);
     }
     .loading-sub {
       font-size: 12px;
-      color: rgba(240,230,211,0.5);
+      color: rgba(200,200,230,0.45);
       line-height: 1.55;
       transition: opacity 0.4s ease;
       position: relative; z-index: 2;
@@ -402,20 +428,20 @@
       margin: 0 auto;
     }
     .loading-bar {
-      width: 140px; height: 2px;
-      background: rgba(201,168,76,0.15);
+      width: 160px; height: 2px;
+      background: rgba(99,102,241,0.15);
       border-radius: 2px;
-      margin: 22px auto 0;
+      margin: 20px auto 0;
       overflow: hidden;
       position: relative; z-index: 2;
     }
     .loading-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+      background: linear-gradient(90deg, #6366f1, var(--gold), #ec4899);
       border-radius: 2px;
       width: 0%;
       animation: barFill 25s ease-out forwards;
-      box-shadow: 0 0 8px rgba(201,168,76,0.5);
+      box-shadow: 0 0 12px rgba(99,102,241,0.5);
     }
     @keyframes barFill { 0% { width: 0%; } 80% { width: 85%; } 100% { width: 95%; } }
     .loading-sub {
@@ -1248,18 +1274,23 @@
     <!-- ─────── SCREEN 2 — LOADING ─────── -->
     <div id="screen-loading" class="screen">
       <div class="loading-card">
-        <div class="loading-particles">
-          <div class="loading-particle"></div><div class="loading-particle"></div>
-          <div class="loading-particle"></div><div class="loading-particle"></div>
-          <div class="loading-particle"></div><div class="loading-particle"></div>
-          <div class="loading-particle"></div><div class="loading-particle"></div>
+        <div class="loading-pipeline">
+          <div class="pipeline-path p1"></div>
+          <div class="pipeline-path p2"></div>
+          <div class="pipeline-path p3"></div>
+          <div class="pipeline-path p4"></div>
+          <div class="pipeline-node n1"></div>
+          <div class="pipeline-node n2"></div>
+          <div class="pipeline-node n3"></div>
+          <div class="pipeline-node n4"></div>
+          <div class="pipeline-node n5"></div>
+          <div class="pipeline-node n6"></div>
+          <div class="pipeline-doc d1"></div>
+          <div class="pipeline-doc d2"></div>
+          <div class="pipeline-doc d3"></div>
+          <div class="pipeline-doc d4"></div>
+          <div class="pipeline-doc d5"></div>
         </div>
-        <div class="loading-connections">
-          <div class="loading-connection"></div>
-          <div class="loading-connection"></div>
-          <div class="loading-connection"></div>
-        </div>
-        <div class="loading-orb"></div>
         <div class="loading-text" id="loading-text">Brille &amp; Vibre orchestre ta semaine...</div>
         <div class="loading-timer" id="loading-timer">0s</div>
         <div class="loading-sub" id="loading-tip"></div>
