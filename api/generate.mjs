@@ -111,6 +111,87 @@ On ne convainc pas. On raconte une histoire tellement vraie que le lecteur se re
 
 Tu réponds UNIQUEMENT avec un objet JSON valide. Aucun texte avant ni après. Ta réponse commence par { et finit par }.`;
 
+// ─── 100 HOOK TEMPLATES CATALOG (Code Liberté) ────────────────
+// A chaque génération, on en pioche 15 au hasard pour varier
+const HOOK_TEMPLATES = [
+  "Les meilleures méthodes pour atteindre [objectif de rêve]",
+  "9 personnes sur 10 se trompent sur ce point précis",
+  "Si je devais tout recommencer à zéro, voici ce que je ferais en premier",
+  "Ne crois pas ceux qui te disent que...",
+  "C'est la solution à tous tes [problèmes idéaux du client]",
+  "Voici [X] petites astuces pour t'aider à [action/résultat]",
+  "J'ai essayé, et voici ce qui s'est passé",
+  "Comment [résultat désiré] avec un minimum d'effort",
+  "C'est la seule manière de [action importante]",
+  "Des difficultés avec [sujet] ? Parlons solutions",
+  "Transforme ton [business] avec cette seule chose",
+  "Imagine [bénéfice ou résultat]. Voilà comment y arriver",
+  "Une technique méconnue pour booster ton [résultat]",
+  "Suis-je le seul à ne pas avoir su que [information] ?",
+  "Si tu veux [objectif], tu dois absolument connaître [concept]",
+  "Les choses que je ne referais jamais après avoir appris [leçon]",
+  "Comment atteindre [résultat désiré] 10 fois plus vite",
+  "Tu me croirais si je te disais que [fait surprenant] ?",
+  "Tu ne sais pas comment [faire quelque chose] ? Fais ça",
+  "Pas de secret gardé : voilà exactement comment je fais [action]",
+  "3 astuces simples pour [résultat]",
+  "Je ne sais pas qui a besoin d'entendre ça, mais... [vérité importante]",
+  "La vérité sur [sujet] que tu regretteras de ne pas avoir su avant",
+  "Les erreurs que je vois trop souvent quand on essaie de [objectif]",
+  "Ce qui te manque vraiment pour [résultat]",
+  "STOP ! Tu dois absolument entendre parler de [sujet crucial]",
+  "Voici exactement comment tu vas ____ sans ____",
+  "Les étapes exactes que j'ai suivies pour ____ en [nombre de jours]",
+  "J'ai arrêté de faire [une stratégie] et j'ai [résultat]",
+  "Comment faire plus de ____ en faisant moins de ____",
+  "J'ai enfin percé le secret de ____",
+  "Dis adieu à [problème] grâce à cette méthode éprouvée",
+  "3 outils que j'utilise chaque jour pour résoudre ____",
+  "Voici ce qui se passe quand ____",
+  "Voici ce que personne ne te dit sur ____ en 2024",
+  "Tu veux doubler ton/tes ____ ? Voici comment",
+  "Tu ne croiras pas ce qui se passe quand j'utilise ____",
+  "Révélation sur ____",
+  "Voici la vraie chose qui m'a aidé(e) à ____",
+  "____ est la pire chose à faire pour ton/tes ____",
+  "Tu veux connaître le secret de ____ ? Laisse-moi te dire",
+  "Clarifions quelques idées fausses sur ____",
+  "Fatigué(e) de ____ ? Essaie ça à la place",
+  "Je parie que tu ne savais pas que ____",
+  "Comment faire ____ en 60 secondes ou moins",
+  "Une chose que j'aurais aimé savoir avant de commencer ____",
+  "Si tu as peur de ____, regarde ça",
+  "POV : Tu viens de trouver le meilleur ____",
+  "Moi, j'applique ____ parce que ma plus grande peur est ____",
+  "N'utilise pas ____ à moins que tu veuilles ____",
+  "3 signes que tu dois abandonner ton/ta ____",
+  "Ce que personne ne te dit à propos de ____",
+  "Si tu ne fais pas ____, tu passes à côté de ____",
+  "Les erreurs que je vois les gens commettre quand ils essaient de ____",
+  "Il m'a fallu X années pour réaliser ____",
+  "La vérité sur ____ que tu aurais aimé connaître plus tôt",
+  "Cette erreur peut te coûter [argent, temps, santé]",
+  "Voilà pourquoi tu as besoin de X et non de Y",
+  "Imagine si tu pouvais ____",
+  "Cela va changer ta façon d'utiliser ____",
+  "Si tu souffres de [problème], arrête de faire défiler",
+  "POV : Tu as pris ____ au sérieux, et voici ce qui s'est passé",
+  "Juste un petit rappel pour te dire que ____",
+  "J'ai passé des années à perfectionner ____, mais je vais te l'expliquer en quelques minutes",
+  "____ est le plus grand défi que tu affrontes réellement, voici pourquoi",
+  "Si tu aimes ____, alors tu vas aussi adorer ça",
+  "5 choses que j'aurais aimé savoir plus tôt à propos de ____",
+  "Moi, en train de résister à l'envie de te dire ____",
+  "Si ton objectif est de ____, tu dois [nouvelle stratégie]",
+  "Submergé(e) par [problème courant] ? Voici ce que tu dois faire",
+];
+
+function getRandomTemplates(n) {
+  const shuffled = [...HOOK_TEMPLATES].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+
 
 function buildWeeklyPlanMessage(audience, focus, format, options, days) {
   days = days || 7;
@@ -298,6 +379,11 @@ ${tonBlock}
 ${formatBlock}
 
 ${rythmeBlock}
+
+STRUCTURES DE HOOKS À UTILISER COMME INSPIRATION (piochées au hasard parmi 100) :
+${getRandomTemplates(15).map((t, i) => '- ' + t).join('\n')}
+
+Adapte ces structures à l'audience et au sujet. Ne les copie pas mot pour mot — inspire-toi de leur ÉNERGIE et STRUCTURE pour créer des hooks uniques et frais.
 
 CONSIGNES
 1. Applique scrupuleusement le style d'écriture du bloc système (rythme 3 temps, déclencheurs, punchlines, progression émotionnelle, test du vocal WhatsApp).
