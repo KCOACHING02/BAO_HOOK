@@ -798,7 +798,7 @@ export default async function handler(req, res) {
 
     userMessage      = buildWeeklyPlanMessage(audience, focus, format, options, days);
     // Sonnet pour le mode drôle (Haiku est mauvais en humour, et le prompt humor est court → Sonnet tient dans 60s)
-    modelForCall     = (body.options && body.options.ton === 'drole') ? 'claude-sonnet-4-6' : DEFAULT_MODEL;
+    modelForCall     = DEFAULT_MODEL;
     // Adapter le token budget au nombre de jours
     maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;
     maxTokensForCall = MAX_TOKENS_WEEKLY_PLAN;     // 6500
